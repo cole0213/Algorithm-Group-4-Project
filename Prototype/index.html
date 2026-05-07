@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>포트폴리오 리뷰어</title>
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* ── 디자인 토큰 (design.md 근사값) ── */
+        :root {
+            --color-primary:        #7C3AED;   /* Notion purple */
+            --color-primary-dark:   #6D28D9;
+            --color-primary-light:  #EDE9FE;   /* tint-lavender */
+            --color-canvas:         #FFFFFF;
+            --color-surface:        #F7F6F3;
+            --color-hairline:       #E9E9E7;
+            --color-hairline-strong:#D3D1CB;
+            --color-ink-deep:       #191919;
+            --color-ink:            #37352F;   /* Notion charcoal */
+            --color-slate:          #787774;
+            --color-steel:          #9B9A97;
+            --color-muted:          #CFCDC9;
+            --color-highlight:      #FFD43B;
+            --color-highlight-text: #5C4400;
+            --color-match-high:     #2DC653;
+            --color-match-mid:      #EA580C;
+            --color-match-low:      #DC2626;
+
+            /* rounded scale */
+            --r-xs:   4px;
+            --r-sm:   6px;
+            --r-md:   8px;
+            --r-lg:   12px;
+            --r-full: 9999px;
+
+            /* spacing */
+            --sp-xxs: 4px;
+            --sp-xs:  8px;
+            --sp-sm:  10px;
+            --sp-md:  16px;
+            --sp-lg:  24px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Pretendard', -apple-system, system-ui, 'Segoe UI', Helvetica, sans-serif;
+            background: var(--color-surface);
+            color: var(--color-ink);
+            font-size: 14px;
+            line-height: 1.5;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* ── 상단 바 ── */
+        .topbar {
+            height: 64px;
+            background: var(--color-canvas);
+            border-bottom: 1px solid var(--color-hairline);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .topbar-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-ink);
+            white-space: nowrap;
+            margin-right: 6px;
+            letter-spacing: -0.01em;
+        }
+
+        .topbar-divider {
+            width: 1px;
+            height: 18px;
+            background: var(--color-hairline);
+            margin: 0 2px;
+        }
+
+        .topbar-search {
+            flex: 1;
+            max-width: 280px;
+            height: 44px;
+            border: 1px solid var(--color-hairline);
+            border-radius: var(--r-md);
+            padding: 0 14px;
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--color-surface);
+            color: var(--color-ink);
+            outline: none;
+            transition: border 0.15s;
+        }
+        .topbar-search:focus { border: 2px solid var(--color-primary); }
+        .topbar-search::placeholder { color: var(--color-steel); }
+
+        .topbar-select {
+            height: 44px;
+            border: 1px solid var(--color-hairline);
+            border-radius: var(--r-md);
+            padding: 0 12px;
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--color-surface);
+            color: var(--color-ink);
+            cursor: pointer;
+            outline: none;
+        }
+
+        /* button-secondary (design.md): transparent bg, hairline-strong border, r-md */
+        .topbar-btn {
+            height: 44px;
+            padding: 0 18px;
+            border: 1px solid var(--color-hairline-strong);
+            border-radius: var(--r-md);
+            background: transparent;
+            font-size: 14px;
+            font-family: inherit;
+            font-weight: 500;
+            color: var(--color-ink);
+            cursor: pointer;
+            transition: background 0.12s;
+        }
+        .topbar-btn:hover { background: var(--color-surface); }
+
+        /* ── 메인 ── */
+        .main {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* ── 좌측 리스트 ── */
+        .sidebar {
+            width: 220px;
+            flex-shrink: 0;
+            background: var(--color-surface);
+            border-right: 1px solid var(--color-hairline);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 10px 16px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--color-steel);
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            border-bottom: 1px solid var(--color-hairline);
+            flex-shrink: 0;
+        }
+
+        .sidebar-list {
+            overflow-y: auto;
+            flex: 1;
+            padding: 6px;
+        }
+
+        .applicant-item {
+            padding: 9px 10px;
+            border-radius: var(--r-md);
+            cursor: pointer;
+            margin-bottom: 2px;
+            border-left: 3px solid transparent;
+            transition: background 0.1s;
+        }
+        .applicant-item:hover { background: rgba(0,0,0,0.04); }
+        .applicant-item.selected {
+            background: var(--color-primary-light);
+            border-left-color: var(--color-primary);
+        }
+
+        .applicant-item-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3px;
+        }
+
+        .applicant-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-ink);
+        }
+
+        /* rounded.full for badges (design.md) */
+        .match-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: var(--r-full);
+        }
+        .match-high { color: #166534; background: #DCFCE7; }
+        .match-mid  { color: #9A3412; background: #FFEDD5; }
+        .match-low  { color: #991B1B; background: #FEE2E2; }
+
+        .applicant-skills {
+            font-size: 11px;
+            color: var(--color-steel);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* ── 우측 포트폴리오 영역 ── */
+        .portfolio-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .portfolio-toolbar {
+            height: 32px;
+            background: var(--color-canvas);
+            border-bottom: 1px solid var(--color-hairline);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .toolbar-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--color-slate);
+        }
+
+        .sync-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--color-slate);
+            margin-left: auto;
+        }
+
+        /* toggle — OFF: hairline gray / ON: primary purple */
+        .toggle-pill {
+            width: 34px;
+            height: 19px;
+            background: var(--color-muted);
+            border-radius: var(--r-full);
+            position: relative;
+            cursor: pointer;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+        .toggle-pill.on { background: var(--color-primary); }
+        .toggle-pill::after {
+            content: '';
+            width: 15px;
+            height: 15px;
+            background: #fff;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: left 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .toggle-pill.on::after { left: 17px; }
+
+        /* ── 패널 컨테이너 ── */
+        .portfolio-panels {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* 빈 상태 */
+        .empty-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-muted);
+            gap: 10px;
+            user-select: none;
+        }
+        .empty-icon { font-size: 36px; }
+        .empty-text { font-size: 14px; font-weight: 500; color: var(--color-steel); }
+
+        /* ── 포트폴리오 패널 (문서 뷰어, 박스 없음) ── */
+        .portfolio-panel {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border-right: 1px solid var(--color-hairline);
+            background: var(--color-canvas);
+            transition: flex 0.2s ease;
+        }
+        .portfolio-panel:last-child { border-right: none; }
+
+        /* 패널 탭 — accent 언더라인 */
+        .panel-tab {
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 18px;
+            border-bottom: 2px solid var(--accent, var(--color-primary));
+            flex-shrink: 0;
+            background: var(--color-canvas);
+        }
+
+        .panel-tab-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-ink);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: -0.01em;
+        }
+
+        /* rounded.full for tab match badge */
+        .panel-tab-match {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: var(--r-full);
+        }
+
+        /* button-ghost (design.md) */
+        .panel-close {
+            width: 24px;
+            height: 24px;
+            border: none;
+            background: transparent;
+            border-radius: var(--r-sm);
+            cursor: pointer;
+            font-size: 13px;
+            color: var(--color-steel);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.1s;
+        }
+        .panel-close:hover { background: var(--color-surface); color: var(--color-ink); }
+
+        /* md 본문 */
+        .panel-md {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px 28px 40px;
+            line-height: 1.7;
+            color: var(--color-ink);
+        }
+
+        /* ── md 텍스트 렌더링 (design.md 타이포그래피) ── */
+        .md-h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--color-ink-deep);
+            margin-bottom: 18px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--color-hairline);
+            letter-spacing: -0.03em;
+            line-height: 1.3;
+        }
+
+        .md-h2 {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--color-slate);
+            margin: 22px 0 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .md-h3 {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-ink);
+            margin: 12px 0 4px;
+        }
+
+        .md-p {
+            font-size: 13.5px;
+            margin-bottom: 5px;
+            color: #4A4745;  /* charcoal */
+            line-height: 1.75;
+        }
+
+        .md-li {
+            font-size: 13px;
+            margin-left: 14px;
+            margin-bottom: 3px;
+            color: #4A4745;
+            list-style: none;
+            position: relative;
+            line-height: 1.65;
+        }
+        .md-li::before {
+            content: '–';
+            position: absolute;
+            left: -12px;
+            color: var(--color-muted);
+        }
+
+        .md-bold { font-weight: 600; color: var(--color-ink); }
+
+        /* ── 기술스택 뱃지 — rounded.xs (4px) tag chips ── */
+        .skill-badges { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+
+        .skill-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            padding: 2px 7px;
+            border-radius: var(--r-xs);   /* 4px — rounded.xs */
+            background: #F1F0EE;
+            color: var(--color-slate);
+        }
+        .skill-badge.matched {
+            background: var(--color-highlight);
+            color: var(--color-highlight-text);
+            font-weight: 500;
+        }
+
+        /* 유사문장 */
+        .sim-red {
+            background: rgba(220, 38, 38, 0.08);
+            border-bottom: 2px solid #F87171;
+            border-radius: 2px;
+        }
+
+        /* button-primary (design.md) — 8px radius rectangle */
+        .original-btn {
+            display: inline-block;
+            margin-top: 16px;
+            padding: 8px 18px;
+            background: var(--color-primary);
+            color: #fff;
+            border: none;
+            border-radius: var(--r-md);   /* 8px — NOT pill */
+            font-size: 13px;
+            font-weight: 500;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background 0.15s;
+            letter-spacing: -0.01em;
+        }
+        .original-btn:hover { background: var(--color-primary-dark); }
+
+        /* 스크롤바 */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--color-hairline); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--color-hairline-strong); }
+    </style>
+</head>
+<body>
+
+<!-- 상단 바 -->
+<div class="topbar">
+    <span class="topbar-title">Portfolio Reviewer</span>
+    <div class="topbar-divider"></div>
+    <input class="topbar-search" type="text" placeholder="🔍  검색 (Python · py · 파이썬)">
+    <select class="topbar-select">
+        <option>매칭률 높은 순</option>
+        <option>경력 많은 순</option>
+        <option>이름 순</option>
+    </select>
+    <button class="topbar-btn">⚙ 설정</button>
+</div>
+
+<!-- 메인 -->
+<div class="main">
+
+    <!-- 좌측 리스트 -->
+    <div class="sidebar">
+        <div class="sidebar-header">지원자 목록 · 6명</div>
+        <div class="sidebar-list" id="applicantList"></div>
+    </div>
+
+    <!-- 우측 포트폴리오 영역 -->
+    <div class="portfolio-area">
+        <div class="portfolio-toolbar">
+<div class="sync-toggle">
+                <span>동기화 스크롤</span>
+                <div class="toggle-pill" id="syncToggle" onclick="toggleSync()"></div>
+            </div>
+        </div>
+        <div class="portfolio-panels" id="portfolioPanels"></div>
+    </div>
+
+</div>
+
+<script>
+    const REQUIRED = new Set(['React', 'Python', 'Docker']);
+
+    /* accent colors per design.md brand spectrum */
+    const ACCENT_COLORS = ['#7C3AED','#EA580C','#2DC653','#DC2626','#0284C7','#65A30D'];
+
+    const APPLICANTS = [
+        {
+            id: 'C', label: '지원자C', name: '김지수', match: 80,
+            skills: ['React', 'Docker', 'Python', 'AWS', 'TypeScript', 'Git'],
+            career: '2년', education: 'OO대학교 컴퓨터공학과 (2020 졸업)',
+            similarGroup: 'red',
+            projects: [
+                { name: '이커머스 플랫폼', period: '2023.01 – 2023.06', role: '프론트엔드 개발',
+                  stack: 'React, TypeScript, AWS S3, Docker',
+                  desc: '소비자 대상 쇼핑몰 플랫폼 UI 전체 설계 및 구현. 장바구니·결제 플로우·상품 검색 기능 담당. 월 DAU 1만 명 운영 중.' },
+                { name: 'AI 챗봇 서비스', period: '2023.08 – 2023.10', role: '풀스택 개발',
+                  stack: 'React, Python, FastAPI, Docker',
+                  desc: '고객센터 자동응답 챗봇 서비스 개발. 프론트엔드 채팅 UI와 Python 백엔드 연동. 응답 속도 40% 개선.' }
+            ],
+            intro: '저는 사용자 중심의 사고를 가진 프론트엔드 개발자입니다.\nReact를 활용한 UI 설계에 강점을 가지고 있으며, Docker를 통한 컨테이너 환경 구축 경험도 보유하고 있습니다.\n사용자 경험 개선에 관심이 많으며, 팀과의 적극적인 소통을 통해 더 나은 제품을 만들어가는 것을 지향합니다.',
+            awards: ['2022 교내 해커톤 최우수상', 'AWS 솔루션 아키텍트 어소시에이트 취득 (2023)'],
+            file: 'portfolios/김지수.md'
+        },
+        {
+            id: 'A', label: '지원자A', name: '이민준', match: 60,
+            skills: ['React', 'Python', 'Vue', 'Git', 'PostgreSQL', 'Linux'],
+            career: '3년', education: 'OO대학교 소프트웨어학과 (2019 졸업)',
+            similarGroup: 'red',
+            projects: [
+                { name: '사내 인사 관리 시스템', period: '2022.03 – 2022.10', role: '백엔드 개발',
+                  stack: 'Python, Django, PostgreSQL, Vue.js',
+                  desc: '300명 규모 기업의 근태·급여·인사 데이터 통합 관리 시스템 개발. 기존 엑셀 기반 업무 대비 처리 시간 60% 절감.' },
+                { name: '데이터 시각화 대시보드', period: '2023.02 – 2023.05', role: '풀스택 개발',
+                  stack: 'Python, FastAPI, Vue.js, Chart.js',
+                  desc: '영업 실적 데이터를 실시간으로 시각화하는 내부 대시보드 개발.' }
+            ],
+            intro: '저는 사용자 중심의 사고를 가진 백엔드 개발자입니다.\nPython 기반 백엔드 개발과 데이터 파이프라인 구축에 주력해 왔으며, Vue.js로 프론트엔드 작업도 병행합니다.\n데이터 처리 성능 최적화에 관심이 많고, 읽기 쉬운 코드와 명확한 문서화를 중요하게 생각합니다.',
+            awards: ['2021 전국 대학생 프로그래밍 경진대회 장려상', '정보처리기사 취득 (2019)'],
+            file: 'portfolios/이민준.md'
+        },
+        {
+            id: 'B', label: '지원자B', name: '박서연', match: 40,
+            skills: ['Python', 'Docker', 'Java', 'Spring Boot', 'Kubernetes', 'MySQL'],
+            career: '5년', education: 'OO대학교 정보통신학과 (2017 졸업)',
+            similarGroup: null,
+            projects: [
+                { name: '물류 자동화 시스템', period: '2021.01 – 2021.12', role: '백엔드 리드',
+                  stack: 'Java, Spring Boot, Docker, Kubernetes, MySQL',
+                  desc: '일 주문 10만 건 처리 물류 센터 자동화 시스템 설계 및 구축. 마이크로서비스 아키텍처 도입으로 배포 주기 2주 → 1일 단축.' },
+                { name: 'REST API 서버 구축', period: '2022.06 – 2022.10', role: '백엔드 개발',
+                  stack: 'Python, FastAPI, Docker, PostgreSQL',
+                  desc: '모바일 앱 대상 REST API 서버 신규 구축. API 응답 시간 평균 120ms 달성.' }
+            ],
+            intro: '안정적이고 확장 가능한 백엔드 아키텍처를 설계하는 것을 좋아합니다.\nJava Spring Boot와 Python을 주로 사용하며, Docker 기반 배포 환경 구축에 익숙합니다.\n대용량 트래픽 처리와 시스템 안정성 확보에 관심이 많습니다.',
+            awards: ['AWS Certified Solutions Architect Professional (2022)', 'Kubernetes CKA 취득 (2023)'],
+            file: 'portfolios/박서연.md'
+        },
+        {
+            id: 'D', label: '지원자D', name: '최준혁', match: 20,
+            skills: ['Angular', 'Java', 'Spring Boot', 'MySQL', 'HTML', 'CSS'],
+            career: '1년', education: 'OO대학교 컴퓨터공학과 (2022 졸업)',
+            similarGroup: null,
+            projects: [
+                { name: '커뮤니티 웹 서비스', period: '2023.03 – 2023.06', role: '프론트엔드 개발',
+                  stack: 'Angular, TypeScript, HTML, CSS',
+                  desc: '대학 동아리 전용 커뮤니티 사이트 개발. 게시판·댓글·회원 관리 UI 구현.' },
+                { name: '도서 관리 시스템', period: '2022.09 – 2022.12', role: '풀스택 개발',
+                  stack: 'Java, Spring Boot, MySQL, Thymeleaf',
+                  desc: '졸업 프로젝트로 도서관 도서 대출·반납 관리 시스템 개발. CRUD 기능 전체 구현.' }
+            ],
+            intro: 'Angular와 Java Spring 기반의 웹 개발 경험을 보유하고 있습니다.\n팀 프로젝트에서 소통과 일정 관리에 강점을 발휘했으며, 주어진 요구사항을 정확히 구현하는 것을 중요하게 여깁니다.',
+            awards: ['정보처리기사 취득 (2022)', '교내 알고리즘 스터디 운영 (2021 – 2022)'],
+            file: 'portfolios/최준혁.md'
+        },
+        {
+            id: 'E', label: '지원자E', name: '정하은', match: 75,
+            skills: ['React', 'TypeScript', 'Node.js', 'Docker', 'Redis', 'AWS'],
+            career: '3년', education: 'OO대학교 전자공학과 (2019 졸업)',
+            similarGroup: null,
+            projects: [
+                { name: '실시간 협업 툴', period: '2022.05 – 2022.11', role: '풀스택 개발',
+                  stack: 'React, TypeScript, Node.js, Socket.io, Redis',
+                  desc: '팀 단위 실시간 문서 편집 및 태스크 관리 툴 개발. WebSocket 기반 실시간 동기화 구현. 동시 접속자 200명 처리.' },
+                { name: '디자인 시스템 구축', period: '2023.01 – 2023.04', role: '프론트엔드 개발',
+                  stack: 'React, TypeScript, Storybook',
+                  desc: '사내 공통 UI 컴포넌트 라이브러리 설계 및 구축. 40개 컴포넌트 제작, 팀 전체 개발 속도 25% 향상.' }
+            ],
+            intro: '프론트엔드와 백엔드를 아우르는 풀스택 개발자입니다.\nReact와 TypeScript를 주력으로 사용하며, Node.js 기반 서버 개발 경험도 보유하고 있습니다.\n성능 최적화와 접근성 개선에 관심이 많습니다.',
+            awards: ['2022 카카오 인턴십 수료', 'AWS Certified Developer Associate (2023)'],
+            file: 'portfolios/정하은.md'
+        },
+        {
+            id: 'F', label: '지원자F', name: '오승민', match: 65,
+            skills: ['Python', 'FastAPI', 'PostgreSQL', 'Redis', 'Docker', 'Celery'],
+            career: '4년', education: 'OO대학교 수학과 (2018 졸업)',
+            similarGroup: null,
+            projects: [
+                { name: '대용량 정산 시스템', period: '2021.06 – 2022.03', role: '백엔드 개발',
+                  stack: 'Python, FastAPI, PostgreSQL, Celery, Redis',
+                  desc: '월 거래 500만 건 규모 정산 배치 시스템 설계 및 구현. Celery 도입으로 처리 시간 70% 단축. 정산 오류율 0.01% 이하 유지.' },
+                { name: '추천 알고리즘 API', period: '2022.04 – 2022.08', role: '백엔드 개발',
+                  stack: 'Python, FastAPI, Redis, PostgreSQL',
+                  desc: '사용자 행동 데이터 기반 콘텐츠 추천 API 개발. Redis 캐싱으로 응답 시간 200ms → 30ms 개선.' }
+            ],
+            intro: '데이터 중심의 백엔드 시스템을 설계하고 운영하는 것에 강점을 가진 개발자입니다.\n수학적 사고를 바탕으로 복잡한 비즈니스 로직을 명확하게 구조화하며, 쿼리 최적화와 캐싱 전략 수립에 자신 있습니다.',
+            awards: ['PostgreSQL 컨트리뷰터 (2023)', '사내 Python 스터디 리드 (2022 – 현재)'],
+            file: 'portfolios/오승민.md'
+        }
+    ];
+
+    const selected = [];
+
+    // ── 동기화 스크롤 ──────────────────────────────
+    let syncEnabled = false;
+    let isSyncing = false;
+
+    function toggleSync() {
+        syncEnabled = !syncEnabled;
+        document.getElementById('syncToggle').classList.toggle('on', syncEnabled);
+    }
+
+    function attachScrollListeners() {
+        const panels = document.querySelectorAll('.panel-md');
+        panels.forEach(panel => {
+            panel.addEventListener('scroll', () => {
+                if (!syncEnabled || isSyncing) return;
+                isSyncing = true;
+                const maxScroll = panel.scrollHeight - panel.clientHeight;
+                const ratio = maxScroll > 0 ? panel.scrollTop / maxScroll : 0;
+                panels.forEach(other => {
+                    if (other === panel) return;
+                    const otherMax = other.scrollHeight - other.clientHeight;
+                    other.scrollTop = ratio * otherMax;
+                });
+                isSyncing = false;
+            });
+        });
+    }
+    // ───────────────────────────────────────────────
+
+    function matchClass(pct) {
+        if (pct >= 70) return 'match-high';
+        if (pct >= 40) return 'match-mid';
+        return 'match-low';
+    }
+
+    function renderMd(a) {
+        const skills = a.skills.map(s =>
+            `<span class="skill-badge ${REQUIRED.has(s) ? 'matched' : ''}">${s}</span>`
+        ).join('');
+
+        const projects = a.projects.map(p => `
+            <p class="md-h3">${p.name}</p>
+            <ul>
+                <li class="md-li"><span class="md-bold">기간</span>&ensp;${p.period} · ${p.role}</li>
+                <li class="md-li"><span class="md-bold">기술</span>&ensp;${p.stack}</li>
+                <li class="md-li">${p.desc}</li>
+            </ul>`).join('');
+
+        const awards = a.awards.map(aw => `<li class="md-li">${aw}</li>`).join('');
+
+        const SIM = '저는 사용자 중심의 사고를 가진';
+        const introHtml = a.similarGroup === 'red'
+            ? a.intro.replace(SIM, `<span class="sim-red">${SIM}</span>`)
+            : a.intro;
+
+        return `
+            <div class="md-h1">${a.name} 포트폴리오</div>
+
+            <div class="md-h2">기본 정보</div>
+            <ul>
+                <li class="md-li"><span class="md-bold">경력</span>&ensp;${a.career}</li>
+                <li class="md-li"><span class="md-bold">학력</span>&ensp;${a.education}</li>
+            </ul>
+
+            <div class="md-h2">기술 스택</div>
+            <div class="skill-badges">${skills}</div>
+
+            <div class="md-h2">자기소개</div>
+            ${introHtml.split('\n').map(line => `<p class="md-p">${line}</p>`).join('')}
+
+            <div class="md-h2">프로젝트</div>
+            ${projects}
+
+            <div class="md-h2">수상 및 활동</div>
+            <ul>${awards}</ul>
+
+            <br>
+            <button class="original-btn">원본 포트폴리오 보기 →</button>
+        `;
+    }
+
+    function renderSidebar() {
+        document.getElementById('applicantList').innerHTML = APPLICANTS.map(a => `
+            <div class="applicant-item ${selected.includes(a.id) ? 'selected' : ''}"
+                 onclick="toggle('${a.id}')">
+                <div class="applicant-item-top">
+                    <span class="applicant-name">${a.label} ${a.name}</span>
+                    <span class="match-badge ${matchClass(a.match)}">${a.match}%</span>
+                </div>
+                <div class="applicant-skills">${a.skills.slice(0,4).join(' · ')}</div>
+            </div>
+        `).join('');
+    }
+
+    function renderPanels() {
+        const area = document.getElementById('portfolioPanels');
+
+        if (selected.length === 0) {
+            area.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">📋</div>
+                    <div class="empty-text">좌측 목록에서 지원자를 클릭하세요</div>
+                </div>`;
+            return;
+        }
+
+        area.innerHTML = selected.map((id, idx) => {
+            const a = APPLICANTS.find(x => x.id === id);
+            const accent = ACCENT_COLORS[idx % ACCENT_COLORS.length];
+            return `
+            <div class="portfolio-panel" style="--accent:${accent}">
+                <div class="panel-tab">
+                    <div class="panel-tab-name">
+                        ${a.label} · ${a.name}
+                        <span class="panel-tab-match ${matchClass(a.match)}">${a.match}%</span>
+                    </div>
+                    <button class="panel-close" onclick="toggle('${a.id}')">✕</button>
+                </div>
+                <div class="panel-md">
+                    ${renderMd(a)}
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    function toggle(id) {
+        const idx = selected.indexOf(id);
+        if (idx !== -1) {
+            selected.splice(idx, 1);
+        } else {
+            if (selected.length >= 4) return;
+            selected.push(id);
+        }
+        renderSidebar();
+        renderPanels();
+        attachScrollListeners();
+    }
+
+    renderSidebar();
+    renderPanels();
+    attachScrollListeners();
+</script>
+</body>
+</html>
