@@ -1,3 +1,9 @@
+> **참고 자료** — 이 파일은 Notion 브랜드 시스템을 추출한 **외부 참고 자료**입니다.
+> 이 프로젝트의 실제 색상·폰트·여백 기준은 `style.md`를 따릅니다.
+> `design.md`는 UI 방향성(문서 뷰어 형식, 8px 버튼, 12px 카드 등)의 참고용으로만 사용합니다.
+
+---
+
 ## Overview
 
 Notion presents itself as the all-in-one workspace through a confident, illustration-rich brand voice. The homepage opens with **"Meet the night shift."** rendered centered over a deep navy hero band ({colors.brand-navy}), decorated with brand-colored sticky-note dots and mesh wire illustrations scattered around the headline. The signature **purple pill primary CTA** ({colors.primary}) "Get Notion free" sits at the visual center, paired with an outlined "Request a demo" secondary. Below the buttons, a real Notion workspace UI mockup card (the "Ramp HQ" kanban board) breaks out of the hero band with a deep diffuse drop shadow.

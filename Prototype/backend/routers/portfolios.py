@@ -9,7 +9,6 @@
 from __future__ import annotations
 import os, time, json
 from pathlib import Path
-
 from fastapi import APIRouter, HTTPException, Query, UploadFile, File, Form
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
@@ -37,6 +36,9 @@ def _abs_portfolios_dir() -> Path:
     return (base / _PORTFOLIOS_DIR).resolve()
 
 
+# ── 세션 파일 경로 ───────────────────────────────────────────────
+_SESSION_FILE = Path(__file__).parent.parent / "session.json"
+
 # ── 캐시 (프로세스 수명 내) ─────────────────────────────────────
 _portfolio_cache: list[dict] | None = None
 
@@ -44,8 +46,25 @@ _portfolio_cache: list[dict] | None = None
 def _get_portfolios() -> list[dict]:
     global _portfolio_cache
     if _portfolio_cache is None:
-        _portfolio_cache = parser_svc.load_all(_abs_portfolios_dir())
+        try:
+            data = json.loads(_SESSION_FILE.read_text(encoding="utf-8"))
+            _portfolio_cache = data.get("portfolios", [])
+            print(f"[Session] session.json에서 {len(_portfolio_cache)}개 로드")
+        except Exception as e:
+            print(f"[Session] session.json 로드 실패: {e} — 빈 목록으로 시작")
+            _portfolio_cache = []
     return _portfolio_cache
+
+
+def _save_session() -> None:
+    """현재 캐시를 session.json에 저장한다."""
+    try:
+        _SESSION_FILE.write_text(
+            json.dumps({"portfolios": _portfolio_cache or []}, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+    except Exception as e:
+        print(f"[Session] 저장 실패: {e}")
 
 
 # ── 요청/응답 모델 ────────────────────────────────────────────────
@@ -69,13 +88,15 @@ async def add_portfolio(
     file: Optional[UploadFile] = File(None),
     text: Optional[str] = Form(None),
     name: Optional[str] = Form(""),
+    position: Optional[str] = Form("general"),  # general | frontend | backend | data
 ):
     """
     포트폴리오 추가.
-    - file: PDF (.pdf) 또는 Markdown (.md, .txt) 파일
+    - file: PDF (.pdf) / Markdown (.md) / 텍스트 (.txt) 파일
     - text: 직접 붙여넣은 텍스트
     - name: 지원자 이름 (선택)
-    둘 다 있으면 file 우선. Solar API로 파싱 → 실패 시 기본 파서 폴백.
+    - position: 직군 유형 — general | frontend | backend | data
+    모든 형식을 Solar LLM으로 파싱. 실패 시 기본 파서 폴백.
     """
     from services import solar as solar_svc
     from services.parser import extract_pdf_text, parse_text_basic
@@ -108,51 +129,34 @@ async def add_portfolio(
     if not raw_text.strip():
         raise HTTPException(status_code=422, detail="파싱할 텍스트가 비어 있습니다.")
 
-    # ── 파싱: Solar 우선, 폴백 기본 파서 ─────────────────────────
-    uid = (name or "").strip() or Path(filename).stem if filename else f"upload_{int(time.time())}"
+    # ── ID 생성 ────────────────────────────────────────────────────
+    uid = (name or "").strip() or (Path(filename).stem if filename else f"upload_{int(time.time())}")
     portfolio: dict = {}
+    pos = position or "general"
 
-    # MD 파일은 기존 MD 파서로 바로 처리
-    if filename.endswith(".md"):
-        import tempfile, os as _os
-        with tempfile.NamedTemporaryFile(suffix=".md", delete=False,
-                                         mode="w", encoding="utf-8") as tmp:
-            tmp.write(raw_text)
-            tmp_path = tmp.name
-        try:
-            portfolio = parser_svc.parse_md(tmp_path)
-            portfolio["id"] = uid
-            if name:
-                portfolio["name"] = name
-        finally:
-            _os.unlink(tmp_path)
-    else:
-        # Solar 파싱 시도
-        try:
-            portfolio = solar_svc.parse_text(raw_text)
-            portfolio.setdefault("id", uid)
-            portfolio.setdefault("projects", [])
-            portfolio.setdefault("awards", [])
-            portfolio.setdefault("skills", [])
-            portfolio.setdefault("intro", "")
-            portfolio.setdefault("career_years", 0)
-            portfolio.setdefault("education", "")
-            portfolio.setdefault("email", "")
-            portfolio.setdefault("github", "")
-            portfolio.setdefault("file", "")
-            if name:
-                portfolio["name"] = name
-            # career_years 문자열 → 정수 변환
-            cy = portfolio.get("career_years", 0)
-            if isinstance(cy, str):
-                import re
-                m = re.search(r"(\d+)", cy)
-                portfolio["career_years"] = int(m.group(1)) if m else 0
-        except solar_svc.NotConfiguredError:
-            portfolio = parse_text_basic(raw_text, name=name or Path(filename).stem if filename else "", uid=uid)
-        except Exception as e:
-            # Solar 오류 → 폴백
-            portfolio = parse_text_basic(raw_text, name=name or "", uid=uid)
+    # ── 파싱: Solar 우선 (모든 형식), 폴백 기본 파서 ──────────────
+    try:
+        portfolio = solar_svc.parse_text(raw_text, position=pos)
+        portfolio.setdefault("id", uid)
+        if name:
+            portfolio["name"] = name
+    except solar_svc.NotConfiguredError:
+        portfolio = parse_text_basic(
+            raw_text,
+            name=name or (Path(filename).stem if filename else ""),
+            uid=uid,
+        )
+    except Exception as e:
+        print(f"[Solar] 파싱 실패: {e} — 기본 파서 사용")
+        portfolio = parse_text_basic(raw_text, name=name or "", uid=uid)
+
+    # ── 필수 필드 보완 ─────────────────────────────────────────────
+    for k, default in [
+        ("projects", []), ("awards", []), ("skills", []),
+        ("intro", ""), ("career_years", 0),
+        ("education", ""), ("email", ""), ("github", ""), ("file", ""),
+    ]:
+        portfolio.setdefault(k, default)
 
     # ── 캐시에 추가 (중복 ID 방지) ────────────────────────────────
     portfolios = _get_portfolios()
@@ -161,17 +165,20 @@ async def add_portfolio(
         portfolio["id"] = f"{portfolio['id']}_{int(time.time())}"
 
     # ── 원본 텍스트 보존 ───────────────────────────────────────────
-    portfolio["_raw"] = raw_text
+    portfolio["_raw"]     = raw_text
     portfolio["_raw_ext"] = Path(filename).suffix.lower().lstrip(".") if filename else "txt"
+    portfolio["_position"] = pos
 
     # ── Solar 디버그 정보 분리 ─────────────────────────────────────
     solar_debug = {
-        "used": portfolio.pop("_solar_used", False),
-        "elapsed": portfolio.pop("_solar_elapsed", None),
-        "tokens": portfolio.pop("_solar_tokens", {}),
+        "used":      portfolio.get("_solar_used", False),
+        "elapsed":   portfolio.pop("_solar_elapsed", None),
+        "tokens":    portfolio.pop("_solar_tokens",  {}),
+        "truncated": portfolio.get("_truncated", False),
     }
 
     portfolios.append(portfolio)
+    _save_session()
 
     return {"message": "추가 완료", "portfolio": portfolio, "solar": solar_debug}
 
@@ -237,6 +244,7 @@ async def import_portfolios(file: UploadFile = File(...)):
         existing_ids.add(pid)
         added += 1
 
+    _save_session()
     return {"message": f"{added}개 불러오기 완료", "total": len(portfolios)}
 
 
@@ -248,6 +256,7 @@ def delete_portfolio(portfolio_id: str):
     if idx is None:
         raise HTTPException(status_code=404, detail="포트폴리오 없음")
     portfolios.pop(idx)
+    _save_session()
     return {"message": "삭제 완료", "id": portfolio_id}
 
 
@@ -332,9 +341,13 @@ def search(
 
 
 @router.get("/similar")
-def similar():
-    """Rabin-Karp + LCS로 포트폴리오 간 유사 문장 검출."""
+def similar(ids: str | None = Query(None, description="쉼표 구분 포트폴리오 ID (없으면 전체)")):
+    """Rabin-Karp + LCS로 포트폴리오 간 유사 문장 검출.
+    ids 파라미터로 비교 대상을 특정 포트폴리오로 제한할 수 있다."""
     portfolios = _get_portfolios()
+    if ids:
+        id_set = set(i.strip() for i in ids.split(',') if i.strip())
+        portfolios = [p for p in portfolios if p["id"] in id_set]
     spans = detect_similar_response(portfolios)
     return {"spans": spans, "count": len(spans)}
 

@@ -13,6 +13,10 @@ export default function App() {
   const [visibleIds, setVisibleIds]     = useState(null); // null = 전체
   const [selectedIds, setSelectedIds]   = useState([]);
   const [similarMap, setSimilarMap]     = useState({});
+  const [similarScope, setSimilarScope] = useState('all'); // 'all' | 'open'
+  const [groupColors, setGroupColors]   = useState([
+    '#DC2626','#EA580C','#0284C7','#65A30D','#7C3AED','#0D9488',
+  ]);
   const [sortKey, setSortKey]           = useState('match');
   const [requiredSpecs, setRequiredSpecs] = useState(DEFAULT_SPECS);
   const [searchQuery, setSearchQuery]   = useState('');
@@ -27,9 +31,18 @@ export default function App() {
     aliasSearch: true,
   });
 
+  // ── 유사 문장 실행 ──────────────────────────────
+  const runSimilar = useCallback(async (scope, ids, colors) => {
+    try {
+      const targetIds = scope === 'open' && ids.length > 0 ? ids : null;
+      const map = await fetchSimilarMap(targetIds, colors);
+      setSimilarMap(map);
+    } catch (e) { console.error('similar 오류:', e); }
+  }, []);
+
   // ── 초기 로딩 ──────────────────────────────────
   useEffect(() => {
-    fetchSimilarMap().then(setSimilarMap).catch(console.error);
+    runSimilar('all', [], groupColors);
     runAnalyze(DEFAULT_SPECS, 'match');
   }, []);
 
@@ -46,6 +59,13 @@ export default function App() {
     }
   }, [requiredSpecs, sortKey]);
 
+  // 열린 패널 변경 시 scope='open'이면 유사 문장 재계산
+  useEffect(() => {
+    if (similarScope === 'open' && settings.similar) {
+      runSimilar('open', selectedIds, groupColors);
+    }
+  }, [selectedIds, similarScope]);
+
   // ── 정렬 변경 ───────────────────────────────────
   const handleSortChange = useCallback((key) => {
     setSortKey(key);
@@ -56,8 +76,8 @@ export default function App() {
   const searchTimer = useRef(null);
   const handleSearch = useCallback((q) => {
     clearTimeout(searchTimer.current);
-    setSearchQuery(q.trim());
     if (!q.trim()) { setSearchQuery(''); setVisibleIds(null); return; }
+    setSearchQuery(q.trim());
     searchTimer.current = setTimeout(async () => {
       try {
         const ids = await searchPortfolios(q, 'cross');
@@ -132,6 +152,19 @@ export default function App() {
         <SettingsDrawer
           settings={settings}
           onToggle={toggleSetting}
+          similarScope={similarScope}
+          onScopeChange={(s) => {
+            setSimilarScope(s);
+            runSimilar(s, selectedIds, groupColors);
+          }}
+          groupColors={groupColors}
+          onColorChange={(idx, color) => {
+            const next = [...groupColors];
+            next[idx] = color;
+            setGroupColors(next);
+            runSimilar(similarScope, selectedIds, next);
+          }}
+          onRefreshSimilar={() => runSimilar(similarScope, selectedIds, groupColors)}
           onClose={() => setDrawerOpen(false)}
         />
       )}

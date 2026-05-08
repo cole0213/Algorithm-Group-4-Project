@@ -14,13 +14,6 @@ export async function analyzePortfolios(requiredSpecs, sortKey = 'match') {
   return data.portfolios;
 }
 
-export async function searchIntra(portfolioId, query) {
-  const params = new URLSearchParams({ q: query, mode: 'intra', portfolio_id: portfolioId });
-  const res = await fetch(`${BASE}/search?${params}`);
-  if (!res.ok) throw new Error(`intra search 실패: ${res.status}`);
-  return await res.json(); // { positions: [{start,end}], contexts: [...] }
-}
-
 export async function searchPortfolios(query, mode = 'cross', portfolioId = null) {
   const params = new URLSearchParams({ q: query, mode });
   if (portfolioId) params.set('portfolio_id', portfolioId);
@@ -30,11 +23,12 @@ export async function searchPortfolios(query, mode = 'cross', portfolioId = null
   return mode === 'cross' ? data.matched_ids : data;
 }
 
-export async function uploadPortfolio({ file, text, name }) {
+export async function uploadPortfolio({ file, text, name, position = 'general' }) {
   const form = new FormData();
   if (file)        form.append('file', file);
   if (text?.trim()) form.append('text', text.trim());
   if (name?.trim()) form.append('name', name.trim());
+  form.append('position', position);
 
   const res = await fetch(`${BASE}/portfolios/add`, {
     method: 'POST',
@@ -82,15 +76,17 @@ export async function importPortfolios(file) {
   return await res.json();
 }
 
-export async function fetchSimilarMap() {
-  const res = await fetch(`${BASE}/similar`);
+export async function fetchSimilarMap(ids = null, groupColors = null) {
+  const params = ids?.length ? '?' + new URLSearchParams({ ids: ids.join(',') }) : '';
+  const res = await fetch(`${BASE}/similar${params}`);
   if (!res.ok) throw new Error(`similar 실패: ${res.status}`);
   const data = await res.json();
-  // { portfolio_id: [{text, group, color}] } 형태로 변환
+  // { portfolio_id: [{text, group, color}] } 형태로 변환, groupColors로 색상 오버라이드
   const map = {};
   for (const span of data.spans) {
     if (!map[span.portfolio_id]) map[span.portfolio_id] = [];
-    map[span.portfolio_id].push(span);
+    const color = groupColors?.[span.group] ?? span.color;
+    map[span.portfolio_id].push({ ...span, color });
   }
   return map;
 }
