@@ -470,13 +470,19 @@
 <div class="topbar">
     <span class="topbar-title">Portfolio Reviewer</span>
     <div class="topbar-divider"></div>
-    <input class="topbar-search" type="text" placeholder="🔍  검색 (Python · py · 파이썬)">
-    <select class="topbar-select">
-        <option>매칭률 높은 순</option>
-        <option>경력 많은 순</option>
-        <option>이름 순</option>
+    <input class="topbar-search" id="searchInput" type="text" placeholder="🔍  검색 (Python · py · 파이썬)"
+           oninput="onSearch(this.value)">
+    <div class="topbar-divider"></div>
+    <input class="topbar-search" id="specsInput" type="text"
+           placeholder="필요 스펙: React, Python, Docker"
+           style="max-width:220px"
+           value="React, Python, Docker">
+    <button class="topbar-btn" onclick="runAnalyze()" style="background:var(--color-primary);color:#fff;border-color:var(--color-primary)">분석</button>
+    <select class="topbar-select" id="sortSelect" onchange="onSortChange(this.value)">
+        <option value="match">매칭률 높은 순</option>
+        <option value="career">경력 많은 순</option>
+        <option value="name">이름 순</option>
     </select>
-    <button class="topbar-btn">⚙ 설정</button>
 </div>
 
 <!-- 메인 -->
@@ -484,7 +490,7 @@
 
     <!-- 좌측 리스트 -->
     <div class="sidebar">
-        <div class="sidebar-header">지원자 목록 · 6명</div>
+        <div class="sidebar-header" id="sidebarHeader">지원자 목록</div>
         <div class="sidebar-list" id="applicantList"></div>
     </div>
 
@@ -502,117 +508,17 @@
 </div>
 
 <script>
-    const REQUIRED = new Set(['React', 'Python', 'Docker']);
-
-    /* accent colors per design.md brand spectrum */
+    const API = 'http://localhost:8000/api';
     const ACCENT_COLORS = ['#7C3AED','#EA580C','#2DC653','#DC2626','#0284C7','#65A30D'];
 
-    const APPLICANTS = [
-        {
-            id: 'C', label: '지원자C', name: '김지수', match: 80,
-            skills: ['React', 'Docker', 'Python', 'AWS', 'TypeScript', 'Git'],
-            career: '2년', education: 'OO대학교 컴퓨터공학과 (2020 졸업)',
-            similarGroup: 'red',
-            projects: [
-                { name: '이커머스 플랫폼', period: '2023.01 – 2023.06', role: '프론트엔드 개발',
-                  stack: 'React, TypeScript, AWS S3, Docker',
-                  desc: '소비자 대상 쇼핑몰 플랫폼 UI 전체 설계 및 구현. 장바구니·결제 플로우·상품 검색 기능 담당. 월 DAU 1만 명 운영 중.' },
-                { name: 'AI 챗봇 서비스', period: '2023.08 – 2023.10', role: '풀스택 개발',
-                  stack: 'React, Python, FastAPI, Docker',
-                  desc: '고객센터 자동응답 챗봇 서비스 개발. 프론트엔드 채팅 UI와 Python 백엔드 연동. 응답 속도 40% 개선.' }
-            ],
-            intro: '저는 사용자 중심의 사고를 가진 프론트엔드 개발자입니다.\nReact를 활용한 UI 설계에 강점을 가지고 있으며, Docker를 통한 컨테이너 환경 구축 경험도 보유하고 있습니다.\n사용자 경험 개선에 관심이 많으며, 팀과의 적극적인 소통을 통해 더 나은 제품을 만들어가는 것을 지향합니다.',
-            awards: ['2022 교내 해커톤 최우수상', 'AWS 솔루션 아키텍트 어소시에이트 취득 (2023)'],
-            file: 'portfolios/김지수.md'
-        },
-        {
-            id: 'A', label: '지원자A', name: '이민준', match: 60,
-            skills: ['React', 'Python', 'Vue', 'Git', 'PostgreSQL', 'Linux'],
-            career: '3년', education: 'OO대학교 소프트웨어학과 (2019 졸업)',
-            similarGroup: 'red',
-            projects: [
-                { name: '사내 인사 관리 시스템', period: '2022.03 – 2022.10', role: '백엔드 개발',
-                  stack: 'Python, Django, PostgreSQL, Vue.js',
-                  desc: '300명 규모 기업의 근태·급여·인사 데이터 통합 관리 시스템 개발. 기존 엑셀 기반 업무 대비 처리 시간 60% 절감.' },
-                { name: '데이터 시각화 대시보드', period: '2023.02 – 2023.05', role: '풀스택 개발',
-                  stack: 'Python, FastAPI, Vue.js, Chart.js',
-                  desc: '영업 실적 데이터를 실시간으로 시각화하는 내부 대시보드 개발.' }
-            ],
-            intro: '저는 사용자 중심의 사고를 가진 백엔드 개발자입니다.\nPython 기반 백엔드 개발과 데이터 파이프라인 구축에 주력해 왔으며, Vue.js로 프론트엔드 작업도 병행합니다.\n데이터 처리 성능 최적화에 관심이 많고, 읽기 쉬운 코드와 명확한 문서화를 중요하게 생각합니다.',
-            awards: ['2021 전국 대학생 프로그래밍 경진대회 장려상', '정보처리기사 취득 (2019)'],
-            file: 'portfolios/이민준.md'
-        },
-        {
-            id: 'B', label: '지원자B', name: '박서연', match: 40,
-            skills: ['Python', 'Docker', 'Java', 'Spring Boot', 'Kubernetes', 'MySQL'],
-            career: '5년', education: 'OO대학교 정보통신학과 (2017 졸업)',
-            similarGroup: null,
-            projects: [
-                { name: '물류 자동화 시스템', period: '2021.01 – 2021.12', role: '백엔드 리드',
-                  stack: 'Java, Spring Boot, Docker, Kubernetes, MySQL',
-                  desc: '일 주문 10만 건 처리 물류 센터 자동화 시스템 설계 및 구축. 마이크로서비스 아키텍처 도입으로 배포 주기 2주 → 1일 단축.' },
-                { name: 'REST API 서버 구축', period: '2022.06 – 2022.10', role: '백엔드 개발',
-                  stack: 'Python, FastAPI, Docker, PostgreSQL',
-                  desc: '모바일 앱 대상 REST API 서버 신규 구축. API 응답 시간 평균 120ms 달성.' }
-            ],
-            intro: '안정적이고 확장 가능한 백엔드 아키텍처를 설계하는 것을 좋아합니다.\nJava Spring Boot와 Python을 주로 사용하며, Docker 기반 배포 환경 구축에 익숙합니다.\n대용량 트래픽 처리와 시스템 안정성 확보에 관심이 많습니다.',
-            awards: ['AWS Certified Solutions Architect Professional (2022)', 'Kubernetes CKA 취득 (2023)'],
-            file: 'portfolios/박서연.md'
-        },
-        {
-            id: 'D', label: '지원자D', name: '최준혁', match: 20,
-            skills: ['Angular', 'Java', 'Spring Boot', 'MySQL', 'HTML', 'CSS'],
-            career: '1년', education: 'OO대학교 컴퓨터공학과 (2022 졸업)',
-            similarGroup: null,
-            projects: [
-                { name: '커뮤니티 웹 서비스', period: '2023.03 – 2023.06', role: '프론트엔드 개발',
-                  stack: 'Angular, TypeScript, HTML, CSS',
-                  desc: '대학 동아리 전용 커뮤니티 사이트 개발. 게시판·댓글·회원 관리 UI 구현.' },
-                { name: '도서 관리 시스템', period: '2022.09 – 2022.12', role: '풀스택 개발',
-                  stack: 'Java, Spring Boot, MySQL, Thymeleaf',
-                  desc: '졸업 프로젝트로 도서관 도서 대출·반납 관리 시스템 개발. CRUD 기능 전체 구현.' }
-            ],
-            intro: 'Angular와 Java Spring 기반의 웹 개발 경험을 보유하고 있습니다.\n팀 프로젝트에서 소통과 일정 관리에 강점을 발휘했으며, 주어진 요구사항을 정확히 구현하는 것을 중요하게 여깁니다.',
-            awards: ['정보처리기사 취득 (2022)', '교내 알고리즘 스터디 운영 (2021 – 2022)'],
-            file: 'portfolios/최준혁.md'
-        },
-        {
-            id: 'E', label: '지원자E', name: '정하은', match: 75,
-            skills: ['React', 'TypeScript', 'Node.js', 'Docker', 'Redis', 'AWS'],
-            career: '3년', education: 'OO대학교 전자공학과 (2019 졸업)',
-            similarGroup: null,
-            projects: [
-                { name: '실시간 협업 툴', period: '2022.05 – 2022.11', role: '풀스택 개발',
-                  stack: 'React, TypeScript, Node.js, Socket.io, Redis',
-                  desc: '팀 단위 실시간 문서 편집 및 태스크 관리 툴 개발. WebSocket 기반 실시간 동기화 구현. 동시 접속자 200명 처리.' },
-                { name: '디자인 시스템 구축', period: '2023.01 – 2023.04', role: '프론트엔드 개발',
-                  stack: 'React, TypeScript, Storybook',
-                  desc: '사내 공통 UI 컴포넌트 라이브러리 설계 및 구축. 40개 컴포넌트 제작, 팀 전체 개발 속도 25% 향상.' }
-            ],
-            intro: '프론트엔드와 백엔드를 아우르는 풀스택 개발자입니다.\nReact와 TypeScript를 주력으로 사용하며, Node.js 기반 서버 개발 경험도 보유하고 있습니다.\n성능 최적화와 접근성 개선에 관심이 많습니다.',
-            awards: ['2022 카카오 인턴십 수료', 'AWS Certified Developer Associate (2023)'],
-            file: 'portfolios/정하은.md'
-        },
-        {
-            id: 'F', label: '지원자F', name: '오승민', match: 65,
-            skills: ['Python', 'FastAPI', 'PostgreSQL', 'Redis', 'Docker', 'Celery'],
-            career: '4년', education: 'OO대학교 수학과 (2018 졸업)',
-            similarGroup: null,
-            projects: [
-                { name: '대용량 정산 시스템', period: '2021.06 – 2022.03', role: '백엔드 개발',
-                  stack: 'Python, FastAPI, PostgreSQL, Celery, Redis',
-                  desc: '월 거래 500만 건 규모 정산 배치 시스템 설계 및 구현. Celery 도입으로 처리 시간 70% 단축. 정산 오류율 0.01% 이하 유지.' },
-                { name: '추천 알고리즘 API', period: '2022.04 – 2022.08', role: '백엔드 개발',
-                  stack: 'Python, FastAPI, Redis, PostgreSQL',
-                  desc: '사용자 행동 데이터 기반 콘텐츠 추천 API 개발. Redis 캐싱으로 응답 시간 200ms → 30ms 개선.' }
-            ],
-            intro: '데이터 중심의 백엔드 시스템을 설계하고 운영하는 것에 강점을 가진 개발자입니다.\n수학적 사고를 바탕으로 복잡한 비즈니스 로직을 명확하게 구조화하며, 쿼리 최적화와 캐싱 전략 수립에 자신 있습니다.',
-            awards: ['PostgreSQL 컨트리뷰터 (2023)', '사내 Python 스터디 리드 (2022 – 현재)'],
-            file: 'portfolios/오승민.md'
-        }
-    ];
-
-    const selected = [];
+    // ── 앱 상태 ────────────────────────────────────
+    const state = {
+        applicants: [],       // analyze 결과 (match_score, skills_match 포함)
+        visibleIds: null,     // null=전체, Set=cross 검색 필터
+        similarMap: {},       // { portfolio_id: [{text, group, color}] }
+        selected: [],         // 열린 패널 id 목록
+        sortKey: 'match',
+    };
 
     // ── 동기화 스크롤 ──────────────────────────────
     let syncEnabled = false;
@@ -640,48 +546,73 @@
             });
         });
     }
-    // ───────────────────────────────────────────────
 
+    // ── 유틸 ───────────────────────────────────────
     function matchClass(pct) {
         if (pct >= 70) return 'match-high';
         if (pct >= 40) return 'match-mid';
         return 'match-low';
     }
 
+    function escHtml(s) {
+        return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    // 유사 문장 색상 하이라이트 (서버 span 기반)
+    function applySimilarHighlight(text, portfolioId) {
+        const spans = state.similarMap[portfolioId] || [];
+        if (!spans.length) return escHtml(text);
+        let result = text;
+        for (const sp of spans) {
+            if (!sp.text) continue;
+            const safe = sp.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            result = result.replace(
+                new RegExp(safe, 'g'),
+                `<span style="background:${sp.color}22;border-bottom:2px solid ${sp.color};border-radius:2px">${escHtml(sp.text)}</span>`
+            );
+        }
+        // 아직 escHtml 안 된 부분 처리
+        if (result === text) return escHtml(text);
+        return result;
+    }
+
+    // ── 렌더링 ─────────────────────────────────────
     function renderMd(a) {
-        const skills = a.skills.map(s =>
-            `<span class="skill-badge ${REQUIRED.has(s) ? 'matched' : ''}">${s}</span>`
+        const skillsMatch = a.skills_match || {};
+        const skills = (a.skills || []).map(s =>
+            `<span class="skill-badge ${skillsMatch[s] ? 'matched' : ''}">${escHtml(s)}</span>`
         ).join('');
 
-        const projects = a.projects.map(p => `
-            <p class="md-h3">${p.name}</p>
+        const projects = (a.projects || []).map(p => `
+            <p class="md-h3">${escHtml(p.name || '')}</p>
             <ul>
-                <li class="md-li"><span class="md-bold">기간</span>&ensp;${p.period} · ${p.role}</li>
-                <li class="md-li"><span class="md-bold">기술</span>&ensp;${p.stack}</li>
-                <li class="md-li">${p.desc}</li>
+                <li class="md-li"><span class="md-bold">기간</span>&ensp;${escHtml(p.period||'')} · ${escHtml(p.role||'')}</li>
+                <li class="md-li"><span class="md-bold">기술</span>&ensp;${escHtml(p.stack||'')}</li>
+                <li class="md-li">${escHtml(p.desc||'')}</li>
             </ul>`).join('');
 
-        const awards = a.awards.map(aw => `<li class="md-li">${aw}</li>`).join('');
+        const awards = (a.awards || []).map(aw => `<li class="md-li">${escHtml(aw)}</li>`).join('');
 
-        const SIM = '저는 사용자 중심의 사고를 가진';
-        const introHtml = a.similarGroup === 'red'
-            ? a.intro.replace(SIM, `<span class="sim-red">${SIM}</span>`)
-            : a.intro;
+        const introLines = (a.intro || '').split('\n').map(line =>
+            `<p class="md-p">${applySimilarHighlight(line, a.id)}</p>`
+        ).join('');
 
         return `
-            <div class="md-h1">${a.name} 포트폴리오</div>
+            <div class="md-h1">${escHtml(a.name)} 포트폴리오</div>
 
             <div class="md-h2">기본 정보</div>
             <ul>
-                <li class="md-li"><span class="md-bold">경력</span>&ensp;${a.career}</li>
-                <li class="md-li"><span class="md-bold">학력</span>&ensp;${a.education}</li>
+                <li class="md-li"><span class="md-bold">경력</span>&ensp;${a.career_years}년</li>
+                <li class="md-li"><span class="md-bold">학력</span>&ensp;${escHtml(a.education||'')}</li>
+                ${a.email ? `<li class="md-li"><span class="md-bold">이메일</span>&ensp;${escHtml(a.email)}</li>` : ''}
+                ${a.github ? `<li class="md-li"><span class="md-bold">GitHub</span>&ensp;${escHtml(a.github)}</li>` : ''}
             </ul>
 
             <div class="md-h2">기술 스택</div>
             <div class="skill-badges">${skills}</div>
 
             <div class="md-h2">자기소개</div>
-            ${introHtml.split('\n').map(line => `<p class="md-p">${line}</p>`).join('')}
+            ${introLines}
 
             <div class="md-h2">프로젝트</div>
             ${projects}
@@ -690,27 +621,36 @@
             <ul>${awards}</ul>
 
             <br>
-            <button class="original-btn">원본 포트폴리오 보기 →</button>
+            <button class="original-btn" onclick="window.open('${escHtml(a.github||'#')}','_blank')">
+                원본 포트폴리오 보기 →
+            </button>
         `;
     }
 
+    function visibleApplicants() {
+        if (!state.visibleIds) return state.applicants;
+        return state.applicants.filter(a => state.visibleIds.has(a.id));
+    }
+
     function renderSidebar() {
-        document.getElementById('applicantList').innerHTML = APPLICANTS.map(a => `
-            <div class="applicant-item ${selected.includes(a.id) ? 'selected' : ''}"
+        const list = visibleApplicants();
+        document.getElementById('sidebarHeader').textContent =
+            `지원자 목록 · ${list.length}명`;
+        document.getElementById('applicantList').innerHTML = list.map((a, idx) => `
+            <div class="applicant-item ${state.selected.includes(a.id) ? 'selected' : ''}"
                  onclick="toggle('${a.id}')">
                 <div class="applicant-item-top">
-                    <span class="applicant-name">${a.label} ${a.name}</span>
-                    <span class="match-badge ${matchClass(a.match)}">${a.match}%</span>
+                    <span class="applicant-name">지원자${idx+1} ${escHtml(a.name)}</span>
+                    <span class="match-badge ${matchClass(a.match_score)}">${a.match_score}%</span>
                 </div>
-                <div class="applicant-skills">${a.skills.slice(0,4).join(' · ')}</div>
+                <div class="applicant-skills">${(a.skills||[]).slice(0,4).map(escHtml).join(' · ')}</div>
             </div>
         `).join('');
     }
 
     function renderPanels() {
         const area = document.getElementById('portfolioPanels');
-
-        if (selected.length === 0) {
+        if (state.selected.length === 0) {
             area.innerHTML = `
                 <div class="empty-state">
                     <div class="empty-icon">📋</div>
@@ -718,42 +658,107 @@
                 </div>`;
             return;
         }
-
-        area.innerHTML = selected.map((id, idx) => {
-            const a = APPLICANTS.find(x => x.id === id);
+        area.innerHTML = state.selected.map((id, idx) => {
+            const a = state.applicants.find(x => x.id === id);
+            if (!a) return '';
             const accent = ACCENT_COLORS[idx % ACCENT_COLORS.length];
             return `
             <div class="portfolio-panel" style="--accent:${accent}">
                 <div class="panel-tab">
                     <div class="panel-tab-name">
-                        ${a.label} · ${a.name}
-                        <span class="panel-tab-match ${matchClass(a.match)}">${a.match}%</span>
+                        ${escHtml(a.name)}
+                        <span class="panel-tab-match ${matchClass(a.match_score)}">${a.match_score}%</span>
                     </div>
                     <button class="panel-close" onclick="toggle('${a.id}')">✕</button>
                 </div>
-                <div class="panel-md">
-                    ${renderMd(a)}
-                </div>
+                <div class="panel-md">${renderMd(a)}</div>
             </div>`;
         }).join('');
     }
 
     function toggle(id) {
-        const idx = selected.indexOf(id);
+        const idx = state.selected.indexOf(id);
         if (idx !== -1) {
-            selected.splice(idx, 1);
+            state.selected.splice(idx, 1);
         } else {
-            if (selected.length >= 4) return;
-            selected.push(id);
+            if (state.selected.length >= 4) return;
+            state.selected.push(id);
         }
         renderSidebar();
         renderPanels();
         attachScrollListeners();
     }
 
-    renderSidebar();
-    renderPanels();
-    attachScrollListeners();
+    // ── API 호출 ───────────────────────────────────
+    async function runAnalyze() {
+        const raw = document.getElementById('specsInput').value;
+        const specs = raw.split(',').map(s => s.trim()).filter(Boolean);
+        if (!specs.length) return;
+
+        try {
+            const res = await fetch(`${API}/analyze`, {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ required_specs: specs, sort_key: state.sortKey }),
+            });
+            const data = await res.json();
+            state.applicants = data.portfolios;
+            state.visibleIds = null;
+            document.getElementById('searchInput').value = '';
+            renderSidebar();
+            renderPanels();
+            attachScrollListeners();
+        } catch (e) {
+            console.error('analyze 오류:', e);
+        }
+    }
+
+    async function fetchSimilar() {
+        try {
+            const res = await fetch(`${API}/similar`);
+            const data = await res.json();
+            state.similarMap = {};
+            for (const sp of data.spans) {
+                if (!state.similarMap[sp.portfolio_id]) state.similarMap[sp.portfolio_id] = [];
+                state.similarMap[sp.portfolio_id].push(sp);
+            }
+        } catch (e) {
+            console.error('similar 오류:', e);
+        }
+    }
+
+    let searchTimer = null;
+    async function onSearch(q) {
+        clearTimeout(searchTimer);
+        if (!q.trim()) {
+            state.visibleIds = null;
+            renderSidebar();
+            return;
+        }
+        searchTimer = setTimeout(async () => {
+            try {
+                const res = await fetch(`${API}/search?q=${encodeURIComponent(q)}&mode=cross`);
+                const data = await res.json();
+                state.visibleIds = new Set(data.matched_ids);
+                renderSidebar();
+            } catch (e) {
+                console.error('search 오류:', e);
+            }
+        }, 300);
+    }
+
+    async function onSortChange(key) {
+        state.sortKey = key;
+        await runAnalyze();
+    }
+
+    // ── 초기화 ─────────────────────────────────────
+    async function init() {
+        await fetchSimilar();
+        await runAnalyze();
+    }
+
+    init();
 </script>
 </body>
 </html>
