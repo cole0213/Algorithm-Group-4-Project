@@ -1,0 +1,81 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]: Portfolio Reviewer
+    - generic [ref=e7]:
+      - generic [ref=e8]: 지원자 검색
+      - textbox "🔍 이름 · 기술 · 키워드" [ref=e9]:
+        - /placeholder: 🔍  이름 · 기술 · 키워드
+    - generic [ref=e11]:
+      - generic [ref=e12]: 필요 스펙
+      - textbox "React, Python, Docker" [ref=e13]
+      - button "📋" [ref=e14] [cursor=pointer]
+    - button "분석" [ref=e15] [cursor=pointer]
+    - combobox [ref=e16] [cursor=pointer]:
+      - option "매칭률 높은 순" [selected]
+      - option "경력 많은 순"
+      - option "이름 순"
+    - button "+ 추가" [ref=e17] [cursor=pointer]
+    - button "⊞" [ref=e18] [cursor=pointer]
+    - button "⬇" [ref=e19] [cursor=pointer]
+    - button "⬆" [ref=e20] [cursor=pointer]
+    - button "⚙ 설정" [ref=e21] [cursor=pointer]
+  - generic [ref=e47]:
+    - generic [ref=e48]: 📊 분석 완료 — 총 4명 중 0명이 70% 이상 매칭
+    - button "✕" [ref=e49] [cursor=pointer]
+  - generic [ref=e22]:
+    - generic [ref=e23]:
+      - generic [ref=e24]:
+        - text: 지원자 목록 · 4명
+        - button "⚙" [ref=e25] [cursor=pointer]
+      - textbox "이름 빠른 검색..." [ref=e27]
+      - generic [ref=e28]:
+        - generic [ref=e50] [cursor=pointer]:
+          - generic [ref=e51]:
+            - generic "임재현 · 더블클릭으로 이름 편집" [ref=e52]:
+              - generic [ref=e53]: "#1"
+              - text: 임재현
+            - generic [ref=e54]:
+              - button "☆" [ref=e55]
+              - button "·" [ref=e57]
+              - generic [ref=e58]: 61%
+              - button "✕" [ref=e59]
+          - generic [ref=e60]: Java · Spring Boot · JPA · Querydsl
+        - generic [ref=e61] [cursor=pointer]:
+          - generic [ref=e62]:
+            - generic "최하은 · 더블클릭으로 이름 편집" [ref=e63]:
+              - generic [ref=e64]: "#2"
+              - text: 최하은
+            - generic [ref=e65]:
+              - button "☆" [ref=e66]
+              - button "·" [ref=e68]
+              - generic [ref=e69]: 55%
+              - button "✕" [ref=e70]
+          - generic [ref=e71]: Python · Apache Spark · Airflow · dbt
+        - generic [ref=e72] [cursor=pointer]:
+          - generic [ref=e73]:
+            - generic "한소희 · 더블클릭으로 이름 편집" [ref=e74]:
+              - generic [ref=e75]: "#3"
+              - text: 한소희
+            - generic [ref=e76]:
+              - button "☆" [ref=e77]
+              - button "·" [ref=e79]
+              - generic [ref=e80]: 34%
+              - button "✕" [ref=e81]
+          - generic [ref=e82]: React · TypeScript · CSS · Tailwind
+        - generic [ref=e83] [cursor=pointer]:
+          - generic [ref=e84]:
+            - generic "정우성 · 더블클릭으로 이름 편집" [ref=e85]:
+              - generic [ref=e86]: "#4"
+              - text: 정우성
+            - generic [ref=e87]:
+              - button "☆" [ref=e88]
+              - button "·" [ref=e90]
+              - generic [ref=e91]: 4%
+              - button "✕" [ref=e92]
+          - generic [ref=e93]: Swift · SwiftUI · UIKit · Combine
+    - generic [ref=e38]:
+      - generic "동기화 스크롤 켜기 — 모든 패널이 함께 스크롤됩니다" [ref=e40] [cursor=pointer]:
+        - generic [ref=e41]: 동기화 스크롤
+      - generic [ref=e158]:
+        - generic [ref=e159]: 📋
+        - generic [ref=e160]: 좌측 목록에서 지원자를 클릭하면 여기에 포트폴리오가 표시됩니다 (최대 4개)

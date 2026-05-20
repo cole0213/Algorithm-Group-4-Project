@@ -1,0 +1,154 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]: Portfolio Reviewer
+    - generic [ref=e7]:
+      - generic [ref=e8]: 지원자 검색
+      - textbox "🔍 이름 · 기술 · 키워드" [ref=e9]:
+        - /placeholder: 🔍  이름 · 기술 · 키워드
+    - generic [ref=e11]:
+      - generic [ref=e12]: 필요 스펙
+      - textbox "React, Python, Docker" [ref=e13]
+      - button "📋" [ref=e14] [cursor=pointer]
+    - button "분석" [ref=e15] [cursor=pointer]
+    - combobox [ref=e16] [cursor=pointer]:
+      - option "매칭률 높은 순" [selected]
+      - option "경력 많은 순"
+      - option "이름 순"
+    - button "+ 추가" [ref=e17] [cursor=pointer]
+    - button "⊞" [ref=e18] [cursor=pointer]
+    - button "⬇" [ref=e19] [cursor=pointer]
+    - button "⬆" [ref=e20] [cursor=pointer]
+    - button "⚙ 설정" [ref=e21] [cursor=pointer]
+  - generic [ref=e47]:
+    - generic [ref=e48]: 📊 분석 완료 — 총 4명 중 0명이 70% 이상 매칭
+    - button "✕" [ref=e49] [cursor=pointer]
+  - generic [ref=e22]:
+    - generic [ref=e23]:
+      - generic [ref=e24]:
+        - text: 지원자 목록 · 4명
+        - button "⚙" [ref=e25] [cursor=pointer]
+      - textbox "이름 빠른 검색..." [ref=e27]
+      - generic [ref=e28]:
+        - generic [ref=e50] [cursor=pointer]:
+          - generic [ref=e51]:
+            - generic "임재현 · 더블클릭으로 이름 편집" [ref=e52]:
+              - generic [ref=e53]: "#1"
+              - text: 임재현
+            - generic [ref=e54]:
+              - button "★" [ref=e55]
+              - button "·" [ref=e57]
+              - generic [ref=e58]: 61%
+              - button "✕" [ref=e59]
+          - generic [ref=e60]: Java · Spring Boot · JPA · Querydsl
+        - generic [ref=e62] [cursor=pointer]:
+          - generic [ref=e63]:
+            - generic "최하은 · 더블클릭으로 이름 편집" [ref=e64]:
+              - generic [ref=e65]: "#2"
+              - text: 최하은
+            - generic [ref=e66]:
+              - button "☆" [ref=e67]
+              - button "·" [ref=e69]
+              - generic [ref=e70]: 55%
+              - button "✕" [ref=e71]
+          - generic [ref=e72]: Python · Apache Spark · Airflow · dbt
+        - generic [ref=e73] [cursor=pointer]:
+          - generic [ref=e74]:
+            - generic "한소희 · 더블클릭으로 이름 편집" [ref=e75]:
+              - generic [ref=e76]: "#3"
+              - text: 한소희
+            - generic [ref=e77]:
+              - button "☆" [ref=e78]
+              - button "·" [ref=e80]
+              - generic [ref=e81]: 34%
+              - button "✕" [ref=e82]
+          - generic [ref=e83]: React · TypeScript · CSS · Tailwind
+        - generic [ref=e84] [cursor=pointer]:
+          - generic [ref=e85]:
+            - generic "정우성 · 더블클릭으로 이름 편집" [ref=e86]:
+              - generic [ref=e87]: "#4"
+              - text: 정우성
+            - generic [ref=e88]:
+              - button "☆" [ref=e89]
+              - button "·" [ref=e91]
+              - generic [ref=e92]: 4%
+              - button "✕" [ref=e93]
+          - generic [ref=e94]: Swift · SwiftUI · UIKit · Combine
+    - generic [ref=e38]:
+      - generic "동기화 스크롤 켜기 — 모든 패널이 함께 스크롤됩니다" [ref=e40] [cursor=pointer]:
+        - generic [ref=e41]: 동기화 스크롤
+      - generic [ref=e44]:
+        - generic [ref=e45]: 📋
+        - generic [ref=e46]: 좌측 목록에서 지원자를 클릭하면 여기에 포트폴리오가 표시됩니다 (최대 4개)
+  - generic [ref=e96]:
+    - generic [ref=e97]:
+      - generic [ref=e98]: 설정
+      - button "✕" [ref=e99] [cursor=pointer]
+    - generic [ref=e100]:
+      - generic [ref=e102]:
+        - generic [ref=e103]: 스킬 하이라이트
+        - generic [ref=e104]: 필요 스펙과 일치하는 기술을 주황색으로 표시합니다.
+      - generic [ref=e107]:
+        - generic [ref=e108]: 유사 문장 표시
+        - generic [ref=e109]: 포트폴리오 간 유사한 문장을 색상으로 강조합니다.
+      - generic [ref=e112]:
+        - generic [ref=e113]: 유사 문장 흐리게
+        - generic [ref=e114]: 유사 문장을 강조 대신 흐리게 처리하여 숨깁니다.
+      - generic [ref=e117]:
+        - generic [ref=e118]: 동기화 스크롤
+        - generic [ref=e119]: 열린 패널들을 같은 위치로 동시에 스크롤합니다.
+      - generic [ref=e122]:
+        - generic [ref=e123]: 원본 보기 버튼
+        - generic [ref=e124]: 패널 하단에 원본 파일 텍스트 확인 버튼을 표시합니다.
+      - generic [ref=e127]:
+        - generic [ref=e128]: 별칭 통합 검색
+        - generic [ref=e129]: "\"파이썬\", \"py\" 등 동의어로도 검색 결과를 찾아줍니다."
+      - generic [ref=e132]:
+        - generic [ref=e133]: 블라인드 심사 모드
+        - generic [ref=e134]: 지원자 이름을 가려 무의식적 편향을 방지합니다.
+      - generic [ref=e137]:
+        - generic [ref=e138]: 다크 모드
+        - generic [ref=e139]: 어두운 테마로 전환합니다.
+      - generic [ref=e141]: 유사 문장 감지 설정
+      - generic [ref=e142]:
+        - generic [ref=e143]: 감지 범위
+        - generic [ref=e144]:
+          - button "전체" [ref=e145] [cursor=pointer]
+          - button "열린 패널" [ref=e146] [cursor=pointer]
+      - paragraph [ref=e147]: 현재 열린 패널 간에서만 유사 문장을 검출합니다.
+      - generic [ref=e148]:
+        - generic [ref=e149]: 그룹 색상
+        - generic [ref=e150]:
+          - generic [ref=e151]:
+            - generic [ref=e152]: 그룹 1
+            - button "그룹 1 색상 변경" [ref=e153] [cursor=pointer]
+          - generic [ref=e154]:
+            - generic [ref=e155]: 그룹 2
+            - button "그룹 2 색상 변경" [ref=e156] [cursor=pointer]
+          - generic [ref=e157]:
+            - generic [ref=e158]: 그룹 3
+            - button "그룹 3 색상 변경" [ref=e159] [cursor=pointer]
+          - generic [ref=e160]:
+            - generic [ref=e161]: 그룹 4
+            - button "그룹 4 색상 변경" [ref=e162] [cursor=pointer]
+          - generic [ref=e163]:
+            - generic [ref=e164]: 그룹 5
+            - button "그룹 5 색상 변경" [ref=e165] [cursor=pointer]
+          - generic [ref=e166]:
+            - generic [ref=e167]: 그룹 6
+            - button "그룹 6 색상 변경" [ref=e168] [cursor=pointer]
+      - button "↻ 유사 문장 재검출" [ref=e169] [cursor=pointer]
+      - generic [ref=e170]:
+        - generic [ref=e171]: 매칭 점수 가중치
+        - generic [ref=e172]:
+          - generic [ref=e173]: 스킬 일치
+          - slider [ref=e174]: "60"
+          - generic [ref=e175]: 60%
+        - generic [ref=e176]:
+          - generic [ref=e177]: 경력
+          - slider [ref=e178]: "25"
+          - generic [ref=e179]: 25%
+        - generic [ref=e180]:
+          - generic [ref=e181]: 프로젝트 수
+          - slider [ref=e182]: "15"
+          - generic [ref=e183]: 15%
+        - generic [ref=e184]: "합계: 100%"

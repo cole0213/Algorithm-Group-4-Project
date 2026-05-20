@@ -1,0 +1,4 @@
+[    8469ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_RESET @ http://local.adguard.org/?ts=1779254956160&type=content-script&dmn=localhost:5173&url=http%3A%2F%2Flocalhost%3A5173%2F&app=chrome.exe&css=2&js=1&rel=1&rji=1&sbe=1&stealth=1&st-dnt:0
+[    8471ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_RESET @ http://local.adguard.org/?ts=1779254956160&name=AdGuard%20Extra&name=AdGuard%20Popup%20Blocker&type=user-script:0
+[    8783ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/chunk-373CG7ZK.js?v=b41423c3:21548
+[    9251ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5173/favicon.ico:0
