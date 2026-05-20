@@ -1,0 +1,105 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]: Portfolio Reviewer
+    - generic [ref=e7]:
+      - generic [ref=e8]: 지원자 검색
+      - textbox "🔍 이름 · 기술 · 키워드" [ref=e9]:
+        - /placeholder: 🔍  이름 · 기술 · 키워드
+    - generic [ref=e11]:
+      - generic [ref=e12]: 필요 스펙
+      - textbox "React, Python, Docker" [ref=e13]
+    - button "분석" [ref=e14] [cursor=pointer]
+    - combobox [ref=e15] [cursor=pointer]:
+      - option "매칭률 높은 순" [selected]
+      - option "경력 많은 순"
+      - option "이름 순"
+    - button "+ 추가" [ref=e16] [cursor=pointer]
+    - button "↓ 내보내기" [ref=e17] [cursor=pointer]
+    - button "↑ 불러오기" [ref=e18] [cursor=pointer]
+    - button "⚙ 설정" [ref=e19] [cursor=pointer]
+  - generic [ref=e20]:
+    - generic [ref=e21]:
+      - generic [ref=e22]: 지원자 목록 · 11명
+      - generic [ref=e23]:
+        - generic [ref=e24] [cursor=pointer]:
+          - generic [ref=e25]:
+            - generic "최하은 | Choi Haeun · 더블클릭으로 이름 편집" [ref=e26]: 1. 최하은 | Choi Haeun
+            - generic [ref=e27]:
+              - generic [ref=e28]: 67%
+              - button "✕" [ref=e29]
+          - generic [ref=e30]: Python · Apache Spark · Airflow · dbt
+        - generic [ref=e31] [cursor=pointer]:
+          - generic [ref=e32]:
+            - generic "임재현 · 더블클릭으로 이름 편집" [ref=e33]: 2. 임재현
+            - generic [ref=e34]:
+              - generic [ref=e35]: 67%
+              - button "✕" [ref=e36]
+          - generic [ref=e37]: Java · Spring Boot · JPA · Querydsl
+        - generic [ref=e38] [cursor=pointer]:
+          - generic [ref=e39]:
+            - generic "임 재 현 | Im Jaehyun · 더블클릭으로 이름 편집" [ref=e40]: 3. 임 재 현 | Im Jaehyun
+            - generic [ref=e41]:
+              - generic [ref=e42]: 67%
+              - button "✕" [ref=e43]
+          - generic [ref=e44]: Java · Spring Boot · JPA · Querydsl
+        - generic [ref=e45] [cursor=pointer]:
+          - generic [ref=e46]:
+            - generic "최하은 | Choi Haeun · 더블클릭으로 이름 편집" [ref=e47]: 4. 최하은 | Choi Haeun
+            - generic [ref=e48]:
+              - generic [ref=e49]: 67%
+              - button "✕" [ref=e50]
+          - generic [ref=e51]: Python · Apache Spark · Airflow · dbt
+        - generic [ref=e52] [cursor=pointer]:
+          - generic [ref=e53]:
+            - generic "김민준 · 더블클릭으로 이름 편집" [ref=e54]: 5. 김민준
+            - generic [ref=e55]:
+              - generic [ref=e56]: 67%
+              - button "✕" [ref=e57]
+          - generic [ref=e58]: JavaScript · TypeScript · React · Vue.js
+        - generic [ref=e59] [cursor=pointer]:
+          - generic [ref=e60]:
+            - generic "임재현 · 더블클릭으로 이름 편집" [ref=e61]: 6. 임재현
+            - generic [ref=e62]:
+              - generic [ref=e63]: 67%
+              - button "✕" [ref=e64]
+          - generic [ref=e65]: Java · Spring Boot · JPA · Querydsl
+        - generic [ref=e66] [cursor=pointer]:
+          - generic [ref=e67]:
+            - generic "한소희 · 더블클릭으로 이름 편집" [ref=e68]: 7. 한소희
+            - generic [ref=e69]:
+              - generic [ref=e70]: 33%
+              - button "✕" [ref=e71]
+          - generic [ref=e72]: React · TypeScript · CSS · Tailwind
+        - generic [ref=e73] [cursor=pointer]:
+          - generic [ref=e74]:
+            - generic "한소희 · 더블클릭으로 이름 편집" [ref=e75]: 8. 한소희
+            - generic [ref=e76]:
+              - generic [ref=e77]: 33%
+              - button "✕" [ref=e78]
+          - generic [ref=e79]: React · TypeScript · CSS · Tailwind
+        - generic [ref=e80] [cursor=pointer]:
+          - generic [ref=e81]:
+            - generic "정우성 · 더블클릭으로 이름 편집" [ref=e82]: 9. 정우성
+            - generic [ref=e83]:
+              - generic [ref=e84]: 0%
+              - button "✕" [ref=e85]
+          - generic [ref=e86]: Swift · SwiftUI · UIKit · Combine
+        - generic [ref=e87] [cursor=pointer]:
+          - generic [ref=e88]:
+            - generic "정우성 · 더블클릭으로 이름 편집" [ref=e89]: 10. 정우성
+            - generic [ref=e90]:
+              - generic [ref=e91]: 0%
+              - button "✕" [ref=e92]
+          - generic [ref=e93]: Swift · SwiftUI · UIKit · Combine
+        - generic [ref=e94] [cursor=pointer]:
+          - generic [ref=e95]:
+            - generic "정우성 · 더블클릭으로 이름 편집" [ref=e96]: 11. 정우성
+            - generic [ref=e97]:
+              - generic [ref=e98]: 0%
+              - button "✕" [ref=e99]
+          - generic [ref=e100]: Swift · SwiftUI · UIKit · Combine
+    - generic [ref=e101]:
+      - generic [ref=e104] [cursor=pointer]: 동기화 스크롤
+      - generic [ref=e107]:
+        - generic [ref=e108]: 📋
+        - generic [ref=e109]: 좌측 목록에서 지원자를 클릭하세요

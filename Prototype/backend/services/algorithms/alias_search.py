@@ -39,7 +39,7 @@ def expand_query(query: str) -> list[str]:
 def portfolio_matches_query(portfolio: dict, query: str) -> bool:
     """
     포트폴리오가 검색어 또는 그 동의어/오타 변형에 해당하는 기술을 갖는지 확인.
-    skills 목록 + 텍스트(intro, project descriptions) 모두 검사.
+    skills 목록 + 텍스트(name, career_years, education, intro, project descriptions) 모두 검사.
     """
     targets = expand_query(query)
     target_set = {normalize(t) for t in targets}
@@ -49,11 +49,23 @@ def portfolio_matches_query(portfolio: dict, query: str) -> bool:
         if normalize(skill) in target_set:
             return True
 
-    # 자유 텍스트(intro + project stack 설명)도 검색
+    # 이름 검색: 띄어쓰기 제거 후 비교 (예: "임 재 현" → "임재현")
+    name_raw = portfolio.get("name", "")
+    name_nospace = name_raw.replace(" ", "").lower()
+    q_nospace = query.replace(" ", "").lower()
+    if q_nospace and q_nospace in name_nospace:
+        return True
+
+    # 자유 텍스트(name, career_years, education, intro, project 설명)도 검색
     full_text = _portfolio_text(portfolio).lower()
     for t in targets:
         if t in full_text:
             return True
+
+    # 숫자 직접 검색 (경력 N년, 등)
+    career = str(portfolio.get("career_years", ""))
+    if query.strip() == career:
+        return True
 
     return False
 
@@ -89,8 +101,15 @@ def highlight_positions(text: str, query: str) -> list[tuple[int, int]]:
 
 
 def _portfolio_text(portfolio: dict) -> str:
-    parts = [portfolio.get("intro", "")]
+    parts = [
+        portfolio.get("name", ""),
+        portfolio.get("education", ""),
+        str(portfolio.get("career_years", "")),
+        portfolio.get("intro", ""),
+    ]
     for proj in portfolio.get("projects", []):
+        parts.append(proj.get("name", ""))
         parts.append(proj.get("stack", ""))
         parts.append(proj.get("desc", ""))
-    return " ".join(parts)
+    parts.extend(portfolio.get("awards", []))
+    return " ".join(filter(None, parts))

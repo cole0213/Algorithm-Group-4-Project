@@ -1,0 +1,213 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]: Portfolio Reviewer
+    - textbox "🔍 검색 (Python · py · 파이썬)" [ref=e7]:
+      - /placeholder: 🔍  검색 (Python · py · 파이썬)
+      - text: Python
+    - 'textbox "필요 스펙: React, Python, Docker" [ref=e9]': React, Python, Docker
+    - button "분석" [ref=e10] [cursor=pointer]
+    - combobox [ref=e11] [cursor=pointer]:
+      - option "매칭률 높은 순" [selected]
+      - option "경력 많은 순"
+      - option "이름 순"
+    - button "+ 추가" [active] [ref=e12] [cursor=pointer]
+    - button "↓ 내보내기" [ref=e13] [cursor=pointer]
+    - button "↑ 불러오기" [ref=e14] [cursor=pointer]
+    - button "⚙ 설정" [ref=e15] [cursor=pointer]
+  - generic [ref=e16]:
+    - generic [ref=e17]:
+      - generic [ref=e18]: 지원자 목록 · 2명
+      - generic [ref=e19]:
+        - generic [ref=e29] [cursor=pointer]:
+          - generic [ref=e30]:
+            - generic [ref=e31]: 지원자1 임 재 현 | Im Jaehyun
+            - generic [ref=e32]:
+              - generic [ref=e33]: 67%
+              - button "✕" [ref=e34]
+          - generic [ref=e35]: Java · Spring Boot · JPA · Querydsl
+        - generic [ref=e36] [cursor=pointer]:
+          - generic [ref=e37]:
+            - generic [ref=e38]: 지원자2 최하은 | Choi Haeun
+            - generic [ref=e39]:
+              - generic [ref=e40]: 67%
+              - button "✕" [ref=e41]
+          - generic [ref=e42]: Python · Apache Spark · Airflow · dbt
+    - generic [ref=e20]:
+      - generic [ref=e23] [cursor=pointer]: 동기화 스크롤
+      - generic [ref=e25]:
+        - generic [ref=e64]:
+          - generic [ref=e65]:
+            - generic [ref=e66]:
+              - text: 임 재 현 | Im Jaehyun
+              - generic [ref=e67]: 67%
+              - generic "Solar LLM으로 파싱된 결과입니다. 원본 보기로 내용을 확인하세요." [ref=e68]: AI
+            - button "✕" [ref=e70] [cursor=pointer]
+          - textbox "이 포트폴리오 내 검색..." [ref=e72]
+          - generic [ref=e73]:
+            - generic [ref=e74]: 임 재 현 | Im Jaehyun 포트폴리오
+            - generic [ref=e75]: 기본 정보
+            - list [ref=e76]:
+              - listitem [ref=e77]: – 경력 7년
+              - listitem [ref=e78]: – 학력 아주대학교 소프트웨어학과 학사 | 2014.03 ~ 2018.02 | GPA 3.8/4.5
+              - listitem [ref=e79]: – 이메일 jaehyun.im.dev@gmail.com
+              - listitem [ref=e80]: – GitHub github.com/jaehyun-im
+            - generic [ref=e81]: 기술 스택
+            - generic [ref=e82]:
+              - generic [ref=e83]: Java
+              - generic [ref=e84]: Spring Boot
+              - generic [ref=e85]: JPA
+              - generic [ref=e86]: Querydsl
+              - generic [ref=e87]: MySQL
+              - generic [ref=e88]: Redis
+              - generic [ref=e89]: Kafka
+              - generic [ref=e90]: AWS
+              - generic [ref=e91]: Terraform
+              - generic [ref=e92]: GitHub Actions
+              - generic [ref=e93]: Kotlin
+              - generic [ref=e94]: Python
+              - generic [ref=e95]: SQL
+              - generic [ref=e96]: Spring Batch
+              - generic [ref=e97]: Spring Security
+              - generic [ref=e98]: OAuth2
+              - generic [ref=e99]: WebFlux
+              - generic [ref=e100]: PostgreSQL
+              - generic [ref=e101]: Oracle
+              - generic [ref=e102]: MongoDB
+              - generic [ref=e103]: Elasticsearch
+              - generic [ref=e104]: Kubernetes
+              - generic [ref=e105]: Docker
+              - generic [ref=e106]: RabbitMQ
+              - generic [ref=e107]: SQS
+              - generic [ref=e108]: Lambda
+              - generic [ref=e109]: CloudWatch
+              - generic [ref=e110]: Saga 패턴
+              - generic [ref=e111]: Adapter 패턴
+            - generic [ref=e112]: 자기소개
+            - paragraph [ref=e113]: Java 백엔드 개발자 · 7년 · jaehyun.im.dev@gmail.com · 010-xxxx-5821
+            - paragraph [ref=e114]: github.com/jaehyun-im · linkedin.com/in/jaehyun-im · 서울특별시 거주
+            - generic [ref=e115]: 프로젝트
+            - generic [ref=e116]:
+              - paragraph [ref=e117]: 비대면 진료 예약 시스템 (오케어헬스)
+              - list [ref=e118]:
+                - listitem [ref=e119]: – 기간 2023.04 ~ 현재 · 백엔드 파트 리드
+                - listitem [ref=e120]: – 기술 Java 17, Spring Boot 3, JPA, Querydsl, MySQL 8, Redis, Kafka, AWS (EKS, RDS, ElastiCache, SQS), Terraform, GitHub Actions
+                - listitem [ref=e121]: – 진료 예약 시 의사 스케줄 충돌, 동시 예약 처리 실패 등 데이터 정합성 문제가 서비스 초기부터 지속적으로 발생하고 있었음. Saga 패턴 기반의 분산 트랜잭션으로 예약 생성-결제-확정 흐름을 관리. Redis 기반 분산 락으로 동일 시간대 중복 예약 원천 차단. 예약 처리 성공률 94.2% → 99.7% 중복 예약 발생 건수 0건 유지 (도입 후 14개월) 고객 CS 인입 예약 관련 60% 감소
+            - generic [ref=e122]:
+              - paragraph [ref=e123]: 다중 쇼핑몰 주문 통합 수집 시스템 (스마트로직스)
+              - list [ref=e124]:
+                - listitem [ref=e125]: – 기간 2020.06 ~ 2023.03 · Backend Developer
+                - listitem [ref=e126]: – 기술 Java 11, Spring Boot 2, MyBatis, MySQL, Redis, RabbitMQ, Docker, Jenkins, AWS (EC2, RDS, S3)
+                - listitem [ref=e127]: – 20개 이상 쇼핑몰에서 주문을 수집해야 하는 상황. 각 쇼핑몰마다 API 스펙, 인증 방식, 데이터 형식이 전부 달랐음. Adapter 패턴으로 쇼핑몰별 구현을 캡슐화하고 공통 Order 도메인 모델로 정규화하는 구조 설계. [각 쇼핑몰 API] → [Adapter Layer] → [Order Normalizer] → [Domain DB] 신규 쇼핑몰 추가 시 Adapter 구현 클래스 1개만 작성하면 되는 구조. 이후 6개월간 쇼핑몰 5개 추가 → 각각 평균 1.5일 소요 (기존 5~7일 대비 70% 단축)
+            - generic [ref=e128]: 수상 및 활동
+            - list [ref=e129]:
+              - listitem [ref=e130]: – 정보처리기사 (2017.11)
+              - listitem [ref=e131]: – SQLD (SQL 개발자) (2019.05)
+              - listitem [ref=e132]: – AWS Certified Solutions Architect (2021.08, 갱신 2024.08)
+              - listitem [ref=e133]: – AWS Certified Developer (2022.03)
+            - button "원본 보기 →" [ref=e134] [cursor=pointer]
+        - generic [ref=e135]:
+          - generic [ref=e136]:
+            - generic [ref=e137]:
+              - text: 최하은 | Choi Haeun
+              - generic [ref=e138]: 67%
+              - generic "Solar LLM으로 파싱된 결과입니다. 원본 보기로 내용을 확인하세요." [ref=e139]: AI
+            - button "✕" [ref=e141] [cursor=pointer]
+          - textbox "이 포트폴리오 내 검색..." [ref=e143]
+          - generic [ref=e144]:
+            - generic [ref=e145]: 최하은 | Choi Haeun 포트폴리오
+            - generic [ref=e146]: 기본 정보
+            - list [ref=e147]:
+              - listitem [ref=e148]: – 경력 4년
+              - listitem [ref=e149]: – 학력 연세대학교 통계학과 (2017~2021) 학사
+              - listitem [ref=e150]: – 이메일 haeun.choi.ml@gmail.com
+              - listitem [ref=e151]: – GitHub github.com/haeun-data
+            - generic [ref=e152]: 기술 스택
+            - generic [ref=e153]:
+              - generic [ref=e154]: Python
+              - generic [ref=e155]: Apache Spark
+              - generic [ref=e156]: Airflow
+              - generic [ref=e157]: dbt
+              - generic [ref=e158]: BigQuery
+              - generic [ref=e159]: Delta Lake
+              - generic [ref=e160]: Kafka
+              - generic [ref=e161]: GCP
+              - generic [ref=e162]: PyTorch
+              - generic [ref=e163]: FastAPI
+              - generic [ref=e164]: Triton Inference Server
+              - generic [ref=e165]: ONNX
+              - generic [ref=e166]: Kubernetes
+              - generic [ref=e167]: AWS
+              - generic [ref=e168]: PostgreSQL
+              - generic [ref=e169]: Redis
+              - generic [ref=e170]: SQL
+              - generic [ref=e171]: Scala
+              - generic [ref=e172]: Bash
+              - generic [ref=e173]: Docker
+              - generic [ref=e174]: Claude
+              - generic [ref=e175]: OpenAI
+              - generic [ref=e176]: MLflow
+              - generic [ref=e177]: Scikit-learn
+              - generic [ref=e178]: Flink
+              - generic [ref=e179]: Feast
+              - generic [ref=e180]: Claude API
+              - generic [ref=e181]: Streamlit
+              - generic [ref=e182]: Notion API
+              - generic [ref=e183]: Apple Health
+              - generic [ref=e184]: Airflow DAG
+              - generic [ref=e185]: Kafka Connect
+              - generic [ref=e186]: Flink 스트리밍
+              - generic [ref=e187]: FastAPI API
+              - generic [ref=e188]: Anthropic
+              - generic [ref=e189]: Claude Opus
+              - generic [ref=e190]: Function Calling
+              - generic [ref=e191]: Structured Output
+            - generic [ref=e192]: 자기소개
+            - paragraph [ref=e193]: 데이터가 흐르는 파이프라인을 만드는 사람
+            - generic [ref=e194]: 프로젝트
+            - generic [ref=e195]:
+              - paragraph [ref=e196]: 실시간 추천 피처 파이프라인
+              - list [ref=e197]:
+                - listitem [ref=e198]: – 기간 2023.02 ~ 현재 · 데이터 엔지니어링팀
+                - listitem [ref=e199]: – 기술 Kafka, Flink, Redis, BigQuery, Feast
+                - listitem [ref=e200]: – 기존 배치 기반 추천 피처가 하루 1번 업데이트되어 실시간성이 부족했습니다. 사용자가 방금 본 상품이 추천에 반영되지 않는 문제가 있었어요.
+            - generic [ref=e201]:
+              - paragraph [ref=e202]: LLM 기반 상품 태그 자동 생성 (사이드 프로젝트)
+              - list [ref=e203]:
+                - listitem [ref=e204]: – 기간
+                - listitem [ref=e205]: – 기술 Claude API, PostgreSQL, FastAPI
+                - listitem [ref=e206]: – 쇼핑몰 크롤링 데이터에 상품 카테고리/스타일 태그를 자동으로 달아주는 시스템.
+            - generic [ref=e207]:
+              - paragraph [ref=e208]: 개인 데이터 대시보드
+              - list [ref=e209]:
+                - listitem [ref=e210]: – 기간
+                - listitem [ref=e211]: – 기술 Notion API, Apple Health, Airflow, Streamlit
+                - listitem [ref=e212]: – 내 일상 데이터(독서량, 운동, 수면)를 모아서 보는 개인 프로젝트.
+            - generic [ref=e213]: 수상 및 활동
+            - list [ref=e214]:
+              - listitem [ref=e215]: – 데이터분석준전문가(ADsP) 2020
+              - listitem [ref=e216]: – Google Professional Data Engineer 2022
+              - listitem [ref=e217]: – AWS Certified Data Analytics 2023
+            - button "원본 보기 →" [ref=e218] [cursor=pointer]
+  - generic [ref=e273]:
+    - generic [ref=e274]:
+      - generic [ref=e275]: 포트폴리오 추가
+      - button "✕" [ref=e276] [cursor=pointer]
+    - generic [ref=e277]:
+      - generic [ref=e278]:
+        - generic [ref=e279]: 포지션 유형
+        - generic [ref=e280]:
+          - generic [ref=e281] [cursor=pointer]: 일반
+          - generic [ref=e282] [cursor=pointer]: 프론트엔드
+          - generic [ref=e283] [cursor=pointer]: 백엔드
+          - generic [ref=e284] [cursor=pointer]: 데이터/AI
+      - generic [ref=e285] [cursor=pointer]:
+        - generic [ref=e286]: ⬆
+        - generic [ref=e287]: 파일을 드래그하거나 클릭하여 선택
+        - generic [ref=e288]: .pdf · .md · .txt 지원
+      - generic [ref=e290]: 또는 텍스트 직접 입력
+      - textbox "포트폴리오 텍스트를 여기에 붙여넣으세요 (Ctrl+V)..." [ref=e291]
+      - textbox "지원자 이름 (선택사항)" [ref=e292]
+      - paragraph [ref=e293]: AI 파싱 결과는 원본 포트폴리오와 대조 확인이 필요합니다.
+    - generic [ref=e294]:
+      - button "취소" [ref=e295] [cursor=pointer]
+      - button "추가" [disabled]

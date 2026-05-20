@@ -13,6 +13,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from routers.portfolios import router as portfolio_router
+from routers import utils as utils_router
 
 app = FastAPI(
     title="Portfolio Reviewer API",
@@ -29,6 +30,7 @@ app.add_middleware(
 )
 
 app.include_router(portfolio_router)
+app.include_router(utils_router.router)
 
 
 @app.get("/")

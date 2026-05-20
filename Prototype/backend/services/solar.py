@@ -24,6 +24,62 @@ class NotConfiguredError(Exception):
     """SOLAR_API_KEY가 설정되지 않은 경우."""
 
 
+class SolarAPIError(Exception):
+    """Solar API 호출이 최종 실패한 경우."""
+
+
+def _call_solar_api(headers: dict, body: dict, max_retries: int = 3) -> requests.Response:
+    """
+    Solar Chat Completions 엔드포인트를 호출하고 재시도 로직을 처리한다.
+
+    재시도 정책:
+      - 429 (rate limit): Retry-After 헤더 값만큼 대기, 없으면 2^attempt * 1.0초 (최대 16초)
+      - 500 / 502 / 503:  1회에 한해 1초 대기 후 재시도
+      - 그 외 오류 코드:   즉시 실패
+    최대 max_retries회 재시도 후에도 실패하면 SolarAPIError 발생.
+    """
+    server_error_retried = False  # 5xx 는 1회만 재시도
+
+    for attempt in range(max_retries + 1):
+        resp = requests.post(_CHAT_URL, headers=headers, json=body, timeout=60)
+
+        if resp.status_code == 200:
+            return resp
+
+        if resp.status_code == 429:
+            if attempt >= max_retries:
+                break
+            # Retry-After 헤더 우선, 없으면 지수 백오프 (최대 16초)
+            retry_after = resp.headers.get("Retry-After")
+            if retry_after is not None:
+                try:
+                    wait = float(retry_after)
+                except ValueError:
+                    wait = min(2 ** attempt * 1.0, 16.0)
+            else:
+                wait = min(2 ** attempt * 1.0, 16.0)
+            print(f"[Solar] rate limit, retry {attempt + 1}/{max_retries} after {wait}s")
+            time.sleep(wait)
+            continue
+
+        if resp.status_code in (500, 502, 503):
+            if not server_error_retried and attempt < max_retries:
+                server_error_retried = True
+                print(f"[Solar] server error {resp.status_code}, retry {attempt + 1}/{max_retries} after 1s")
+                time.sleep(1.0)
+                continue
+            # 1회 이미 재시도했거나 max_retries 초과
+            break
+
+        # 그 외 오류(400, 401, 403 등): 즉시 실패
+        resp.raise_for_status()
+
+    raise SolarAPIError(
+        f"Solar API가 {max_retries}회 재시도 후에도 실패했습니다. "
+        f"마지막 상태 코드: {resp.status_code}"
+    )
+
+
 def _headers() -> dict:
     if not _API_KEY:
         raise NotConfiguredError("SOLAR_API_KEY가 .env에 설정되지 않았습니다.")
@@ -49,7 +105,10 @@ _SCHEMA = """{
       "desc":   "string"
     }
   ],
-  "awards": ["string"]
+  "awards": ["string"],
+  "links": [
+    {"label": "string", "url": "string"}
+  ]
 }"""
 
 
@@ -68,6 +127,7 @@ _BASE_PROMPT = """당신은 개발자 포트폴리오 파싱 전문가입니다.
 - intro와 desc는 원문 텍스트를 그대로 복사하십시오. 단어 하나도 바꾸지 마십시오.
 - career_years: 원문에 숫자가 있으면 그 숫자만 사용하십시오. 없으면 0.
 - skills: 원문에 보유 기술로 명확히 언급된 경우에만 포함하십시오.
+- links: GitHub, Notion, LinkedIn, 블로그, 개인 사이트 등 원문에 명시된 URL을 추출하십시오. label은 플랫폼명(예: "GitHub", "Notion", "LinkedIn", "Blog", "Portfolio"). 없으면 [].
 
 [이렇게 하지 마십시오 — 예시]
 예시 1) 원문: "React를 배우고 싶다"
@@ -121,7 +181,7 @@ def _build_prompt(position: str) -> str:
 
 _ALLOWED_KEYS = {
     "name", "email", "github", "career_years",
-    "education", "skills", "intro", "projects", "awards",
+    "education", "skills", "intro", "projects", "awards", "links",
 }
 
 
@@ -169,6 +229,19 @@ def _normalize(result: dict) -> dict:
     # awards: 문자열 배열만
     result["awards"] = [a for a in result.get("awards", []) if isinstance(a, str)]
 
+    # links: {label, url} 딕셔너리 배열 정규화
+    raw_links = result.get("links", [])
+    if not isinstance(raw_links, list):
+        raw_links = []
+    clean_links = []
+    for lnk in raw_links:
+        if isinstance(lnk, dict):
+            label = _str(lnk.get("label") or lnk.get("name") or "")
+            url   = _str(lnk.get("url")   or lnk.get("href") or "")
+            if url:
+                clean_links.append({"label": label, "url": url})
+    result["links"] = clean_links
+
     return result
 
 
@@ -194,9 +267,8 @@ def parse_text(raw_text: str, position: str = "general") -> dict:
 
     print(f"[Solar] 요청 시작 — position={position}, 입력 {len(chunk)}자 (절단={truncated}), 모델={_MODEL}")
     t0 = time.time()
-    resp = requests.post(_CHAT_URL, headers=_headers(), json=payload, timeout=60)
+    resp = _call_solar_api(_headers(), payload)
     elapsed = time.time() - t0
-    resp.raise_for_status()
 
     raw_resp = resp.json()
     content  = raw_resp["choices"][0]["message"]["content"]

@@ -1,0 +1,63 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]: Portfolio Reviewer
+    - generic [ref=e7]:
+      - generic [ref=e8]: 지원자 검색
+      - textbox "🔍 이름 · 기술 · 키워드" [ref=e9]:
+        - /placeholder: 🔍  이름 · 기술 · 키워드
+    - generic [ref=e11]:
+      - generic [ref=e12]: 필요 스펙
+      - textbox "React, Python, Docker" [ref=e13]
+    - button "분석" [ref=e14] [cursor=pointer]
+    - combobox [ref=e15] [cursor=pointer]:
+      - option "매칭률 높은 순" [selected]
+      - option "경력 많은 순"
+      - option "이름 순"
+    - button "+ 추가" [ref=e16] [cursor=pointer]
+    - button "↓ 내보내기" [ref=e17] [cursor=pointer]
+    - button "↑ 불러오기" [ref=e18] [cursor=pointer]
+    - button "⚙ 설정" [ref=e19] [cursor=pointer]
+  - generic [ref=e20]:
+    - generic [ref=e21]:
+      - generic [ref=e22]: 지원자 목록 · 5명
+      - generic [ref=e23]:
+        - generic [ref=e24] [cursor=pointer]:
+          - generic [ref=e25]:
+            - generic "더블클릭으로 이름 편집" [ref=e26]: 1. 임 재 현 | Im Jaehyun
+            - generic [ref=e27]:
+              - generic [ref=e28]: 67%
+              - button "✕" [ref=e29]
+          - generic [ref=e30]: Java · Spring Boot · JPA · Querydsl
+        - generic [ref=e31] [cursor=pointer]:
+          - generic [ref=e32]:
+            - generic "더블클릭으로 이름 편집" [ref=e33]: 2. 최하은 | Choi Haeun
+            - generic [ref=e34]:
+              - generic [ref=e35]: 67%
+              - button "✕" [ref=e36]
+          - generic [ref=e37]: Python · Apache Spark · Airflow · dbt
+        - generic [ref=e38] [cursor=pointer]:
+          - generic [ref=e39]:
+            - generic "더블클릭으로 이름 편집" [ref=e40]: 3. 김민준
+            - generic [ref=e41]:
+              - generic [ref=e42]: 67%
+              - button "✕" [ref=e43]
+          - generic [ref=e44]: JavaScript · TypeScript · React · Vue.js
+        - generic [ref=e45] [cursor=pointer]:
+          - generic [ref=e46]:
+            - generic "더블클릭으로 이름 편집" [ref=e47]: 4. 한소희
+            - generic [ref=e48]:
+              - generic [ref=e49]: 33%
+              - button "✕" [ref=e50]
+          - generic [ref=e51]: React · TypeScript · CSS · Tailwind
+        - generic [ref=e52] [cursor=pointer]:
+          - generic [ref=e53]:
+            - generic "더블클릭으로 이름 편집" [ref=e54]: 5. 정우성
+            - generic [ref=e55]:
+              - generic [ref=e56]: 0%
+              - button "✕" [ref=e57]
+          - generic [ref=e58]: Swift · SwiftUI · UIKit · Combine
+    - generic [ref=e59]:
+      - generic [ref=e62] [cursor=pointer]: 동기화 스크롤
+      - generic [ref=e65]:
+        - generic [ref=e66]: 📋
+        - generic [ref=e67]: 좌측 목록에서 지원자를 클릭하세요

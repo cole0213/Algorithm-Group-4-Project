@@ -7,7 +7,8 @@
 # GET  /api/similar                  - 유사 문장 검출
 
 from __future__ import annotations
-import os, time, json
+import os, time, json, hashlib
+from datetime import datetime
 from pathlib import Path
 from fastapi import APIRouter, HTTPException, Query, UploadFile, File, Form
 from fastapi.responses import JSONResponse
@@ -18,7 +19,7 @@ from services import parser as parser_svc
 from services.algorithms.hash_table import SpecMatcher
 from services.algorithms.lcs import match_score, matched_skills
 from services.algorithms.sort import sort_applicants
-from services.algorithms.bst import ApplicantIndex, TextIndex
+from services.algorithms.bst import ApplicantIndex, TextIndex, invalidate_cache as bst_invalidate, get_or_build_bst
 from services.algorithms.alias_search import portfolio_matches_query, highlight_positions
 from services.algorithms.rabin_karp import detect_similar_response
 
@@ -69,9 +70,16 @@ def _save_session() -> None:
 
 # ── 요청/응답 모델 ────────────────────────────────────────────────
 
+class WeightsModel(BaseModel):
+    skill: float = 60.0
+    career: float = 25.0
+    project: float = 15.0
+
+
 class AnalyzeRequest(BaseModel):
     required_specs: list[str]
     sort_key: str = "match"   # "match" | "career" | "name"
+    weights: Optional[WeightsModel] = None
 
 
 # ── 엔드포인트 ────────────────────────────────────────────────────
@@ -168,6 +176,7 @@ async def add_portfolio(
     portfolio["_raw"]     = raw_text
     portfolio["_raw_ext"] = Path(filename).suffix.lower().lstrip(".") if filename else "txt"
     portfolio["_position"] = pos
+    portfolio["_added_at"] = datetime.now().strftime("%Y-%m-%d %H:%M")
 
     # ── Solar 디버그 정보 분리 ─────────────────────────────────────
     solar_debug = {
@@ -177,10 +186,82 @@ async def add_portfolio(
         "truncated": portfolio.get("_truncated", False),
     }
 
+    # ── 파일 중복 감지 ─────────────────────────────────────────────
+    raw_hash = hashlib.md5(raw_text.encode("utf-8")).hexdigest()
+    duplicate_file = any(
+        hashlib.md5((p.get("_raw") or "").encode("utf-8")).hexdigest() == raw_hash
+        for p in portfolios
+    )
+
+    # ── 동명이인 감지 ──────────────────────────────────────────────
+    new_name = (portfolio.get("name") or "").strip()
+    duplicate_name = new_name and any(
+        (p.get("name") or "").strip() == new_name for p in portfolios
+    )
+
     portfolios.append(portfolio)
     _save_session()
+    bst_invalidate()
 
-    return {"message": "추가 완료", "portfolio": portfolio, "solar": solar_debug}
+    return {
+        "message": "추가 완료",
+        "portfolio": portfolio,
+        "solar": solar_debug,
+        "duplicate_name": duplicate_name,
+        "duplicate_file": duplicate_file,
+    }
+
+
+@router.post("/portfolios/{portfolio_id}/reanalyze")
+async def reanalyze_portfolio(portfolio_id: str):
+    """Solar LLM으로 포트폴리오를 재파싱한다.
+    저장된 _raw 원본 텍스트를 다시 Solar에 넘겨 결과를 갱신한다."""
+    from services import solar as solar_svc
+
+    portfolios = _get_portfolios()
+    idx = next((i for i, p in enumerate(portfolios) if p["id"] == portfolio_id), None)
+    if idx is None:
+        raise HTTPException(status_code=404, detail="포트폴리오를 찾을 수 없습니다.")
+
+    existing = portfolios[idx]
+    raw_text = existing.get("_raw", "")
+    if not raw_text.strip():
+        raise HTTPException(status_code=422, detail="원본 텍스트가 없습니다. 재분석 불가.")
+
+    pos = existing.get("_position", "general")
+
+    try:
+        portfolio = solar_svc.parse_text(raw_text, position=pos)
+    except solar_svc.NotConfiguredError:
+        raise HTTPException(status_code=503, detail="Solar API 키가 설정되지 않았습니다.")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Solar 파싱 실패: {e}")
+
+    # 기존 메타 보존
+    portfolio["id"]        = portfolio_id
+    portfolio["_raw"]      = raw_text
+    portfolio["_raw_ext"]  = existing.get("_raw_ext", "txt")
+    portfolio["_position"] = pos
+
+    for k, default in [
+        ("projects", []), ("awards", []), ("skills", []),
+        ("intro", ""), ("career_years", 0),
+        ("education", ""), ("email", ""), ("github", ""), ("file", ""),
+    ]:
+        portfolio.setdefault(k, default)
+
+    solar_debug = {
+        "used":      portfolio.get("_solar_used", False),
+        "elapsed":   portfolio.pop("_solar_elapsed", None),
+        "tokens":    portfolio.pop("_solar_tokens", {}),
+        "truncated": portfolio.get("_truncated", False),
+    }
+
+    portfolios[idx] = portfolio
+    _save_session()
+    bst_invalidate()
+
+    return {"message": "재분석 완료", "portfolio": portfolio, "solar": solar_debug}
 
 
 @router.get("/portfolios/{portfolio_id}/raw")
@@ -217,8 +298,14 @@ def export_portfolios():
 
 
 @router.post("/portfolios/import")
-async def import_portfolios(file: UploadFile = File(...)):
-    """JSON 파일로 포트폴리오 불러오기 (기존 목록에 병합)."""
+async def import_portfolios(
+    file: UploadFile = File(...),
+    overwrite: bool = Form(False),
+):
+    """JSON 파일로 포트폴리오 불러오기.
+    overwrite=True: 중복 ID는 기존 항목을 덮어씀.
+    overwrite=False (기본): 중복 ID는 새 ID를 생성하여 병합.
+    """
     global _portfolio_cache
     content = await file.read()
     try:
@@ -231,21 +318,48 @@ async def import_portfolios(file: UploadFile = File(...)):
         raise HTTPException(status_code=422, detail="portfolios 배열이 없습니다.")
 
     portfolios = _get_portfolios()
-    existing_ids = {p["id"] for p in portfolios}
+    existing_ids = {p["id"]: i for i, p in enumerate(portfolios)}
     added = 0
+    overwritten = 0
     for p in imported:
         if not isinstance(p, dict) or "id" not in p:
             continue
         pid = p["id"]
         if pid in existing_ids:
-            pid = f"{pid}_{int(time.time())}"
-            p["id"] = pid
-        portfolios.append(p)
-        existing_ids.add(pid)
-        added += 1
+            if overwrite:
+                portfolios[existing_ids[pid]] = p
+                overwritten += 1
+            else:
+                p["id"] = f"{pid}_{int(time.time())}"
+                portfolios.append(p)
+                existing_ids[p["id"]] = len(portfolios) - 1
+                added += 1
+        else:
+            portfolios.append(p)
+            existing_ids[pid] = len(portfolios) - 1
+            added += 1
 
     _save_session()
-    return {"message": f"{added}개 불러오기 완료", "total": len(portfolios)}
+    bst_invalidate()
+    msg = f"{added}개 추가"
+    if overwritten:
+        msg += f", {overwritten}개 덮어쓰기"
+    return {"message": f"{msg} 완료", "total": len(portfolios), "added": added, "overwritten": overwritten}
+
+
+@router.patch("/portfolios/{portfolio_id}/name")
+def rename_portfolio(portfolio_id: str, body: dict):
+    """지원자 이름 변경."""
+    new_name = (body.get("name") or "").strip()
+    if not new_name:
+        raise HTTPException(status_code=400, detail="이름을 입력해주세요.")
+    portfolios = _get_portfolios()
+    p = next((x for x in portfolios if x["id"] == portfolio_id), None)
+    if not p:
+        raise HTTPException(status_code=404, detail="포트폴리오 없음")
+    p["name"] = new_name
+    _save_session()
+    return {"message": "이름 변경 완료", "id": portfolio_id, "name": new_name}
 
 
 @router.delete("/portfolios/{portfolio_id}")
@@ -257,6 +371,7 @@ def delete_portfolio(portfolio_id: str):
         raise HTTPException(status_code=404, detail="포트폴리오 없음")
     portfolios.pop(idx)
     _save_session()
+    bst_invalidate()
     return {"message": "삭제 완료", "id": portfolio_id}
 
 
@@ -266,20 +381,54 @@ def analyze(req: AnalyzeRequest):
     필요 스펙 입력 → 각 지원자에 대해:
     - hash_table로 O(1) 스킬 매칭 여부
     - LCS로 매칭 점수 산출
+    - 가중치(skill/career/project)를 반영한 종합 점수 계산
     - 요청 기준으로 정렬
     """
     portfolios = _get_portfolios()
     matcher = SpecMatcher(req.required_specs)
 
+    # 가중치 정규화 (합계가 0이 되지 않도록 보호)
+    w = req.weights
+    if w is not None:
+        w_total = w.skill + w.career + w.project
+        if w_total > 0:
+            w_skill   = w.skill   / w_total
+            w_career  = w.career  / w_total
+            w_project = w.project / w_total
+        else:
+            w_skill = w_career = w_project = 1 / 3
+    else:
+        # 기본값: skill 60%, career 25%, project 15%
+        w_skill, w_career, w_project = 0.60, 0.25, 0.15
+
     results = []
     for p in portfolios:
-        score = match_score(req.required_specs, p["skills"])
+        # LCS 기반 스킬 매칭 점수 (0–100)
+        skill_score = match_score(req.required_specs, p["skills"])
         skills_match = matcher.match_skills(p["skills"])
         matched = matched_skills(req.required_specs, p["skills"])
 
+        # 경력 점수: career_years를 최대 10년 기준으로 0–100 스케일
+        career_years = float(p.get("career_years") or 0)
+        career_score = min(career_years / 10.0, 1.0) * 100
+
+        # 프로젝트 수 점수: 최대 10개 기준으로 0–100 스케일
+        project_count = len(p.get("projects") or [])
+        project_score = min(project_count / 10.0, 1.0) * 100
+
+        # 가중 합산 점수
+        weighted_score = round(
+            skill_score   * w_skill +
+            career_score  * w_career +
+            project_score * w_project
+        )
+
         results.append({
             **p,
-            "match_score": score,
+            "match_score": weighted_score,
+            "skill_score": skill_score,
+            "career_score": round(career_score),
+            "project_score": round(project_score),
             "skills_match": skills_match,   # { "React": True, "Vue": False, ... }
             "matched_skills": matched,
         })
@@ -310,8 +459,8 @@ def search(
             p["id"] for p in portfolios
             if portfolio_matches_query(p, q)
         ]
-        # BST 인덱스로 결과 재검증 (성능 시연용)
-        idx = ApplicantIndex.build(portfolios)
+        # BST 인덱스로 결과 재검증 (성능 시연용) — 캐시 활용
+        idx = get_or_build_bst(portfolios)
         bst_ids = idx.search(q)
         # 두 결과 합집합 (alias_search가 더 넓게 탐지)
         all_ids = list(dict.fromkeys(matched_ids + bst_ids))

@@ -1,20 +1,20 @@
 import { useState, useRef } from 'react';
 import { uploadPortfolio } from '../api';
 
-const POSITIONS = [
-  { value: 'general',  label: '일반' },
-  { value: 'frontend', label: '프론트엔드' },
-  { value: 'backend',  label: '백엔드' },
-  { value: 'data',     label: '데이터/AI' },
+const STEPS = [
+  { id: 'reading', label: '파일 읽는 중...', icon: '📄' },
+  { id: 'parsing', label: 'LLM 파싱 중...',  icon: '🤖' },
+  { id: 'saving',  label: '저장 중...',       icon: '💾' },
+  { id: 'done',    label: '완료!',            icon: '✅' },
 ];
 
 export default function UploadModal({ onClose, onAdded }) {
   const [file, setFile]         = useState(null);
   const [text, setText]         = useState('');
   const [name, setName]         = useState('');
-  const [position, setPosition] = useState('general');
   const [dragging, setDragging] = useState(false);
   const [loading, setLoading]   = useState(false);
+  const [uploadStep, setUploadStep] = useState(null); // null | 'reading' | 'parsing' | 'saving' | 'done'
   const [error, setError]       = useState('');
   const [solarLog, setSolarLog] = useState(null);
   const fileInputRef = useRef(null);
@@ -49,19 +49,41 @@ export default function UploadModal({ onClose, onAdded }) {
       return;
     }
     setLoading(true);
+    setUploadStep('reading');
     setError('');
     try {
-      const result = await uploadPortfolio({ file, text, name, position });
+      setUploadStep('parsing');
+      const result = await uploadPortfolio({ file, text, name, position: 'general' });
       setSolarLog(result.solar);
-      if (result.solar?.used) {
-        setTimeout(() => { setLoading(false); onAdded(result); onClose(); }, 2000);
-      } else {
+      if (result.duplicate_file) {
         setLoading(false);
-        onAdded(result);
-        onClose();
+        setUploadStep(null);
+        if (!window.confirm('동일한 내용의 포트폴리오가 이미 존재합니다. 그래도 추가하시겠습니까?')) {
+          return;
+        }
+        setLoading(true);
+        setUploadStep('parsing');
+      }
+      if (result.duplicate_name) {
+        setLoading(false);
+        setUploadStep(null);
+        if (!window.confirm(`'${result.portfolio.name}' 이름의 지원자가 이미 존재합니다. 동명이인으로 추가하시겠습니까?`)) {
+          return;
+        }
+      }
+      setUploadStep('saving');
+      if (result.solar?.used) {
+        setTimeout(() => {
+          setUploadStep('done');
+          setTimeout(() => { setLoading(false); onAdded(result); onClose(); }, 800);
+        }, 1200);
+      } else {
+        setUploadStep('done');
+        setTimeout(() => { setLoading(false); onAdded(result); onClose(); }, 800);
       }
     } catch (e) {
       setLoading(false);
+      setUploadStep(null);
       setError(e.message || '업로드 중 오류가 발생했습니다.');
     }
   }
@@ -80,25 +102,6 @@ export default function UploadModal({ onClose, onAdded }) {
         </div>
 
         <div className="modal-body">
-          {/* 포지션 선택 */}
-          <div className="position-selector">
-            <span className="position-label">포지션 유형</span>
-            <div className="position-options">
-              {POSITIONS.map(p => (
-                <label key={p.value} className={`position-option ${position === p.value ? 'selected' : ''}`}>
-                  <input
-                    type="radio"
-                    name="position"
-                    value={p.value}
-                    checked={position === p.value}
-                    onChange={() => setPosition(p.value)}
-                  />
-                  {p.label}
-                </label>
-              ))}
-            </div>
-          </div>
-
           {/* 드래그앤드롭 */}
           <div
             className={`drop-zone ${dragging ? 'dragging' : ''} ${file ? 'has-file' : ''}`}
@@ -153,6 +156,27 @@ export default function UploadModal({ onClose, onAdded }) {
 
           {error && <div className="upload-error">{error}</div>}
 
+          {/* 업로드 단계 표시 */}
+          {uploadStep && (
+            <div className="upload-steps">
+              {STEPS.map((step, i) => {
+                const currentIdx = STEPS.findIndex(s => s.id === uploadStep);
+                const stepIdx = i;
+                const isDone = stepIdx < currentIdx || uploadStep === 'done';
+                const isActive = step.id === uploadStep;
+                return (
+                  <div
+                    key={step.id}
+                    className={`upload-step ${isActive ? 'active' : ''} ${isDone ? 'done' : ''}`}
+                  >
+                    <span className="upload-step-icon">{isDone ? '✓' : step.icon}</span>
+                    <span className="upload-step-label">{step.label}</span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
           {/* Solar 디버그 */}
           {solarLog && (
             <div className={`solar-debug ${solarLog.used ? 'success' : 'fallback'}`}>
@@ -190,7 +214,7 @@ export default function UploadModal({ onClose, onAdded }) {
             onClick={handleSubmit}
             disabled={loading || (!file && !text.trim())}
           >
-            {loading ? '분석 중...' : '추가'}
+            {loading ? (STEPS.find(s => s.id === uploadStep)?.label ?? '분석 중...') : '추가'}
           </button>
         </div>
       </div>

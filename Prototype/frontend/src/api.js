@@ -3,11 +3,13 @@
 
 const BASE = '/api';
 
-export async function analyzePortfolios(requiredSpecs, sortKey = 'match') {
+export async function analyzePortfolios(requiredSpecs, sortKey = 'match', weights = null) {
+  const body = { required_specs: requiredSpecs, sort_key: sortKey };
+  if (weights) body.weights = weights;
   const res = await fetch(`${BASE}/analyze`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ required_specs: requiredSpecs, sort_key: sortKey }),
+    body: JSON.stringify(body),
   });
   if (!res.ok) throw new Error(`analyze 실패: ${res.status}`);
   const data = await res.json();
@@ -42,6 +44,19 @@ export async function uploadPortfolio({ file, text, name, position = 'general' }
   return { portfolio: data.portfolio, solar: data.solar };
 }
 
+export async function renamePortfolio(portfolioId, name) {
+  const res = await fetch(`${BASE}/portfolios/${encodeURIComponent(portfolioId)}/name`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `이름 변경 실패: ${res.status}`);
+  }
+  return await res.json();
+}
+
 export async function deletePortfolio(portfolioId) {
   const res = await fetch(`${BASE}/portfolios/${encodeURIComponent(portfolioId)}`, {
     method: 'DELETE',
@@ -65,15 +80,52 @@ export function exportPortfolios() {
   a.click();
 }
 
-export async function importPortfolios(file) {
+export async function importPortfolios(file, overwrite = false) {
   const form = new FormData();
   form.append('file', file);
+  form.append('overwrite', overwrite ? 'true' : 'false');
   const res = await fetch(`${BASE}/portfolios/import`, { method: 'POST', body: form });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.detail || `불러오기 실패: ${res.status}`);
   }
   return await res.json();
+}
+
+export async function reanalyzePortfolio(portfolioId) {
+  const res = await fetch(`${BASE}/portfolios/${encodeURIComponent(portfolioId)}/reanalyze`, {
+    method: 'POST',
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `재분석 실패: ${res.status}`);
+  }
+  return await res.json(); // { message, portfolio, solar }
+}
+
+export async function extractSpecs(text) {
+  const res = await fetch(`${BASE}/extract-specs`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text }),
+  });
+  if (!res.ok) {
+    const body = await res.text();
+    let detail = '추출 실패';
+    try { detail = JSON.parse(body).detail || detail; } catch {}
+    throw new Error(detail);
+  }
+  return res.json();
+}
+
+export async function diffPortfolios(idA, idB) {
+  const res = await fetch(`${BASE}/diff`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id_a: idA, id_b: idB }),
+  });
+  if (!res.ok) throw new Error((await res.json()).detail || 'diff 실패');
+  return res.json();
 }
 
 export async function fetchSimilarMap(ids = null, groupColors = null) {

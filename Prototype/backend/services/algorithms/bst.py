@@ -10,6 +10,34 @@ from dataclasses import dataclass, field
 from .alias_map import normalize
 
 
+# ── 모듈 수준 캐시 ──────────────────────────────────────────────────
+
+_bst_cache: dict = {}   # cache_key → BST 인스턴스
+_cache_version: int = 0  # 포트폴리오 변경 시마다 증가
+
+
+def invalidate_cache() -> None:
+    """포트폴리오 추가·삭제·재분석 시 호출하여 BST 캐시를 전부 무효화한다."""
+    global _cache_version
+    _cache_version += 1
+    _bst_cache.clear()
+
+
+def get_or_build_bst(portfolios: list[dict]) -> "ApplicantIndex":
+    """
+    cross 모드용 ApplicantIndex를 캐시에서 반환하거나 새로 빌드한다.
+    캐시 키는 '_v{_cache_version}' 으로 구성되며, invalidate_cache() 호출 시
+    버전이 올라가 다음 요청에서 자동으로 재빌드된다.
+    """
+    cache_key = f"cross_v{_cache_version}"
+    if cache_key in _bst_cache:
+        return _bst_cache[cache_key]
+
+    idx = ApplicantIndex.build(portfolios)
+    _bst_cache[cache_key] = idx
+    return idx
+
+
 # ── BST 노드 ────────────────────────────────────────────────────────
 
 @dataclass
@@ -67,13 +95,24 @@ class ApplicantIndex:
     @classmethod
     def build(cls, portfolios: list[dict]) -> "ApplicantIndex":
         """
-        portfolios: [{ "id": ..., "skills": [...] }, ...]
-        각 스킬마다 BST에 삽입.
+        portfolios: [{ "id": ..., "skills": [...], "name": ..., ... }, ...]
+        스킬 + 이름 토큰을 BST에 삽입.
         """
         idx = cls()
         for p in portfolios:
+            pid = p["id"]
             for skill in p.get("skills", []):
-                idx.insert(skill, p["id"])
+                idx.insert(skill, pid)
+            # 이름 토큰 인덱싱 (띄어쓰기 분리 + 전체 이름)
+            name = p.get("name", "")
+            if name:
+                idx.insert(name, pid)
+                for token in name.split():
+                    idx.insert(token, pid)
+            # 경력 연수 인덱싱
+            career = str(p.get("career_years", ""))
+            if career and career != "0":
+                idx.insert(career, pid)
         return idx
 
 
