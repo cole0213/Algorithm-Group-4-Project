@@ -1,0 +1,147 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]: Portfolio Reviewer
+    - generic [ref=e7]:
+      - generic [ref=e8]: 지원자 검색
+      - textbox "🔍 이름 · 기술 · 키워드" [ref=e9]:
+        - /placeholder: 🔍  이름 · 기술 · 키워드
+    - generic [ref=e11]:
+      - generic [ref=e12]: 필요 스펙
+      - textbox "React, Python, Docker" [ref=e13]
+      - button "📋" [ref=e14] [cursor=pointer]
+    - button "분석" [ref=e15] [cursor=pointer]
+    - combobox [ref=e16] [cursor=pointer]:
+      - option "매칭률 높은 순" [selected]
+      - option "경력 많은 순"
+      - option "이름 순"
+    - button "+ 추가" [ref=e17] [cursor=pointer]
+    - button "⊞" [ref=e18] [cursor=pointer]
+    - button "⬇" [ref=e19] [cursor=pointer]
+    - button "⬆" [ref=e20] [cursor=pointer]
+    - button "⚙ 설정" [ref=e21] [cursor=pointer]
+  - generic [ref=e47]:
+    - generic [ref=e48]: 📊 분석 완료 — 총 4명 중 0명이 70% 이상 매칭
+    - button "✕" [ref=e49] [cursor=pointer]
+  - generic [ref=e22]:
+    - generic [ref=e23]:
+      - generic [ref=e24]:
+        - text: 지원자 목록 · 4명
+        - button "⚙" [ref=e25] [cursor=pointer]
+      - textbox "이름 빠른 검색..." [ref=e27]
+      - generic [ref=e28]:
+        - generic [ref=e50] [cursor=pointer]:
+          - generic [ref=e51]:
+            - generic "임재현 · 더블클릭으로 이름 편집" [ref=e52]:
+              - generic [ref=e53]: "#1"
+              - text: 임재현
+            - generic [ref=e54]:
+              - button "☆" [ref=e55]
+              - button "·" [ref=e57]
+              - generic [ref=e58]: 61%
+              - button "✕" [ref=e59]
+          - generic [ref=e60]: Java · Spring Boot · JPA · Querydsl
+        - generic [ref=e61] [cursor=pointer]:
+          - generic [ref=e62]:
+            - generic "최하은 · 더블클릭으로 이름 편집" [ref=e63]:
+              - generic [ref=e64]: "#2"
+              - text: 최하은
+            - generic [ref=e65]:
+              - button "☆" [ref=e66]
+              - button "·" [ref=e68]
+              - generic [ref=e69]: 55%
+              - button "✕" [ref=e70]
+          - generic [ref=e71]: Python · Apache Spark · Airflow · dbt
+        - generic [ref=e72] [cursor=pointer]:
+          - generic [ref=e73]:
+            - generic "한소희 · 더블클릭으로 이름 편집" [ref=e74]:
+              - generic [ref=e75]: "#3"
+              - text: 한소희
+            - generic [ref=e76]:
+              - button "☆" [ref=e77]
+              - button "·" [ref=e79]
+              - generic [ref=e80]: 34%
+              - button "✕" [ref=e81]
+          - generic [ref=e82]: React · TypeScript · CSS · Tailwind
+        - generic [ref=e83] [cursor=pointer]:
+          - generic [ref=e84]:
+            - generic "정우성 · 더블클릭으로 이름 편집" [ref=e85]:
+              - generic [ref=e86]: "#4"
+              - text: 정우성
+            - generic [ref=e87]:
+              - button "☆" [ref=e88]
+              - button "·" [ref=e90]
+              - generic [ref=e91]: 4%
+              - button "✕" [ref=e92]
+          - generic [ref=e93]: Swift · SwiftUI · UIKit · Combine
+    - generic [ref=e38]:
+      - generic [ref=e39]:
+        - generic "동기화 스크롤 켜기 — 모든 패널이 함께 스크롤됩니다" [ref=e40] [cursor=pointer]:
+          - generic [ref=e41]: 동기화 스크롤
+        - generic "현재 열린 패널 수 (최대 4개)" [ref=e161]: 패널 1/4
+      - generic [ref=e162]:
+        - generic [ref=e163]:
+          - generic [ref=e164]:
+            - text: 임재현
+            - generic [ref=e165]: 61%
+            - generic "Solar LLM으로 파싱된 포트폴리오입니다. 원본 보기에서 전체 내용을 확인할 수 있습니다." [ref=e166]: Solar
+          - generic [ref=e167]:
+            - button "⊡" [active] [ref=e287] [cursor=pointer]
+            - button "✕" [ref=e169] [cursor=pointer]
+        - textbox "이 포트폴리오 내 검색..." [ref=e171]
+        - generic [ref=e172]:
+          - generic [ref=e173]:
+            - button "원본 보기 →" [ref=e174] [cursor=pointer]
+            - button "Solar AI 재분석" [ref=e175] [cursor=pointer]
+          - generic [ref=e176]: 임재현 포트폴리오
+          - link "🐙 GitHub" [ref=e178] [cursor=pointer]:
+            - /url: https://github.com/jaehyun-im
+          - generic [ref=e288] [cursor=pointer]:
+            - generic [ref=e289]: 기본 정보
+            - generic [ref=e290]: ▾
+          - list [ref=e240]:
+            - listitem [ref=e241]: – 경력 7년
+            - listitem [ref=e242]: – 학력 아주대학교 소프트웨어학과 학사 | 2014.03 ~ 2018.02 | GPA 3.8/4.5
+            - listitem [ref=e243]:
+              - text: – 이메일
+              - link "jaehyun.im.dev@gmail.com" [ref=e244] [cursor=pointer]:
+                - /url: mailto:jaehyun.im.dev@gmail.com
+            - listitem [ref=e245]:
+              - text: – GitHub
+              - link "github.com/jaehyun-im" [ref=e246] [cursor=pointer]:
+                - /url: https://github.com/jaehyun-im
+          - generic [ref=e291] [cursor=pointer]:
+            - generic [ref=e292]: 기술 스택
+            - generic [ref=e293]: ▾
+          - generic [ref=e274]:
+            - generic [ref=e275]: Java
+            - generic [ref=e276]: Spring Boot
+            - generic [ref=e277]: JPA
+            - generic [ref=e278]: Querydsl
+            - generic [ref=e279]: MySQL
+            - button "+41개 더보기" [ref=e280] [cursor=pointer]
+          - generic [ref=e294] [cursor=pointer]:
+            - generic [ref=e295]: 자기소개
+            - generic [ref=e296]: ▾
+          - generic [ref=e202]:
+            - paragraph [ref=e203]: Java/Spring 기반 백엔드 개발 7년 경력. 이커머스, 물류, 헬스케어 도메인 경험.
+            - paragraph [ref=e204]: 마이크로서비스 설계, 대용량 트래픽 처리, 레거시 시스템 현대화에 강점.
+            - paragraph [ref=e205]: AWS 기반 클라우드 네이티브 아키텍처 설계 및 운영 경험 보유.
+          - generic [ref=e297] [cursor=pointer]:
+            - generic [ref=e298]: 프로젝트
+            - generic [ref=e299]: ▾
+          - generic [ref=e209]:
+            - generic [ref=e210]:
+              - paragraph [ref=e211]: 비대면 진료 예약 시스템
+              - list [ref=e212]:
+                - listitem [ref=e213]: – 기간 2023.04 ~ 현재 · 백엔드 파트 리드
+                - listitem [ref=e214]: – 기술 Java 17, Spring Boot 3, JPA, Querydsl, MySQL 8, Redis, Kafka, AWS EKS, RDS, ElastiCache, SQS, Terraform, GitHub Actions
+                - listitem [ref=e215]: "– 진료 예약 시 의사 스케줄 충돌, 동시 예약 처리 실패 등 데이터 정합성 문제가 서비스 초기부터 지속적으로 발생하고 있었음. Saga 패턴 기반의 분산 트랜잭션으로 예약 생성-결제-확정 흐름을 관리. Redis 기반 분산 락으로 동일 시간대 중복 예약 원천 차단. 결과: · 예약 처리 성공률 94.2% → 99.7% · 중복 예약 발생 건수 0건 유지 (도입 후 14개월) · 고객 CS 인입 예약 관련 60% 감소"
+            - generic [ref=e216]:
+              - paragraph [ref=e217]: 다중 쇼핑몰 주문 통합 수집 시스템
+              - list [ref=e218]:
+                - listitem [ref=e219]: – 기간 2020.06 ~ 2023.03 · Backend Developer
+                - listitem [ref=e220]: – 기술 Java 11, Spring Boot 2, MyBatis, MySQL, Redis, RabbitMQ, Docker, Jenkins, AWS EC2, RDS, S3
+                - listitem [ref=e221]: "– 20개 이상 쇼핑몰에서 주문을 수집해야 하는 상황. 각 쇼핑몰마다 API 스펙, 인증 방식, 데이터 형식이 전부 달랐음. 아키텍처: Adapter 패턴으로 쇼핑몰별 구현을 캡슐화하고 공통 Order 도메인 모델로 정규화하는 구조 설계. [각 쇼핑몰 API] → [Adapter Layer] → [Order Normalizer] → [Domain DB] 신규 쇼핑몰 추가 시 Adapter 구현 클래스 1개만 작성하면 되는 구조. 이후 6개월간 쇼핑몰 5개 추가 → 각각 평균 1.5일 소요 (기존 5~7일 대비 70% 단축)"
+        - generic [ref=e222]:
+          - generic [ref=e223]: 📝 메모
+          - textbox "이 지원자에 대한 메모를 입력하세요..." [ref=e224]

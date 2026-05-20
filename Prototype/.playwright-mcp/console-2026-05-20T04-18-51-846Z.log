@@ -1,0 +1,3 @@
+[    1052ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:5173/@fs/C:/Users/lovel/Documents/SAVE/_%EB%8C%80%ED%95%99%EA%B5%90/%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98/_TeamProject/Algorithm-Group-4-Project/Prototype/frontend/src/components/PortfolioPanel.jsx?t=1779250539880:0
+[    1230ms] [WARNING] Something has shimmed the React DevTools global hook (__REACT_DEVTOOLS_GLOBAL_HOOK__). Fast Refresh is not compatible with this shim and will be disabled. @ http://localhost:5173/@react-refresh:341
+[    1256ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5173/favicon.ico:0

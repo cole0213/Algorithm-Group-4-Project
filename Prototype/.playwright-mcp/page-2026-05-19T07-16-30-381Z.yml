@@ -1,0 +1,22 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]: Portfolio Reviewer
+    - textbox "🔍 검색 (Python · py · 파이썬)" [ref=e7]:
+      - /placeholder: 🔍  검색 (Python · py · 파이썬)
+    - 'textbox "필요 스펙: React, Python, Docker" [ref=e9]': React, Python, Docker
+    - button "분석" [ref=e10] [cursor=pointer]
+    - combobox [ref=e11] [cursor=pointer]:
+      - option "매칭률 높은 순" [selected]
+      - option "경력 많은 순"
+      - option "이름 순"
+    - button "+ 추가" [ref=e12] [cursor=pointer]
+    - button "↓ 내보내기" [ref=e13] [cursor=pointer]
+    - button "↑ 불러오기" [ref=e14] [cursor=pointer]
+    - button "⚙ 설정" [ref=e15] [cursor=pointer]
+  - generic [ref=e16]:
+    - generic [ref=e18]: 지원자 목록 · 0명
+    - generic [ref=e20]:
+      - generic [ref=e23] [cursor=pointer]: 동기화 스크롤
+      - generic [ref=e26]:
+        - generic [ref=e27]: 📋
+        - generic [ref=e28]: 좌측 목록에서 지원자를 클릭하세요

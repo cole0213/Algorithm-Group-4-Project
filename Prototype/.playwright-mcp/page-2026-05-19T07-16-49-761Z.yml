@@ -1,0 +1,126 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]: Portfolio Reviewer
+    - textbox "🔍 검색 (Python · py · 파이썬)" [ref=e7]:
+      - /placeholder: 🔍  검색 (Python · py · 파이썬)
+    - 'textbox "필요 스펙: React, Python, Docker" [ref=e9]': React, Python, Docker
+    - button "분석" [ref=e10] [cursor=pointer]
+    - combobox [ref=e11] [cursor=pointer]:
+      - option "매칭률 높은 순" [selected]
+      - option "경력 많은 순"
+      - option "이름 순"
+    - button "+ 추가" [ref=e12] [cursor=pointer]
+    - button "↓ 내보내기" [ref=e13] [cursor=pointer]
+    - button "↑ 불러오기" [ref=e14] [cursor=pointer]
+    - button "⚙ 설정" [ref=e15] [cursor=pointer]
+  - generic [ref=e16]:
+    - generic [ref=e17]:
+      - generic [ref=e18]: 지원자 목록 · 5명
+      - generic [ref=e19]:
+        - generic [ref=e29] [cursor=pointer]:
+          - generic [ref=e30]:
+            - generic [ref=e31]: 지원자1 임 재 현 | Im Jaehyun
+            - generic [ref=e32]:
+              - generic [ref=e33]: 67%
+              - button "✕" [ref=e34]
+          - generic [ref=e35]: Java · Spring Boot · JPA · Querydsl
+        - generic [ref=e36] [cursor=pointer]:
+          - generic [ref=e37]:
+            - generic [ref=e38]: 지원자2 최하은 | Choi Haeun
+            - generic [ref=e39]:
+              - generic [ref=e40]: 67%
+              - button "✕" [ref=e41]
+          - generic [ref=e42]: Python · Apache Spark · Airflow · dbt
+        - generic [ref=e43] [cursor=pointer]:
+          - generic [ref=e44]:
+            - generic [ref=e45]: 지원자3 김민준
+            - generic [ref=e46]:
+              - generic [ref=e47]: 67%
+              - button "✕" [ref=e48]
+          - generic [ref=e49]: JavaScript · TypeScript · React · Vue.js
+        - generic [ref=e50] [cursor=pointer]:
+          - generic [ref=e51]:
+            - generic [ref=e52]: 지원자4 한소희
+            - generic [ref=e53]:
+              - generic [ref=e54]: 33%
+              - button "✕" [ref=e55]
+          - generic [ref=e56]: React · TypeScript · CSS · Tailwind
+        - generic [ref=e57] [cursor=pointer]:
+          - generic [ref=e58]:
+            - generic [ref=e59]: 지원자5 정우성
+            - generic [ref=e60]:
+              - generic [ref=e61]: 0%
+              - button "✕" [ref=e62]
+          - generic [ref=e63]: Swift · SwiftUI · UIKit · Combine
+    - generic [ref=e20]:
+      - generic [ref=e23] [cursor=pointer]: 동기화 스크롤
+      - generic [ref=e64]:
+        - generic [ref=e65]:
+          - generic [ref=e66]:
+            - text: 임 재 현 | Im Jaehyun
+            - generic [ref=e67]: 67%
+            - generic "Solar LLM으로 파싱된 결과입니다. 원본 보기로 내용을 확인하세요." [ref=e68]: AI
+          - button "✕" [ref=e70] [cursor=pointer]
+        - textbox "이 포트폴리오 내 검색..." [ref=e72]
+        - generic [ref=e73]:
+          - generic [ref=e74]: 임 재 현 | Im Jaehyun 포트폴리오
+          - generic [ref=e75]: 기본 정보
+          - list [ref=e76]:
+            - listitem [ref=e77]: – 경력 7년
+            - listitem [ref=e78]: – 학력 아주대학교 소프트웨어학과 학사 | 2014.03 ~ 2018.02 | GPA 3.8/4.5
+            - listitem [ref=e79]: – 이메일 jaehyun.im.dev@gmail.com
+            - listitem [ref=e80]: – GitHub github.com/jaehyun-im
+          - generic [ref=e81]: 기술 스택
+          - generic [ref=e82]:
+            - generic [ref=e83]: Java
+            - generic [ref=e84]: Spring Boot
+            - generic [ref=e85]: JPA
+            - generic [ref=e86]: Querydsl
+            - generic [ref=e87]: MySQL
+            - generic [ref=e88]: Redis
+            - generic [ref=e89]: Kafka
+            - generic [ref=e90]: AWS
+            - generic [ref=e91]: Terraform
+            - generic [ref=e92]: GitHub Actions
+            - generic [ref=e93]: Kotlin
+            - generic [ref=e94]: Python
+            - generic [ref=e95]: SQL
+            - generic [ref=e96]: Spring Batch
+            - generic [ref=e97]: Spring Security
+            - generic [ref=e98]: OAuth2
+            - generic [ref=e99]: WebFlux
+            - generic [ref=e100]: PostgreSQL
+            - generic [ref=e101]: Oracle
+            - generic [ref=e102]: MongoDB
+            - generic [ref=e103]: Elasticsearch
+            - generic [ref=e104]: Kubernetes
+            - generic [ref=e105]: Docker
+            - generic [ref=e106]: RabbitMQ
+            - generic [ref=e107]: SQS
+            - generic [ref=e108]: Lambda
+            - generic [ref=e109]: CloudWatch
+            - generic [ref=e110]: Saga 패턴
+            - generic [ref=e111]: Adapter 패턴
+          - generic [ref=e112]: 자기소개
+          - paragraph [ref=e113]: Java 백엔드 개발자 · 7년 · jaehyun.im.dev@gmail.com · 010-xxxx-5821
+          - paragraph [ref=e114]: github.com/jaehyun-im · linkedin.com/in/jaehyun-im · 서울특별시 거주
+          - generic [ref=e115]: 프로젝트
+          - generic [ref=e116]:
+            - paragraph [ref=e117]: 비대면 진료 예약 시스템 (오케어헬스)
+            - list [ref=e118]:
+              - listitem [ref=e119]: – 기간 2023.04 ~ 현재 · 백엔드 파트 리드
+              - listitem [ref=e120]: – 기술 Java 17, Spring Boot 3, JPA, Querydsl, MySQL 8, Redis, Kafka, AWS (EKS, RDS, ElastiCache, SQS), Terraform, GitHub Actions
+              - listitem [ref=e121]: – 진료 예약 시 의사 스케줄 충돌, 동시 예약 처리 실패 등 데이터 정합성 문제가 서비스 초기부터 지속적으로 발생하고 있었음. Saga 패턴 기반의 분산 트랜잭션으로 예약 생성-결제-확정 흐름을 관리. Redis 기반 분산 락으로 동일 시간대 중복 예약 원천 차단. 예약 처리 성공률 94.2% → 99.7% 중복 예약 발생 건수 0건 유지 (도입 후 14개월) 고객 CS 인입 예약 관련 60% 감소
+          - generic [ref=e122]:
+            - paragraph [ref=e123]: 다중 쇼핑몰 주문 통합 수집 시스템 (스마트로직스)
+            - list [ref=e124]:
+              - listitem [ref=e125]: – 기간 2020.06 ~ 2023.03 · Backend Developer
+              - listitem [ref=e126]: – 기술 Java 11, Spring Boot 2, MyBatis, MySQL, Redis, RabbitMQ, Docker, Jenkins, AWS (EC2, RDS, S3)
+              - listitem [ref=e127]: – 20개 이상 쇼핑몰에서 주문을 수집해야 하는 상황. 각 쇼핑몰마다 API 스펙, 인증 방식, 데이터 형식이 전부 달랐음. Adapter 패턴으로 쇼핑몰별 구현을 캡슐화하고 공통 Order 도메인 모델로 정규화하는 구조 설계. [각 쇼핑몰 API] → [Adapter Layer] → [Order Normalizer] → [Domain DB] 신규 쇼핑몰 추가 시 Adapter 구현 클래스 1개만 작성하면 되는 구조. 이후 6개월간 쇼핑몰 5개 추가 → 각각 평균 1.5일 소요 (기존 5~7일 대비 70% 단축)
+          - generic [ref=e128]: 수상 및 활동
+          - list [ref=e129]:
+            - listitem [ref=e130]: – 정보처리기사 (2017.11)
+            - listitem [ref=e131]: – SQLD (SQL 개발자) (2019.05)
+            - listitem [ref=e132]: – AWS Certified Solutions Architect (2021.08, 갱신 2024.08)
+            - listitem [ref=e133]: – AWS Certified Developer (2022.03)
+          - button "원본 보기 →" [ref=e134] [cursor=pointer]

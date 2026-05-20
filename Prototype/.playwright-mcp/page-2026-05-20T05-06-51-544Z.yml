@@ -1,0 +1,163 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]: Portfolio Reviewer
+    - generic [ref=e7]:
+      - generic [ref=e8]: 지원자 검색
+      - textbox "🔍 이름 · 기술 · 키워드" [ref=e9]:
+        - /placeholder: 🔍  이름 · 기술 · 키워드
+    - generic [ref=e11]:
+      - generic [ref=e12]: 필요 스펙
+      - textbox "React, Python, Docker" [ref=e13]
+      - button "📋" [ref=e14] [cursor=pointer]
+    - button "분석" [ref=e15] [cursor=pointer]
+    - combobox [ref=e16] [cursor=pointer]:
+      - option "매칭률 높은 순" [selected]
+      - option "경력 많은 순"
+      - option "이름 순"
+    - button "+ 추가" [ref=e17] [cursor=pointer]
+    - button "⊞" [ref=e18] [cursor=pointer]
+    - button "⬇" [ref=e19] [cursor=pointer]
+    - button "⬆" [ref=e20] [cursor=pointer]
+    - button "⚙ 설정" [ref=e21] [cursor=pointer]
+  - generic [ref=e47]:
+    - generic [ref=e48]: 📊 분석 완료 — 총 4명 중 0명이 70% 이상 매칭
+    - button "✕" [ref=e49] [cursor=pointer]
+  - generic [ref=e22]:
+    - generic [ref=e23]:
+      - generic [ref=e24]:
+        - text: 지원자 목록 · 4명
+        - button "⚙" [ref=e25] [cursor=pointer]
+      - textbox "이름 빠른 검색..." [ref=e27]
+      - generic [ref=e28]:
+        - generic [ref=e50] [cursor=pointer]:
+          - generic [ref=e51]:
+            - generic "임재현 · 더블클릭으로 이름 편집" [ref=e52]:
+              - generic [ref=e53]: "#1"
+              - text: 임재현
+            - generic [ref=e54]:
+              - button "★" [ref=e467]
+              - generic [ref=e56]:
+                - button "·" [ref=e57]
+                - generic [ref=e469]:
+                  - button "✓ 통과" [ref=e470]
+                  - button "? 보류" [ref=e471]
+                  - button "✗ 탈락" [ref=e472]
+                  - button "— 마킹 없음" [ref=e473]
+              - generic [ref=e58]: 61%
+              - button "✕" [ref=e59]
+          - generic [ref=e60]: Java · Spring Boot · JPA · Querydsl
+        - generic [ref=e61] [cursor=pointer]:
+          - generic [ref=e62]:
+            - generic "최하은 · 더블클릭으로 이름 편집" [ref=e63]:
+              - generic [ref=e64]: "#2"
+              - text: 최하은
+            - generic [ref=e65]:
+              - button "☆" [ref=e66]
+              - button "·" [ref=e68]
+              - generic [ref=e69]: 55%
+              - button "✕" [ref=e70]
+          - generic [ref=e71]: Python · Apache Spark · Airflow · dbt
+        - generic [ref=e72] [cursor=pointer]:
+          - generic [ref=e73]:
+            - generic "한소희 · 더블클릭으로 이름 편집" [ref=e74]:
+              - generic [ref=e75]: "#3"
+              - text: 한소희
+            - generic [ref=e76]:
+              - button "☆" [ref=e77]
+              - button "·" [ref=e79]
+              - generic [ref=e80]: 34%
+              - button "✕" [ref=e81]
+          - generic [ref=e82]: React · TypeScript · CSS · Tailwind
+        - generic [ref=e83] [cursor=pointer]:
+          - generic [ref=e84]:
+            - generic "정우성 · 더블클릭으로 이름 편집" [ref=e85]:
+              - generic [ref=e86]: "#4"
+              - text: 정우성
+            - generic [ref=e87]:
+              - button "☆" [ref=e88]
+              - button "·" [ref=e90]
+              - generic [ref=e91]: 4%
+              - button "✕" [ref=e92]
+          - generic [ref=e93]: Swift · SwiftUI · UIKit · Combine
+    - generic [ref=e38]:
+      - generic [ref=e39]:
+        - generic "동기화 스크롤 켜기 — 모든 패널이 함께 스크롤됩니다" [ref=e40] [cursor=pointer]:
+          - generic [ref=e41]: 동기화 스크롤
+        - generic "현재 열린 패널 수 (최대 4개)" [ref=e316]: 패널 1/4
+      - generic [ref=e393]:
+        - generic [ref=e394]:
+          - generic [ref=e395]:
+            - text: 최하은
+            - generic [ref=e396]: 55%
+            - generic "Solar LLM으로 파싱된 포트폴리오입니다. 원본 보기에서 전체 내용을 확인할 수 있습니다." [ref=e397]: Solar
+          - generic [ref=e398]:
+            - button "⊞" [ref=e399] [cursor=pointer]
+            - button "✕" [ref=e400] [cursor=pointer]
+        - textbox "이 포트폴리오 내 검색..." [ref=e402]
+        - generic [ref=e403]:
+          - generic [ref=e404]:
+            - button "원본 보기 →" [ref=e405] [cursor=pointer]
+            - button "Solar AI 재분석" [ref=e406] [cursor=pointer]
+          - generic [ref=e407]: 최하은 포트폴리오
+          - link "🐙 GitHub" [ref=e409] [cursor=pointer]:
+            - /url: https://github.com/haeun-data
+          - generic [ref=e685] [cursor=pointer]:
+            - generic [ref=e686]: 기본 정보
+            - generic [ref=e687]: ▾
+          - list [ref=e413]:
+            - listitem [ref=e414]: – 경력 4년
+            - listitem [ref=e415]: – 학력 연세대학교 통계학과 (2017~2021) 학사
+            - listitem [ref=e416]:
+              - text: – 이메일
+              - link "haeun.choi.ml@gmail.com" [ref=e417] [cursor=pointer]:
+                - /url: mailto:haeun.choi.ml@gmail.com
+            - listitem [ref=e418]:
+              - text: – GitHub
+              - link "github.com/haeun-data" [ref=e419] [cursor=pointer]:
+                - /url: https://github.com/haeun-data
+          - generic [ref=e688] [cursor=pointer]:
+            - generic [ref=e689]: 기술 스택
+            - generic [ref=e690]: ▾
+          - generic [ref=e423]:
+            - generic [ref=e424]: Python
+            - generic [ref=e425]: Apache Spark
+            - generic [ref=e426]: Airflow
+            - generic [ref=e427]: dbt
+            - generic [ref=e428]: BigQuery
+            - button "+33개 더보기" [ref=e429] [cursor=pointer]
+          - generic [ref=e691] [cursor=pointer]:
+            - generic [ref=e692]: 자기소개
+            - generic [ref=e693]: ▾
+          - paragraph [ref=e434]: 데이터가 흐르는 파이프라인을 만드는 사람
+          - generic [ref=e694] [cursor=pointer]:
+            - generic [ref=e695]: 프로젝트
+            - generic [ref=e696]: ▾
+          - generic [ref=e438]:
+            - generic [ref=e439]:
+              - paragraph [ref=e440]: 실시간 추천 피처 파이프라인
+              - list [ref=e441]:
+                - listitem [ref=e442]: – 기간 2023.02 ~ 현재 · 데이터 엔지니어링팀
+                - listitem [ref=e443]: – 기술 Kafka, Flink, Redis, BigQuery, Feast
+                - listitem [ref=e444]: – 기존 배치 기반 추천 피처가 하루 1번 업데이트되어 실시간성이 부족했습니다. 사용자가 방금 본 상품이 추천에 반영되지 않는 문제가 있었어요.
+            - generic [ref=e445]:
+              - paragraph [ref=e446]: LLM 기반 상품 태그 자동 생성 (사이드 프로젝트)
+              - list [ref=e447]:
+                - listitem [ref=e448]: – 기간
+                - listitem [ref=e449]: – 기술 Claude API, PostgreSQL, FastAPI
+                - listitem [ref=e450]: – 쇼핑몰 크롤링 데이터에 상품 카테고리/스타일 태그를 자동으로 달아주는 시스템.
+            - generic [ref=e451]:
+              - paragraph [ref=e452]: 개인 데이터 대시보드
+              - list [ref=e453]:
+                - listitem [ref=e454]: – 기간
+                - listitem [ref=e455]: – 기술 Notion API, Apple Health, Airflow, Streamlit
+                - listitem [ref=e456]: – 내 일상 데이터(독서량, 운동, 수면)를 모아서 보는 개인 프로젝트.
+          - generic [ref=e697] [cursor=pointer]:
+            - generic [ref=e698]: 수상 및 활동
+            - generic [ref=e699]: ▾
+          - list [ref=e460]:
+            - listitem [ref=e461]: – 데이터분석준전문가(ADsP) 2020
+            - listitem [ref=e462]: – Google Professional Data Engineer 2022
+            - listitem [ref=e463]: – AWS Certified Data Analytics 2023
+        - generic [ref=e464]:
+          - generic [ref=e465]: 📝 메모
+          - textbox "이 지원자에 대한 메모를 입력하세요..." [ref=e466]

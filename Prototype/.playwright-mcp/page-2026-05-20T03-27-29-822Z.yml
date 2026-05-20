@@ -1,0 +1,193 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]: Portfolio Reviewer
+    - generic [ref=e7]:
+      - generic [ref=e8]: 지원자 검색
+      - textbox "🔍 이름 · 기술 · 키워드" [ref=e9]:
+        - /placeholder: 🔍  이름 · 기술 · 키워드
+    - generic [ref=e11]:
+      - generic [ref=e12]: 필요 스펙
+      - textbox "React, Python, Docker" [ref=e13]
+    - button "분석" [ref=e14] [cursor=pointer]
+    - combobox [ref=e15] [cursor=pointer]:
+      - option "매칭률 높은 순" [selected]
+      - option "경력 많은 순"
+      - option "이름 순"
+    - button "+ 추가" [ref=e16] [cursor=pointer]
+    - button "↓ 내보내기" [ref=e17] [cursor=pointer]
+    - button "↑ 불러오기" [ref=e18] [cursor=pointer]
+    - button "⚙ 설정" [ref=e19] [cursor=pointer]
+  - generic [ref=e20]:
+    - generic [ref=e21]:
+      - generic [ref=e22]: 지원자 목록 · 11명
+      - generic [ref=e23]:
+        - generic [ref=e24] [cursor=pointer]:
+          - generic [ref=e25]:
+            - generic "최하은 | Choi Haeun · 더블클릭으로 이름 편집" [ref=e26]: 1. 최하은 | Choi Haeun
+            - generic [ref=e27]:
+              - generic [ref=e28]: 67%
+              - button "✕" [ref=e29]
+          - generic [ref=e30]: Python · Apache Spark · Airflow · dbt
+        - generic [ref=e31] [cursor=pointer]:
+          - generic [ref=e32]:
+            - generic "임재현 · 더블클릭으로 이름 편집" [ref=e33]: 2. 임재현
+            - generic [ref=e34]:
+              - generic [ref=e35]: 67%
+              - button "✕" [ref=e36]
+          - generic [ref=e37]: Java · Spring Boot · JPA · Querydsl
+        - generic [ref=e38] [cursor=pointer]:
+          - generic [ref=e39]:
+            - generic "임 재 현 | Im Jaehyun · 더블클릭으로 이름 편집" [ref=e40]: 3. 임 재 현 | Im Jaehyun
+            - generic [ref=e41]:
+              - generic [ref=e42]: 67%
+              - button "✕" [ref=e43]
+          - generic [ref=e44]: Java · Spring Boot · JPA · Querydsl
+        - generic [ref=e45] [cursor=pointer]:
+          - generic [ref=e46]:
+            - generic "최하은 | Choi Haeun · 더블클릭으로 이름 편집" [ref=e47]: 4. 최하은 | Choi Haeun
+            - generic [ref=e48]:
+              - generic [ref=e49]: 67%
+              - button "✕" [ref=e50]
+          - generic [ref=e51]: Python · Apache Spark · Airflow · dbt
+        - generic [ref=e52] [cursor=pointer]:
+          - generic [ref=e53]:
+            - generic "김민준 · 더블클릭으로 이름 편집" [ref=e54]: 5. 김민준
+            - generic [ref=e55]:
+              - generic [ref=e56]: 67%
+              - button "✕" [ref=e57]
+          - generic [ref=e58]: JavaScript · TypeScript · React · Vue.js
+        - generic [ref=e59] [cursor=pointer]:
+          - generic [ref=e60]:
+            - generic "임재현 · 더블클릭으로 이름 편집" [ref=e61]: 6. 임재현
+            - generic [ref=e62]:
+              - generic [ref=e63]: 67%
+              - button "✕" [ref=e64]
+          - generic [ref=e65]: Java · Spring Boot · JPA · Querydsl
+        - generic [ref=e66] [cursor=pointer]:
+          - generic [ref=e67]:
+            - generic "한소희 · 더블클릭으로 이름 편집" [ref=e68]: 7. 한소희
+            - generic [ref=e69]:
+              - generic [ref=e70]: 33%
+              - button "✕" [ref=e71]
+          - generic [ref=e72]: React · TypeScript · CSS · Tailwind
+        - generic [ref=e73] [cursor=pointer]:
+          - generic [ref=e74]:
+            - generic "한소희 · 더블클릭으로 이름 편집" [ref=e75]: 8. 한소희
+            - generic [ref=e76]:
+              - generic [ref=e77]: 33%
+              - button "✕" [ref=e78]
+          - generic [ref=e79]: React · TypeScript · CSS · Tailwind
+        - generic [ref=e80] [cursor=pointer]:
+          - generic [ref=e81]:
+            - generic "정우성 · 더블클릭으로 이름 편집" [ref=e82]: 9. 정우성
+            - generic [ref=e83]:
+              - generic [ref=e84]: 0%
+              - button "✕" [ref=e85]
+          - generic [ref=e86]: Swift · SwiftUI · UIKit · Combine
+        - generic [ref=e87] [cursor=pointer]:
+          - generic [ref=e88]:
+            - generic "정우성 · 더블클릭으로 이름 편집" [ref=e89]: 10. 정우성
+            - generic [ref=e90]:
+              - generic [ref=e91]: 0%
+              - button "✕" [ref=e92]
+          - generic [ref=e93]: Swift · SwiftUI · UIKit · Combine
+        - generic [ref=e94] [cursor=pointer]:
+          - generic [ref=e95]:
+            - generic "정우성 · 더블클릭으로 이름 편집" [ref=e96]: 11. 정우성
+            - generic [ref=e97]:
+              - generic [ref=e98]: 0%
+              - button "✕" [ref=e99]
+          - generic [ref=e100]: Swift · SwiftUI · UIKit · Combine
+    - generic [ref=e101]:
+      - generic [ref=e104] [cursor=pointer]: 동기화 스크롤
+      - generic [ref=e110]:
+        - generic [ref=e111]:
+          - generic [ref=e112]:
+            - text: 최하은 | Choi Haeun
+            - generic [ref=e113]: 67%
+            - generic "Solar LLM으로 파싱된 결과입니다. 원본 보기로 내용을 확인하세요." [ref=e114]: AI
+          - button "✕" [ref=e116] [cursor=pointer]
+        - textbox "이 포트폴리오 내 검색..." [ref=e118]
+        - generic [ref=e119]:
+          - generic [ref=e120]:
+            - button "원본 보기 →" [ref=e121] [cursor=pointer]
+            - button "Solar AI 재분석" [ref=e122] [cursor=pointer]
+          - generic [ref=e123]: 최하은 | Choi Haeun 포트폴리오
+          - generic [ref=e124]: 기본 정보
+          - list [ref=e125]:
+            - listitem [ref=e126]: – 경력 4년
+            - listitem [ref=e127]: – 학력 연세대학교 통계학과 (2017~2021) 학사
+            - listitem [ref=e128]:
+              - text: – 이메일
+              - link "haeun.choi.ml@gmail.com" [ref=e129] [cursor=pointer]:
+                - /url: mailto:haeun.choi.ml@gmail.com
+            - listitem [ref=e130]:
+              - text: – GitHub
+              - link "github.com/haeun-data" [ref=e131] [cursor=pointer]:
+                - /url: https://github.com/haeun-data
+          - generic [ref=e132]: 기술 스택
+          - generic [ref=e133]:
+            - generic [ref=e134]: Python
+            - generic [ref=e135]: Apache Spark
+            - generic [ref=e136]: Airflow
+            - generic [ref=e137]: dbt
+            - generic [ref=e138]: BigQuery
+            - generic [ref=e139]: Delta Lake
+            - generic [ref=e140]: Kafka
+            - generic [ref=e141]: GCP
+            - generic [ref=e142]: PyTorch
+            - generic [ref=e143]: FastAPI
+            - generic [ref=e144]: Triton Inference Server
+            - generic [ref=e145]: ONNX
+            - generic [ref=e146]: Kubernetes
+            - generic [ref=e147]: AWS
+            - generic [ref=e148]: PostgreSQL
+            - generic [ref=e149]: Redis
+            - generic [ref=e150]: SQL
+            - generic [ref=e151]: Scala
+            - generic [ref=e152]: Bash
+            - generic [ref=e153]: Docker
+            - generic [ref=e154]: Claude
+            - generic [ref=e155]: OpenAI
+            - generic [ref=e156]: MLflow
+            - generic [ref=e157]: Scikit-learn
+            - generic [ref=e158]: Flink
+            - generic [ref=e159]: Feast
+            - generic [ref=e160]: Claude API
+            - generic [ref=e161]: Streamlit
+            - generic [ref=e162]: Notion API
+            - generic [ref=e163]: Apple Health
+            - generic [ref=e164]: Airflow DAG
+            - generic [ref=e165]: Kafka Connect
+            - generic [ref=e166]: Flink 스트리밍
+            - generic [ref=e167]: FastAPI API
+            - generic [ref=e168]: Anthropic
+            - generic [ref=e169]: Claude Opus
+            - generic [ref=e170]: Function Calling
+            - generic [ref=e171]: Structured Output
+          - generic [ref=e172]: 자기소개
+          - paragraph [ref=e173]: 데이터가 흐르는 파이프라인을 만드는 사람
+          - generic [ref=e174]: 프로젝트
+          - generic [ref=e175]:
+            - paragraph [ref=e176]: 실시간 추천 피처 파이프라인
+            - list [ref=e177]:
+              - listitem [ref=e178]: – 기간 2023.02 ~ 현재 · 데이터 엔지니어링팀
+              - listitem [ref=e179]: – 기술 Kafka, Flink, Redis, BigQuery, Feast
+              - listitem [ref=e180]: – 기존 배치 기반 추천 피처가 하루 1번 업데이트되어 실시간성이 부족했습니다. 사용자가 방금 본 상품이 추천에 반영되지 않는 문제가 있었어요.
+          - generic [ref=e181]:
+            - paragraph [ref=e182]: LLM 기반 상품 태그 자동 생성 (사이드 프로젝트)
+            - list [ref=e183]:
+              - listitem [ref=e184]: – 기간
+              - listitem [ref=e185]: – 기술 Claude API, PostgreSQL, FastAPI
+              - listitem [ref=e186]: – 쇼핑몰 크롤링 데이터에 상품 카테고리/스타일 태그를 자동으로 달아주는 시스템.
+          - generic [ref=e187]:
+            - paragraph [ref=e188]: 개인 데이터 대시보드
+            - list [ref=e189]:
+              - listitem [ref=e190]: – 기간
+              - listitem [ref=e191]: – 기술 Notion API, Apple Health, Airflow, Streamlit
+              - listitem [ref=e192]: – 내 일상 데이터(독서량, 운동, 수면)를 모아서 보는 개인 프로젝트.
+          - generic [ref=e193]: 수상 및 활동
+          - list [ref=e194]:
+            - listitem [ref=e195]: – 데이터분석준전문가(ADsP) 2020
+            - listitem [ref=e196]: – Google Professional Data Engineer 2022
+            - listitem [ref=e197]: – AWS Certified Data Analytics 2023
