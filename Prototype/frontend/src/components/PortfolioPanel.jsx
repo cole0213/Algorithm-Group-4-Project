@@ -238,6 +238,9 @@ const PortfolioPanel = forwardRef(function PortfolioPanel(
       </div>
     );
   }
+  // AI 자동 설정으로 지정된 섹션만 표시 (미지정 시 전체 표시)
+  const showSection = (key) =>
+    !Array.isArray(settings.visibleSections) || settings.visibleSections.includes(key);
 
   // 전체화면 모드
   const [fullscreen, setFullscreen] = useState(false);
@@ -511,7 +514,7 @@ const PortfolioPanel = forwardRef(function PortfolioPanel(
         <div className="md-h1">{blind ? `지원자 #${accentIdx + 1}` : a.name} 포트폴리오</div>
 
         {/* 중요 링크 버튼 */}
-        {(() => {
+        {showSection('links') && (() => {
           const links = [...(a.links || [])];
           // github 필드가 links에 없으면 추가
           if (a.github && !links.some(l => l.url === a.github || (a.github && l.url?.includes('github.com')))) {
@@ -549,90 +552,106 @@ const PortfolioPanel = forwardRef(function PortfolioPanel(
         })()}
 
         {/* 기본 정보 */}
-        <SectionHeader sKey="info" label="기본 정보" />
-        {!collapsed['info'] && (
-          <ul className="md-ul section-body">
-            <li className="md-li">
-              <span className="md-bold">경력</span>&ensp;{a.career_years}년
-            </li>
-            <li className="md-li">
-              <span className="md-bold">학력</span>&ensp;{a.education}
-            </li>
-            {a.email && (
-              <li className="md-li">
-                <span className="md-bold">이메일</span>&ensp;
-                <a href={`mailto:${a.email}`} className="portfolio-link">{a.email}</a>
-              </li>
+        {showSection('info') && (
+          <>
+            <SectionHeader sKey="info" label="기본 정보" />
+            {!collapsed['info'] && (
+              <ul className="md-ul section-body">
+                <li className="md-li">
+                  <span className="md-bold">경력</span>&ensp;{a.career_years}년
+                </li>
+                <li className="md-li">
+                  <span className="md-bold">학력</span>&ensp;{a.education}
+                </li>
+                {a.email && (
+                  <li className="md-li">
+                    <span className="md-bold">이메일</span>&ensp;
+                    <a href={`mailto:${a.email}`} className="portfolio-link">{a.email}</a>
+                  </li>
+                )}
+                {a.github && (
+                  <li className="md-li">
+                    <span className="md-bold">GitHub</span>&ensp;
+                    <a href={a.github.startsWith('http') ? a.github : `https://${a.github}`} target="_blank" rel="noopener noreferrer" className="portfolio-link">{a.github}</a>
+                  </li>
+                )}
+                {a._added_at && (
+                  <li className="md-li">
+                    <span className="md-bold">추가됨</span>&ensp;
+                    <span className="added-at-text">{a._added_at}</span>
+                  </li>
+                )}
+              </ul>
             )}
-            {a.github && (
-              <li className="md-li">
-                <span className="md-bold">GitHub</span>&ensp;
-                <a href={a.github.startsWith('http') ? a.github : `https://${a.github}`} target="_blank" rel="noopener noreferrer" className="portfolio-link">{a.github}</a>
-              </li>
-            )}
-            {a._added_at && (
-              <li className="md-li">
-                <span className="md-bold">추가됨</span>&ensp;
-                <span className="added-at-text">{a._added_at}</span>
-              </li>
-            )}
-          </ul>
+          </>
         )}
 
         {/* 기술 스택 */}
-        <SectionHeader sKey="skills" label="기술 스택" />
-        {!collapsed['skills'] && (
-          <div className="skill-badges section-body">
-            {(showAllSkills ? (a.skills || []) : (a.skills || []).slice(0, SKILL_LIMIT)).map(s => (
-              <span
-                key={s}
-                className={`skill-badge ${settings.highlight && skillsMatch[s] ? 'matched' : ''}`}
-              >
-                {s}
-              </span>
-            ))}
-            {(a.skills || []).length > SKILL_LIMIT && (
-              <button className="skill-toggle-btn" onClick={() => setShowAllSkills(v => !v)}>
-                {showAllSkills ? '접기' : `+${(a.skills || []).length - SKILL_LIMIT}개 더보기`}
-              </button>
+        {showSection('skills') && (
+          <>
+            <SectionHeader sKey="skills" label="기술 스택" />
+            {!collapsed['skills'] && (
+              <div className="skill-badges section-body">
+                {(showAllSkills ? (a.skills || []) : (a.skills || []).slice(0, SKILL_LIMIT)).map(s => (
+                  <span
+                    key={s}
+                    className={`skill-badge ${settings.highlight && skillsMatch[s] ? 'matched' : ''}`}
+                  >
+                    {s}
+                  </span>
+                ))}
+                {(a.skills || []).length > SKILL_LIMIT && (
+                  <button className="skill-toggle-btn" onClick={() => setShowAllSkills(v => !v)}>
+                    {showAllSkills ? '접기' : `+${(a.skills || []).length - SKILL_LIMIT}개 더보기`}
+                  </button>
+                )}
+              </div>
             )}
-          </div>
+          </>
         )}
 
         {/* 자기소개 */}
-        <SectionHeader sKey="intro" label="자기소개" />
-        {!collapsed['intro'] && (
-          <div className="section-body">
-            {introLines}
-          </div>
+        {showSection('intro') && (
+          <>
+            <SectionHeader sKey="intro" label="자기소개" />
+            {!collapsed['intro'] && (
+              <div className="section-body">
+                {introLines}
+              </div>
+            )}
+          </>
         )}
 
         {/* 프로젝트 */}
-        <SectionHeader sKey="projects" label="프로젝트" />
-        {!collapsed['projects'] && (
-          <div className="section-body">
-            {(a.projects || []).map((p, i) => (
-              <div key={i}>
-                <p className="md-h3">{p.name}</p>
-                <ul className="md-ul">
-                  <li className="md-li">
-                    <span className="md-bold">기간</span>&ensp;{p.period}
-                    {p.role && ` · ${p.role}`}
-                  </li>
-                  {p.stack && (
-                    <li className="md-li">
-                      <span className="md-bold">기술</span>&ensp;{p.stack}
-                    </li>
-                  )}
-                  {p.desc && <li className="md-li">{renderText(p.desc)}</li>}
-                </ul>
+        {showSection('projects') && (
+          <>
+            <SectionHeader sKey="projects" label="프로젝트" />
+            {!collapsed['projects'] && (
+              <div className="section-body">
+                {(a.projects || []).map((p, i) => (
+                  <div key={i}>
+                    <p className="md-h3">{p.name}</p>
+                    <ul className="md-ul">
+                      <li className="md-li">
+                        <span className="md-bold">기간</span>&ensp;{p.period}
+                        {p.role && ` · ${p.role}`}
+                      </li>
+                      {p.stack && (
+                        <li className="md-li">
+                          <span className="md-bold">기술</span>&ensp;{p.stack}
+                        </li>
+                      )}
+                      {p.desc && <li className="md-li">{renderText(p.desc)}</li>}
+                    </ul>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            )}
+          </>
         )}
 
         {/* 수상 및 활동 */}
-        {a.awards?.length > 0 && (
+        {showSection('awards') && a.awards?.length > 0 && (
           <>
             <SectionHeader sKey="awards" label="수상 및 활동" />
             {!collapsed['awards'] && (

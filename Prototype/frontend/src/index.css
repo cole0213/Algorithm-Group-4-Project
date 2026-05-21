@@ -148,11 +148,43 @@ input, textarea, select { font-family: inherit; }
 .topbar-input.search { width: 200px; }
 .topbar-input.specs  { width: 200px; }
 
+/* 인라인 아이콘 버튼이 있는 입력은 우측 패딩 확보 */
+.topbar-input-wrap .topbar-input { padding-right: 30px; }
+
 /* 검색창 라벨 래퍼 */
 .topbar-field {
   display: flex;
   flex-direction: column;
   gap: 1px;
+  position: relative;
+}
+
+/* 입력 + 인라인 아이콘 버튼 래퍼 */
+.topbar-input-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* 입력 우측 인라인 아이콘 버튼 */
+.topbar-input-icon-btn {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  color: var(--text-muted);
+  padding: 4px 6px;
+  border-radius: var(--r-xs);
+  transition: background 0.1s, color 0.1s;
+}
+.topbar-input-icon-btn:hover {
+  background: var(--hover-bg);
+  color: var(--text-primary);
 }
 .topbar-field-label {
   font-size: 10px;
@@ -901,49 +933,6 @@ input, textarea, select { font-family: inherit; }
   padding-top: 48px;
 }
 
-/* ─── 스킬 매트릭스 ──────────────────────────── */
-.matrix-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
-  z-index: 300; display: flex; align-items: center; justify-content: center;
-}
-.matrix-modal {
-  background: white; border-radius: 12px;
-  width: 90vw; max-width: 1100px; max-height: 80vh;
-  display: flex; flex-direction: column;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-}
-.matrix-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 20px; border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-}
-.matrix-title { font-size: 15px; font-weight: 700; color: var(--text); }
-.matrix-close {
-  background: none; border: none; cursor: pointer;
-  font-size: 16px; color: var(--text-muted);
-}
-.matrix-body { overflow: auto; flex: 1; }
-.matrix-table {
-  border-collapse: collapse; width: max-content; min-width: 100%;
-  font-size: 12px;
-}
-.matrix-table th, .matrix-table td {
-  border: 1px solid var(--border); padding: 6px 8px; white-space: nowrap;
-}
-.matrix-name-col, .matrix-name-cell {
-  position: sticky; left: 0; background: white;
-  z-index: 1; font-weight: 600; min-width: 100px;
-}
-.matrix-skill-col { min-width: 60px; text-align: center; }
-.matrix-skill-label {
-  writing-mode: vertical-rl; transform: rotate(180deg);
-  max-height: 80px; overflow: hidden; text-overflow: ellipsis;
-}
-.matrix-cell { text-align: center; }
-.matrix-cell.has-skill { background: #DCFCE7; color: #16A34A; font-weight: 700; }
-.matrix-cell.no-skill { color: #E5E7EB; }
-.matrix-table thead th { background: var(--bg-secondary, #F9FAFB); }
-
 /* 원본 뷰어 원본/마크다운 토글 */
 .raw-view-toggle {
   display: flex;
@@ -1468,6 +1457,45 @@ input, textarea, select { font-family: inherit; }
 }
 .analyze-summary-banner .banner-close:hover { opacity: 1; }
 
+/* AI 필터 활성 배너 */
+.filter-active-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: var(--primary-tint);
+  border-bottom: 1px solid var(--primary);
+  font-size: 12.5px;
+  color: var(--primary);
+  font-weight: 500;
+  flex-wrap: wrap;
+}
+.filter-active-banner .filter-chip {
+  background: var(--surface);
+  border: 1px solid var(--primary);
+  border-radius: var(--r-full);
+  padding: 1px 9px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--primary);
+}
+.filter-active-banner .filter-count {
+  margin-left: auto;
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+.filter-active-banner .banner-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--primary);
+  opacity: 0.6;
+  padding: 0 2px;
+}
+.filter-active-banner .banner-close:hover { opacity: 1; }
+
 /* ─── 패널 메모 영역 ────────────────────────────── */
 .panel-note-section {
   margin-top: 20px;
@@ -1799,6 +1827,15 @@ body.dark .panel-filter-warn { background: #422006; border-color: #F59E0B; color
 .job-desc-header button {
   background: none; border: none; cursor: pointer; font-size: 14px; color: var(--text-muted);
 }
+.job-desc-hint {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  background: var(--primary-tint);
+  border-radius: var(--r-sm);
+  padding: 8px 10px;
+}
+.job-desc-hint b { color: var(--primary); font-weight: 600; }
 .job-desc-textarea {
   width: 100%; box-sizing: border-box; resize: vertical;
   padding: 8px; border: 1px solid var(--border); border-radius: 6px;

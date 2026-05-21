@@ -73,73 +73,247 @@ async def extract_specs(req: ExtractSpecsRequest):
     return {"specs": specs, "specs_text": ", ".join(specs), "required": specs, "preferred": []}
 
 
-# ── Diff 엔드포인트 ────────────────────────────────────────────────
+# ── AI 설정 자동 생성 엔드포인트 ──────────────────────────────────
+# 사용자가 자연어로 "백엔드 채용. Python 필수, AWS 우대. 경력·프로젝트 위주로 보고싶음" 같은
+# 문장을 던지면 Solar LLM이 settings JSON으로 변환해 반환한다.
+
+KNOWN_SECTIONS = ["info", "skills", "intro", "projects", "awards", "links"]
+SECTION_KO = {
+    "info": "기본 정보",
+    "skills": "기술 스택",
+    "intro": "자기소개",
+    "projects": "프로젝트",
+    "awards": "수상 및 활동",
+    "links": "중요 링크",
+}
+
+
+class ExtractConfigRequest(BaseModel):
+    text: str
+
+
+@router.post("/extract-config")
+async def extract_config(req: ExtractConfigRequest):
+    """채용 요구사항 + 포폴 목차 자연어를 받아 settings JSON을 반환합니다 (Solar LLM)."""
+    api_key = os.getenv("SOLAR_API_KEY") or os.getenv("UPSTAGE_API_KEY")
+    if not api_key:
+        raise HTTPException(status_code=503, detail="Solar API 키가 설정되지 않았습니다.")
+
+    import httpx
+    import re as re_mod
+
+    sections_desc = ", ".join(f'"{k}"({v})' for k, v in SECTION_KO.items())
+
+    system_prompt = f"""당신은 채용 담당자의 요구사항을 구조화하는 전문가입니다.
+사용자가 자연어로 입력한 "채용 요구사항 + 보고 싶은 포트폴리오 항목" 텍스트를 분석하여
+아래 JSON 형식으로만 응답하세요. 설명·마크다운·추가 문장 금지.
+
+{{
+  "required": ["기술1", "기술2"],
+  "preferred": ["기술3"],
+  "visible_sections": ["info", "skills", "projects"],
+  "weights": {{"skill": 60, "career": 25, "project": 15}},
+  "min_career_years": 3,
+  "education_keywords": ["대학교", "학사"],
+  "position": "backend"
+}}
+
+규칙:
+- required: 필수 자격 요건의 기술/언어/도구
+- preferred: 우대 사항의 기술/언어/도구
+- 기술명 원본 표기 보존, 버전·연차 제외
+- visible_sections: 포트폴리오에서 보고 싶다고 언급된 섹션. 가능한 키: {sections_desc}
+  - 사용자가 "기본정보·기술·프로젝트만" 같이 언급하면 그 키들만 배열에 포함
+  - 명시적 언급이 전혀 없으면 전체 6개 키를 모두 포함
+  - "자기소개 빼줘" 같은 부정 표현도 반영
+- weights: skill+career+project = 100. 기본값 60/25/15.
+  - "프로젝트 비중 크게" 같은 표현 있으면 project 가중치 상향 등 자연어 반영
+- min_career_years: "경력 N년 이상" 같은 표현에서 N을 정수로 추출. 언급 없으면 null
+  - "신입" → 0, "주니어" → 1, "시니어" → 5, "경력 무관" → null
+- education_keywords: 학력 조건 키워드 배열. 가능한 값 예: "대학교", "고졸", "전문대", "학사", "석사", "박사", "재학"
+  - "대학교 졸업생" / "학사 이상" → ["대학교", "학사"]
+  - "석사 이상" → ["석사", "박사"]
+  - 언급 없으면 빈 배열 []
+- position: 직군. 가능한 값: "frontend" | "backend" | "data" | null
+  - "백엔드", "서버" → "backend"
+  - "프론트", "FE" → "frontend"
+  - "데이터", "ML" → "data"
+  - 언급 없거나 풀스택·기타면 null
+- 알 수 없으면 기본값 사용"""
+
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+    }
+    body = {
+        "model": "solar-pro",
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": req.text[:4000]},
+        ],
+        "max_tokens": 400,
+        "temperature": 0.1,
+    }
+
+    async with httpx.AsyncClient(timeout=30) as client:
+        resp = await client.post(
+            "https://api.upstage.ai/v1/chat/completions",
+            headers=headers,
+            json=body,
+        )
+    if resp.status_code != 200:
+        raise HTTPException(status_code=502, detail=f"Solar API 오류: {resp.status_code}")
+
+    content = resp.json()["choices"][0]["message"]["content"].strip()
+
+    parsed = None
+    match = re_mod.search(r"\{[\s\S]*\}", content)
+    if match:
+        try:
+            parsed = json_mod.loads(match.group())
+        except Exception:
+            parsed = None
+
+    if not isinstance(parsed, dict):
+        raise HTTPException(status_code=502, detail="Solar 응답 JSON 파싱 실패")
+
+    required = [s.strip() for s in parsed.get("required", []) if isinstance(s, str) and s.strip()]
+    preferred = [s.strip() for s in parsed.get("preferred", []) if isinstance(s, str) and s.strip()]
+    specs = required + [s for s in preferred if s not in required]
+
+    raw_sections = parsed.get("visible_sections")
+    if isinstance(raw_sections, list) and raw_sections:
+        visible_sections = [s for s in raw_sections if s in KNOWN_SECTIONS]
+        if not visible_sections:
+            visible_sections = list(KNOWN_SECTIONS)
+    else:
+        visible_sections = list(KNOWN_SECTIONS)
+
+    raw_w = parsed.get("weights") or {}
+    def _w(key, default):
+        v = raw_w.get(key, default)
+        try:
+            return max(0, min(100, int(v)))
+        except Exception:
+            return default
+    weights = {"skill": _w("skill", 60), "career": _w("career", 25), "project": _w("project", 15)}
+    total = sum(weights.values()) or 1
+    if total != 100:
+        # 정규화 — 합이 100이 되도록 비례 조정
+        weights = {k: round(v * 100 / total) for k, v in weights.items()}
+        # 반올림 오차 보정
+        diff = 100 - sum(weights.values())
+        weights["skill"] += diff
+
+    # 필터 조건 추출
+    raw_min_years = parsed.get("min_career_years")
+    try:
+        min_career_years = int(raw_min_years) if raw_min_years is not None else None
+        if min_career_years is not None and min_career_years < 0:
+            min_career_years = 0
+    except Exception:
+        min_career_years = None
+
+    edu_raw = parsed.get("education_keywords")
+    education_keywords = [s.strip() for s in edu_raw if isinstance(s, str) and s.strip()] if isinstance(edu_raw, list) else []
+
+    raw_pos = parsed.get("position")
+    position = raw_pos if raw_pos in ("frontend", "backend", "data") else None
+
+    return {
+        "required": required,
+        "preferred": preferred,
+        "specs": specs,
+        "specs_text": ", ".join(specs),
+        "visible_sections": visible_sections,
+        "weights": weights,
+        "min_career_years": min_career_years,
+        "education_keywords": education_keywords,
+        "position": position,
+    }
+
+
+# ── Diff 엔드포인트 (2~4명) ─────────────────────────────────────────
+
+from typing import List
+
+LABELS = ["A", "B", "C", "D"]
+
 
 class DiffRequest(BaseModel):
-    id_a: str
-    id_b: str
+    ids: List[str]
 
 
 @router.post("/diff")
 async def diff_portfolios(req: DiffRequest):
-    """두 포트폴리오를 Solar LLM으로 비교하여 항목별 차이를 반환합니다."""
+    """2~4명의 포트폴리오를 Solar LLM으로 비교하여 항목별 차이를 반환합니다."""
     from routers.portfolios import _get_portfolios
 
-    portfolios = _get_portfolios()
-    a = next((p for p in portfolios if p.get("id") == req.id_a), None)
-    b = next((p for p in portfolios if p.get("id") == req.id_b), None)
+    if not (2 <= len(req.ids) <= 4):
+        raise HTTPException(status_code=400, detail="비교 인원은 2~4명이어야 합니다.")
 
-    if not a or not b:
-        raise HTTPException(status_code=404, detail="포트폴리오를 찾을 수 없습니다.")
+    portfolios = _get_portfolios()
+    targets = []
+    for pid in req.ids:
+        p = next((x for x in portfolios if x.get("id") == pid), None)
+        if not p:
+            raise HTTPException(status_code=404, detail=f"포트폴리오를 찾을 수 없습니다: {pid}")
+        targets.append(p)
+
+    labels = LABELS[:len(targets)]
+    names = {labels[i]: targets[i].get("name", labels[i]) for i in range(len(targets))}
 
     api_key = os.getenv("SOLAR_API_KEY") or os.getenv("UPSTAGE_API_KEY")
     if not api_key:
-        # Solar API 없이도 로컬 비교 반환
-        return _local_diff(a, b)
+        return _local_diff(targets, labels, names)
 
-    prompt = f"""두 지원자를 다음 항목별로 비교하고 JSON으로 반환하세요:
+    label_keys = ", ".join(f'"{l}": "..."' for l in labels)
+    winner_pipe = "|".join(labels) + "|동등"
+
+    profiles = "\n\n".join(
+        f"지원자 {labels[i]} ({targets[i].get('name', labels[i])}):\n"
+        f"- 경력: {targets[i].get('career_years', 0)}년\n"
+        f"- 학력: {targets[i].get('education', '')}\n"
+        f"- 스킬: {', '.join(targets[i].get('skills', []))}\n"
+        f"- 자기소개: {(targets[i].get('intro', '') or '')[:500]}"
+        for i in range(len(targets))
+    )
+
+    prompt = f"""{len(targets)}명의 지원자를 다음 항목별로 비교하고 JSON으로 반환하세요:
 경력, 학력, 기술스택, 주요프로젝트, 강점, 약점
 
 반드시 아래 JSON 형식으로만 응답하세요:
 {{
-  "경력": {{"A": "...", "B": "...", "winner": "A|B|동등"}},
-  "학력": {{"A": "...", "B": "...", "winner": "A|B|동등"}},
-  "기술스택": {{"A": "...", "B": "...", "winner": "A|B|동등"}},
-  "주요프로젝트": {{"A": "...", "B": "...", "winner": "A|B|동등"}},
-  "강점": {{"A": "...", "B": "..."}},
-  "약점": {{"A": "...", "B": "..."}}
+  "경력":         {{{label_keys}, "winner": "{winner_pipe}"}},
+  "학력":         {{{label_keys}, "winner": "{winner_pipe}"}},
+  "기술스택":     {{{label_keys}, "winner": "{winner_pipe}"}},
+  "주요프로젝트": {{{label_keys}, "winner": "{winner_pipe}"}},
+  "강점":         {{{label_keys}}},
+  "약점":         {{{label_keys}}}
 }}
 
-지원자 A ({a.get("name", "A")}):
-- 경력: {a.get("career_years", 0)}년
-- 학력: {a.get("education", "")}
-- 스킬: {", ".join(a.get("skills", []))}
-- 자기소개: {(a.get("intro", "") or "")[:500]}
+각 항목의 winner는 가장 우수한 1명의 라벨이거나 "동등".
+강점/약점은 winner 필드 없음.
 
-지원자 B ({b.get("name", "B")}):
-- 경력: {b.get("career_years", 0)}년
-- 학력: {b.get("education", "")}
-- 스킬: {", ".join(b.get("skills", []))}
-- 자기소개: {(b.get("intro", "") or "")[:500]}"""
+{profiles}"""
 
     import httpx
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
     body = {
         "model": "solar-pro",
         "messages": [{"role": "user", "content": prompt}],
-        "max_tokens": 800,
+        "max_tokens": 1200,
         "temperature": 0.1,
     }
-    async with httpx.AsyncClient(timeout=30) as client:
+    async with httpx.AsyncClient(timeout=45) as client:
         resp = await client.post(
             "https://api.upstage.ai/v1/chat/completions",
             headers=headers, json=body,
         )
     if resp.status_code != 200:
-        return _local_diff(a, b)
+        return _local_diff(targets, labels, names)
 
     content = resp.json()["choices"][0]["message"]["content"].strip()
-    # JSON 파싱 시도 — markdown 코드블럭 제거
     try:
         if "```" in content:
             content = content.split("```")[1]
@@ -147,49 +321,30 @@ async def diff_portfolios(req: DiffRequest):
                 content = content[4:]
         diff_data = json_mod.loads(content)
     except Exception:
-        return _local_diff(a, b)
+        return _local_diff(targets, labels, names)
 
-    return {"diff": diff_data, "name_a": a.get("name"), "name_b": b.get("name"), "solar": True}
+    return {"diff": diff_data, "labels": labels, "names": names, "solar": True}
 
 
-def _local_diff(a: dict, b: dict) -> dict:
-    """Solar 없이 로컬 데이터 기반 간단 비교"""
-    skills_a = set(a.get("skills", []))
-    skills_b = set(b.get("skills", []))
-    only_a = list(skills_a - skills_b)
-    only_b = list(skills_b - skills_a)
-    common = list(skills_a & skills_b)
+def _local_diff(targets: list, labels: list, names: dict) -> dict:
+    """Solar 없이 N명 로컬 비교"""
+    skills_sets = [set(t.get("skills", [])) for t in targets]
+    common = set.intersection(*skills_sets) if skills_sets else set()
+    careers = [t.get("career_years", 0) or 0 for t in targets]
 
-    career_a = a.get("career_years", 0) or 0
-    career_b = b.get("career_years", 0) or 0
+    def _winner_max(vals):
+        m = max(vals)
+        winners = [labels[i] for i, v in enumerate(vals) if v == m]
+        return winners[0] if len(winners) == 1 else "동등"
 
-    return {
-        "diff": {
-            "경력": {
-                "A": f"{career_a}년",
-                "B": f"{career_b}년",
-                "winner": "A" if career_a > career_b else ("B" if career_b > career_a else "동등"),
-            },
-            "학력": {
-                "A": a.get("education", ""),
-                "B": b.get("education", ""),
-                "winner": "동등",
-            },
-            "기술스택": {
-                "A": f"공통 {len(common)}개, 고유 {len(only_a)}개",
-                "B": f"공통 {len(common)}개, 고유 {len(only_b)}개",
-                "winner": "A" if len(only_a) > len(only_b) else ("B" if len(only_b) > len(only_a) else "동등"),
-            },
-            "공통 스킬": {
-                "A": ", ".join(common) or "없음",
-                "B": ", ".join(common) or "없음",
-            },
-            "고유 스킬": {
-                "A": ", ".join(only_a) or "없음",
-                "B": ", ".join(only_b) or "없음",
-            },
-        },
-        "name_a": a.get("name"),
-        "name_b": b.get("name"),
-        "solar": False,
+    skill_counts = [len(s) for s in skills_sets]
+    only_counts = [len(skills_sets[i] - set.union(*[skills_sets[j] for j in range(len(targets)) if j != i]) if len(targets) > 1 else skills_sets[i]) for i in range(len(targets))]
+
+    diff = {
+        "경력":     {labels[i]: f"{careers[i]}년" for i in range(len(targets))} | {"winner": _winner_max(careers)},
+        "학력":     {labels[i]: targets[i].get("education", "") for i in range(len(targets))} | {"winner": "동등"},
+        "기술스택": {labels[i]: f"{skill_counts[i]}개 (공통 {len(common)}, 고유 {only_counts[i]})" for i in range(len(targets))} | {"winner": _winner_max(only_counts)},
+        "공통 스킬": {labels[i]: ", ".join(sorted(common)) or "없음" for i in range(len(targets))},
+        "고유 스킬": {labels[i]: ", ".join(sorted(skills_sets[i] - set.union(*[skills_sets[j] for j in range(len(targets)) if j != i]) if len(targets) > 1 else skills_sets[i])) or "없음" for i in range(len(targets))},
     }
+    return {"diff": diff, "labels": labels, "names": names, "solar": False}

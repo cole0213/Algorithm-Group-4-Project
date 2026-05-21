@@ -1,0 +1,25 @@
+{
+  "namesBefore": [
+    "#1 김민준",
+    "#2 한소희",
+    "#3 오지훈"
+  ],
+  "namesAfter": [
+    "#1 김민준",
+    "#2 한소희"
+  ],
+  "namesAfterClear": [
+    "#1 김민준",
+    "#2 한소희",
+    "#3 오지훈"
+  ],
+  "bannerVisible": true,
+  "chips": [
+    "경력 3년↑",
+    "학력 대학교·학사",
+    "직군 backend"
+  ],
+  "toast": "AI 설정 적용: 경력 3년↑ · 학력 대학교·학사 · 직군 backend",
+  "issues": [],
+  "pass": true
+}
