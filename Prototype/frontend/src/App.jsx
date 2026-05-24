@@ -5,6 +5,7 @@ import Sidebar from './components/Sidebar';
 import PortfolioArea from './components/PortfolioArea';
 import SettingsDrawer from './components/SettingsDrawer';
 import UploadModal from './components/UploadModal';
+import FolderUploadModal from './components/FolderUploadModal';
 import Toaster, { useToast } from './components/Toaster';
 import SkillMatrix from './components/SkillMatrix';
 import DiffModal from './components/DiffModal';
@@ -32,6 +33,7 @@ export default function App() {
   const [searchQuery, setSearchQuery]   = useState('');
   const [drawerOpen, setDrawerOpen]     = useState(false);
   const [uploadOpen, setUploadOpen]     = useState(false);
+  const [folderOpen, setFolderOpen]     = useState(false);
   const [analyzeBanner, setAnalyzeBanner] = useState(null); // null | { total, high }
   const [scrollPos, setScrollPos]       = useState({}); // { [portfolioId]: scrollTop }
   const [showMatrix, setShowMatrix]     = useState(false);
@@ -224,6 +226,7 @@ export default function App() {
         onSortChange={handleSortChange}
         onSettingsClick={() => setDrawerOpen(true)}
         onUploadClick={() => setUploadOpen(true)}
+        onFolderClick={() => setFolderOpen(true)}
         onImported={(msg) => { runAnalyze(); toast(msg || '불러오기 완료', 'success'); }}
         onMatrixClick={() => setShowMatrix(true)}
       />
@@ -291,6 +294,22 @@ export default function App() {
             runAnalyze();
             runSimilar(similarScope, selectedIds, groupColors);
             toast(`"${portfolio.name}" 추가 완료`, 'success');
+          }}
+        />
+      )}
+      {folderOpen && (
+        <FolderUploadModal
+          onClose={() => setFolderOpen(false)}
+          onAllAdded={(results) => {
+            const portfolios = results.map(r => ({
+              ...r.portfolio,
+              match_score: 0,
+              skills_match: {},
+            }));
+            setApplicants(prev => [...prev, ...portfolios]);
+            runAnalyze();
+            runSimilar(similarScope, selectedIds, groupColors);
+            toast(`${portfolios.length}개 포트폴리오 추가 완료`, 'success');
           }}
         />
       )}

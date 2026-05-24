@@ -15,7 +15,44 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Optional
 
+from difflib import SequenceMatcher
+
 from services import parser as parser_svc
+from services.parser import clean_name as _clean_name
+
+
+# ── 내용 유사도 헬퍼 ─────────────────────────────────────────────
+
+_CONTENT_DUP_THRESHOLD = 0.95  # 95% 이상이면 중복
+
+
+def _content_similarity(raw_a: str, raw_b: str) -> float:
+    """두 원문의 내용 유사도 (0.0~1.0). difflib.SequenceMatcher 기반."""
+    if not raw_a or not raw_b:
+        return 0.0
+    a = raw_a[:10_000]
+    b = raw_b[:10_000]
+    sm = SequenceMatcher(None, a, b, autojunk=False)
+    if sm.quick_ratio() < _CONTENT_DUP_THRESHOLD:
+        return sm.quick_ratio()
+    return sm.ratio()
+
+
+def _find_content_duplicate(portfolios: list[dict], new_name: str, raw_text: str) -> dict | None:
+    """이름이 같은 포트폴리오 중 원문 유사도가 임계값 이상인 첫 항목 반환."""
+    if not new_name:
+        return None
+    for p in portfolios:
+        if (p.get("name") or "").strip() != new_name:
+            continue
+        sim = _content_similarity(raw_text, p.get("_raw", ""))
+        if sim >= _CONTENT_DUP_THRESHOLD:
+            return {
+                "id":         p["id"],
+                "name":       p.get("name", ""),
+                "similarity": round(sim * 100, 1),
+            }
+    return None
 from services.algorithms.hash_table import SpecMatcher
 from services.algorithms.lcs import match_score, matched_skills
 from services.algorithms.sort import sort_applicants
@@ -97,6 +134,7 @@ async def add_portfolio(
     text: Optional[str] = Form(None),
     name: Optional[str] = Form(""),
     position: Optional[str] = Form("general"),  # general | frontend | backend | data
+    skip_content_check: bool = Form(False),      # True이면 내용 중복 검사 건너뜀
 ):
     """
     포트폴리오 추가.
@@ -138,7 +176,8 @@ async def add_portfolio(
         raise HTTPException(status_code=422, detail="파싱할 텍스트가 비어 있습니다.")
 
     # ── ID 생성 ────────────────────────────────────────────────────
-    uid = (name or "").strip() or (Path(filename).stem if filename else f"upload_{int(time.time())}")
+    raw_uid = (name or "").strip() or (Path(filename).stem if filename else "")
+    uid = _clean_name(raw_uid) if raw_uid else f"upload_{int(time.time())}"
     portfolio: dict = {}
     pos = position or "general"
 
@@ -199,6 +238,21 @@ async def add_portfolio(
         (p.get("name") or "").strip() == new_name for p in portfolios
     )
 
+    # ── 내용 중복 감지 (이름 일치 + 원문 유사도 ≥ 95%) ──────────────
+    content_duplicate = None
+    if not skip_content_check:
+        content_duplicate = _find_content_duplicate(portfolios, new_name, raw_text)
+        if content_duplicate:
+            # 저장하지 않고 중복 정보만 반환
+            return {
+                "message": "content_duplicate",
+                "portfolio": portfolio,
+                "solar": solar_debug,
+                "duplicate_name": duplicate_name,
+                "duplicate_file": duplicate_file,
+                "content_duplicate": content_duplicate,
+            }
+
     portfolios.append(portfolio)
     _save_session()
     bst_invalidate()
@@ -209,6 +263,7 @@ async def add_portfolio(
         "solar": solar_debug,
         "duplicate_name": duplicate_name,
         "duplicate_file": duplicate_file,
+        "content_duplicate": None,
     }
 
 
@@ -300,11 +355,11 @@ def export_portfolios():
 @router.post("/portfolios/import")
 async def import_portfolios(
     file: UploadFile = File(...),
-    overwrite: bool = Form(False),
+    mode: str = Form("overwrite"),
 ):
     """JSON 파일로 포트폴리오 불러오기.
-    overwrite=True: 중복 ID는 기존 항목을 덮어씀.
-    overwrite=False (기본): 중복 ID는 새 ID를 생성하여 병합.
+    mode="overwrite" : 중복 ID는 기존 항목을 교체, 나머지는 유지.
+    mode="reset"     : 기존 포트폴리오 전체 삭제 후 파일 내용으로 교체.
     """
     global _portfolio_cache
     content = await file.read()
@@ -316,35 +371,35 @@ async def import_portfolios(
     imported = data.get("portfolios", [])
     if not isinstance(imported, list):
         raise HTTPException(status_code=422, detail="portfolios 배열이 없습니다.")
+    imported = [p for p in imported if isinstance(p, dict) and "id" in p]
 
+    if mode == "reset":
+        _portfolio_cache = imported
+        _save_session()
+        bst_invalidate()
+        return {"message": f"초기화 후 {len(imported)}개 불러오기 완료", "total": len(imported)}
+
+    # mode == "overwrite"
     portfolios = _get_portfolios()
-    existing_ids = {p["id"]: i for i, p in enumerate(portfolios)}
+    existing_map = {p["id"]: i for i, p in enumerate(portfolios)}
     added = 0
     overwritten = 0
     for p in imported:
-        if not isinstance(p, dict) or "id" not in p:
-            continue
         pid = p["id"]
-        if pid in existing_ids:
-            if overwrite:
-                portfolios[existing_ids[pid]] = p
-                overwritten += 1
-            else:
-                p["id"] = f"{pid}_{int(time.time())}"
-                portfolios.append(p)
-                existing_ids[p["id"]] = len(portfolios) - 1
-                added += 1
+        if pid in existing_map:
+            portfolios[existing_map[pid]] = p
+            overwritten += 1
         else:
             portfolios.append(p)
-            existing_ids[pid] = len(portfolios) - 1
+            existing_map[pid] = len(portfolios) - 1
             added += 1
 
     _save_session()
     bst_invalidate()
-    msg = f"{added}개 추가"
-    if overwritten:
-        msg += f", {overwritten}개 덮어쓰기"
-    return {"message": f"{msg} 완료", "total": len(portfolios), "added": added, "overwritten": overwritten}
+    parts = []
+    if added:       parts.append(f"{added}개 추가")
+    if overwritten: parts.append(f"{overwritten}개 덮어쓰기")
+    return {"message": f"{', '.join(parts)} 완료", "total": len(portfolios), "added": added, "overwritten": overwritten}
 
 
 @router.patch("/portfolios/{portfolio_id}/name")

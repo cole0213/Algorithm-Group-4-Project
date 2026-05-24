@@ -25,12 +25,13 @@ export async function searchPortfolios(query, mode = 'cross', portfolioId = null
   return mode === 'cross' ? data.matched_ids : data;
 }
 
-export async function uploadPortfolio({ file, text, name, position = 'general' }) {
+export async function uploadPortfolio({ file, text, name, position = 'general', bypassDuplicateCheck = false }) {
   const form = new FormData();
   if (file)        form.append('file', file);
   if (text?.trim()) form.append('text', text.trim());
   if (name?.trim()) form.append('name', name.trim());
   form.append('position', position);
+  if (bypassDuplicateCheck) form.append('skip_content_check', 'true');
 
   const res = await fetch(`${BASE}/portfolios/add`, {
     method: 'POST',
@@ -41,7 +42,13 @@ export async function uploadPortfolio({ file, text, name, position = 'general' }
     throw new Error(err.detail || `업로드 실패: ${res.status}`);
   }
   const data = await res.json();
-  return { portfolio: data.portfolio, solar: data.solar };
+  return {
+    portfolio:         data.portfolio,
+    solar:             data.solar,
+    duplicate_file:    data.duplicate_file    ?? false,
+    duplicate_name:    data.duplicate_name    ?? false,
+    content_duplicate: data.content_duplicate ?? null,
+  };
 }
 
 export async function renamePortfolio(portfolioId, name) {
@@ -80,10 +87,10 @@ export function exportPortfolios() {
   a.click();
 }
 
-export async function importPortfolios(file, overwrite = false) {
+export async function importPortfolios(file, mode = 'overwrite') {
   const form = new FormData();
   form.append('file', file);
-  form.append('overwrite', overwrite ? 'true' : 'false');
+  form.append('mode', mode);  // 'overwrite' | 'reset'
   const res = await fetch(`${BASE}/portfolios/import`, { method: 'POST', body: form });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));

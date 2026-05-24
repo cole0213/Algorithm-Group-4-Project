@@ -45,18 +45,12 @@ const STYLES = {
     borderRadius: '20px',
     fontSize: '12px',
     fontWeight: 600,
-    background: '#FEF3C7',
-    color: '#92400E',
-    border: '1px solid #FCD34D',
   },
   badgeLocal: {
     padding: '3px 9px',
     borderRadius: '20px',
     fontSize: '12px',
     fontWeight: 600,
-    background: '#F3F4F6',
-    color: '#6B7280',
-    border: '1px solid #D1D5DB',
   },
   closeBtn: {
     background: 'none',
@@ -114,7 +108,6 @@ const STYLES = {
     whiteSpace: 'nowrap',
   },
   tdWinner: {
-    background: 'rgba(16, 185, 129, 0.08)',
     position: 'relative',
   },
   winIcon: {
@@ -130,7 +123,10 @@ const STYLES = {
 function CellContent({ value, isWinner }) {
   const text = Array.isArray(value) ? value.join(', ') : (value ?? '—');
   return (
-    <td style={{ ...STYLES.td, ...(isWinner ? STYLES.tdWinner : {}) }}>
+    <td
+      className={isWinner ? 'diff-td-winner' : ''}
+      style={{ ...STYLES.td, ...(isWinner ? STYLES.tdWinner : {}) }}
+    >
       {text}
       {isWinner && <i style={STYLES.winIcon}>✓</i>}
     </td>
@@ -186,7 +182,10 @@ export default function DiffModal({ applicantA, applicantB, onClose }) {
           <h2 style={STYLES.headerTitle}>{nameA} vs {nameB}</h2>
           <div style={STYLES.headerRight}>
             {result && (
-              <span style={result.solar ? STYLES.badgeSolar : STYLES.badgeLocal}>
+              <span
+                className={result.solar ? 'diff-badge-solar' : 'diff-badge-local'}
+                style={result.solar ? STYLES.badgeSolar : STYLES.badgeLocal}
+              >
                 {result.solar ? 'Solar AI 분석' : '로컬 비교'}
               </span>
             )}

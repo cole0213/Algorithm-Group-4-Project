@@ -14,6 +14,34 @@ import re
 from pathlib import Path
 
 
+def clean_name(raw: str) -> str:
+    """이름 문자열에서 지원자 이름만 추출.
+    한글 이름이 있으면 한글 이름만, 영어 이름만 있으면 영어 이름만 반환한다.
+    """
+    if not raw or not raw.strip():
+        return raw
+    # 밑줄·하이픈을 공백으로 정규화
+    s = re.sub(r'[_\-]+', ' ', raw).strip()
+    # 불필요한 접미사 제거 (포트폴리오, 이력서, Resume, Portfolio, CV 등)
+    s = re.sub(r'(?i)\b(포트폴리오|이력서|resume|portfolio|cv)\b', '', s).strip()
+    s = re.sub(r'\s+', ' ', s).strip()
+    # 한글 이름 (2~5자)
+    ko = re.search(r'[가-힣]{2,5}', s)
+    if ko:
+        return ko.group()
+    # 괄호·대괄호 내 내용 제거
+    s = re.sub(r'[\(\[\{][^\)\]\}]*[\)\]\}]', '', s).strip()
+    # 영어 이름: 대문자로 시작하는 First [Middle] Last 형식
+    en = re.search(r'[A-Z][a-zA-Z]+(?:\s+[A-Z][a-zA-Z]+)+', s)
+    if en:
+        return en.group().strip()
+    # 소문자 영어 이름도 허용 — Title case 변환
+    en_lower = re.search(r'[a-zA-Z]{2,}(?:\s+[a-zA-Z]{2,})+', s)
+    if en_lower:
+        return ' '.join(w.capitalize() for w in en_lower.group().split())
+    return s.strip()
+
+
 def parse_md(filepath: str | Path) -> dict:
     """단일 MD 파일을 파싱하여 포트폴리오 딕셔너리 반환."""
     text = Path(filepath).read_text(encoding="utf-8")
@@ -42,7 +70,7 @@ def parse_md(filepath: str | Path) -> dict:
 
         # ── H1: 이름 ──────────────────────────────────────────────
         if stripped.startswith("# ") and not stripped.startswith("## "):
-            portfolio["name"] = stripped[2:].replace("포트폴리오", "").strip()
+            portfolio["name"] = clean_name(stripped[2:].strip())
             continue
 
         # ── 섹션 전환 ─────────────────────────────────────────────
@@ -180,9 +208,10 @@ def parse_text_basic(text: str, name: str = "", uid: str = "") -> dict:
     import time
     from .algorithms.alias_map import ALIAS_MAP
 
+    cleaned = clean_name(name.strip()) if name.strip() else ""
     portfolio: dict = {
-        "id":           uid or name.strip() or f"upload_{int(time.time())}",
-        "name":         name.strip() or "업로드된 포트폴리오",
+        "id":           uid or cleaned or f"upload_{int(time.time())}",
+        "name":         cleaned or "업로드된 포트폴리오",
         "email":        "",
         "github":       "",
         "career_years": 0,

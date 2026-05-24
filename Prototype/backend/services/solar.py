@@ -10,6 +10,7 @@ import json
 import time
 import requests
 from dotenv import load_dotenv
+from services.parser import clean_name
 
 load_dotenv()
 
@@ -18,6 +19,25 @@ _BASE_URL = "https://api.upstage.ai/v1"
 _CHAT_URL = f"{_BASE_URL}/chat/completions"
 _MODEL    = os.getenv("SOLAR_MODEL", "solar-pro")
 _MAX_CHARS = 8000  # 32k 토큰 제한 대비 보수적 설정 (한국어 약 3–4자/토큰)
+
+# 섹션 경계 감지 정규식 — 마크다운 헤더·장식 구분선·한국어/영어 섹션 키워드 인식
+_SECTION_HEADER_RE = re.compile(
+    r"(?m)^[ \t]*(?:"
+    r"#{1,3}[ \t]+\S[^\n]*"                              # ## 마크다운 헤더
+    r"|[━─]{4,}[^\n]*"                                   # ━━━━ / ──── 장식 구분선
+    r"|(?:기본\s*정보|개인\s*정보|연락처"
+    r"|기술\s*스택|보유\s*기술"
+    r"|자기\s*소개|소개글?"
+    r"|프로젝트(?:\s*경험)?|주요\s*프로젝트"
+    r"|경력\s*사항?|업무\s*경험"
+    r"|수상\s*경력?|자격증|교육\s*사항?|학력"
+    r"|활동|기타\s*활동)(?:\s*및[^\n]*)?[ \t]*$"         # 한국어 섹션 키워드
+    r"|(?:ABOUT|SUMMARY|EXPERIENCE|WORK\s+HISTORY"
+    r"|(?:TECHNICAL\s+)?SKILLS?|(?:NOTABLE\s+)?PROJECTS?"
+    r"|EDUCATION(?:\s+&\s+ETC)?|CERTIFICATIONS?"
+    r"|ACTIVIT(?:Y|IES))[ \t]*$"                        # 영어 섹션 키워드
+    r")"
+)
 
 
 class NotConfiguredError(Exception):
@@ -146,6 +166,7 @@ _BASE_PROMPT = """당신은 개발자 포트폴리오 파싱 전문가입니다.
 """ + _SCHEMA + """
 
 [필드 규칙]
+- name: 원문에 한글 이름(예: 김도현)이 있으면 반드시 한글 이름만 name 필드에 사용하십시오. 영문 로마자(예: Kim Dohyun)가 함께 있어도 한글 이름만 저장하십시오. 한글 이름이 전혀 없는 경우에만 영문 이름을 사용하십시오.
 - career_years: 원문 명시 정수만. 없으면 0. 날짜로부터 계산 금지.
 - skills: 원래 표기 보존 (파이썬 → Python, 리액트 → React). 버전 제거 (React 18 → React). 중복 제거. 보유·사용 기술로 명확히 언급된 것만 포함.
 - intro, desc: 원문 그대로 복사. 요약·의역·보완·수치 추가 금지.
@@ -175,6 +196,43 @@ _POSITION_HINTS: dict[str, str] = {
 def _build_prompt(position: str) -> str:
     hint = _POSITION_HINTS.get(position, "")
     return _BASE_PROMPT + hint
+
+
+# ── 원문 한글 이름 탐색 ──────────────────────────────────────────
+
+# 신뢰도 순으로 패턴 나열
+_KO_NAME_PATTERNS = [
+    # 1. 이름/성명 레이블 뒤
+    re.compile(r'(?:이름|성명)\s*[:\|]\s*([가-힣]{2,5})', re.MULTILINE),
+    # 2. 마크다운 표 셀 — | 이름 | 김도현 | 형태
+    re.compile(r'\|\s*(?:이름|성명)\s*\|\s*([가-힣]{2,5})\s*\|', re.MULTILINE),
+    # 3. H1 헤더에서 한글 이름 (# 김도현 또는 # 김도현 포트폴리오)
+    re.compile(r'^\s*#\s+([가-힣]{2,5})', re.MULTILINE),
+    # 4. H1/H2 헤더 내 한글 이름 (앞부분에만)
+    re.compile(r'^\s*#{1,2}\s+(?:[^\n가-힣]*?)([가-힣]{2,5})', re.MULTILINE),
+]
+
+
+def _find_korean_name(text: str) -> str | None:
+    """원문에서 한글 이름(2~5자)을 신뢰도 높은 패턴 순으로 탐색한다."""
+    for pat in _KO_NAME_PATTERNS:
+        m = pat.search(text)
+        if m:
+            return m.group(1)
+    return None
+
+
+def _supplement_korean_name(result: dict, raw_text: str) -> dict:
+    """
+    name 필드에 한글이 없으면 원문에서 한글 이름을 탐색해 보완한다.
+    Solar가 영문 로마자만 반환한 경우를 커버한다.
+    """
+    if re.search(r'[가-힣]', result.get("name", "")):
+        return result  # 이미 한글 포함 — 처리 불필요
+    ko = _find_korean_name(raw_text)
+    if ko:
+        result["name"] = ko
+    return result
 
 
 # ── 후처리 — 타입 강제 및 스키마 정제 ──────────────────────────
@@ -212,6 +270,10 @@ def _normalize(result: dict) -> dict:
         if not isinstance(result.get(key), str):
             result[key] = ""
 
+    # 이름 정제: 한글 이름이 있으면 한글 이름만, 영어 이름만 있으면 영어 이름만
+    if result.get("name"):
+        result["name"] = clean_name(result["name"])
+
     # projects 내부 필드 정규화
     clean_projects = []
     for p in result.get("projects", []):
@@ -245,17 +307,50 @@ def _normalize(result: dict) -> dict:
     return result
 
 
-# ── Solar 파싱 ────────────────────────────────────────────────────
+# ── 분할 처리 ─────────────────────────────────────────────────────
 
-def parse_text(raw_text: str, position: str = "general") -> dict:
-    """
-    자유 형식 텍스트를 Solar로 파싱하여 구조화된 포트폴리오 딕셔너리 반환.
-    position: "general" | "frontend" | "backend" | "data"
-    """
-    truncated = len(raw_text) > _MAX_CHARS
-    chunk = raw_text[:_MAX_CHARS]
+# 후반부 파트 전용 추가 지침 — 기본 정보는 이미 앞 파트에서 추출했음을 알림
+_CONTINUATION_PREFIX = """이 텍스트는 개발자 포트폴리오의 후반부(연속)입니다.
+앞 파트에서 기본 정보(이름, 이메일, 기술 스택 등)를 이미 추출했습니다.
+이 파트에서는 프로젝트·수상·링크 등 남은 내용을 중점적으로 추출하십시오.
 
-    system_prompt = _build_prompt(position)
+[추가 지침]
+- 이 텍스트에서 확실히 확인되는 경우에만 기본 정보 필드(name, email 등)를 채우십시오.
+- 확인되지 않으면 "" 또는 0으로 두십시오.
+- skills, projects, awards, links는 이 텍스트에서 찾을 수 있는 모든 내용을 추출하십시오.
+
+"""
+
+
+def _find_split_point(text: str, max_chars: int) -> int:
+    """
+    섹션 경계를 기준으로 분할 지점을 결정한다.
+
+    텍스트를 섹션 순서대로 읽다가 어느 섹션의 끝이 max_chars를 초과하면
+    그 섹션의 시작 위치(= 이전 섹션의 끝)에서 분할한다.
+    섹션 경계를 찾지 못하거나 첫 섹션부터 초과하면 max_chars를 반환한다.
+    """
+    if len(text) <= max_chars:
+        return len(text)
+
+    # 감지된 섹션 시작 위치 목록. 0을 앞에 추가해 "헤더 이전 텍스트"도 하나의 구간으로 처리
+    boundaries = [0] + [m.start() for m in _SECTION_HEADER_RE.finditer(text)]
+    boundaries.append(len(text))  # 센티넬
+
+    for i in range(len(boundaries) - 1):
+        section_start = boundaries[i]
+        section_end   = boundaries[i + 1]
+
+        if section_end > max_chars:
+            # 이 섹션 끝이 한계 초과 → 이 섹션 시작에서 분할
+            # section_start == 0 이면 첫 구간부터 초과 → 단순 절단(max_chars) 사용
+            return section_start if section_start > 0 else max_chars
+
+    return max_chars  # 모든 섹션이 한계 이내 (이론상 도달 안 함)
+
+
+def _call_single(chunk: str, system_prompt: str, label: str) -> tuple[dict, float, dict]:
+    """Solar API 단일 호출. (정규화된 결과, elapsed, usage) 반환."""
     payload = {
         "model": _MODEL,
         "messages": [
@@ -265,7 +360,7 @@ def parse_text(raw_text: str, position: str = "general") -> dict:
         "temperature": 0.1,
     }
 
-    print(f"[Solar] 요청 시작 — position={position}, 입력 {len(chunk)}자 (절단={truncated}), 모델={_MODEL}")
+    print(f"[Solar] {label} 요청 — 입력 {len(chunk)}자, 모델={_MODEL}")
     t0 = time.time()
     resp = _call_solar_api(_headers(), payload)
     elapsed = time.time() - t0
@@ -274,27 +369,116 @@ def parse_text(raw_text: str, position: str = "general") -> dict:
     content  = raw_resp["choices"][0]["message"]["content"]
     usage    = raw_resp.get("usage", {})
     print(
-        f"[Solar] 완료 — {elapsed:.1f}s | "
+        f"[Solar] {label} 완료 — {elapsed:.1f}s | "
         f"prompt={usage.get('prompt_tokens','?')} / "
         f"completion={usage.get('completion_tokens','?')} 토큰"
     )
 
-    # JSON 추출 — 정규식으로 코드블럭 무관하게 추출
     match = re.search(r"\{[\s\S]*\}", content)
     if not match:
-        raise ValueError("Solar 응답에서 JSON 블럭을 찾을 수 없습니다.")
+        raise ValueError(f"Solar 응답({label})에서 JSON 블럭을 찾을 수 없습니다.")
     result = json.loads(match.group())
+    return _normalize(result), round(elapsed, 2), usage
 
-    # 정규화
-    result = _normalize(result)
 
-    # 메타 필드 추가
-    result["_solar_used"]    = True
-    result["_solar_elapsed"] = round(elapsed, 2)
-    result["_solar_tokens"]  = usage
-    result["_truncated"]     = truncated
+def _merge_results(part1: dict, part2: dict) -> dict:
+    """
+    두 파트의 Solar 결과를 병합한다.
+    기본 정보(name·email 등)는 Part 1 우선, 비어있으면 Part 2로 보완.
+    배열 필드(projects·awards·links)는 순서 유지 합산, skills는 중복 제거.
+    """
+    merged = dict(part1)
 
-    return result
+    # 기본 정보: Part 1 우선, 빈 값이면 Part 2에서 보완
+    for key in ("name", "email", "github", "education", "intro"):
+        if not merged.get(key) and part2.get(key):
+            merged[key] = part2[key]
+    if not merged.get("career_years") and part2.get("career_years"):
+        merged["career_years"] = part2["career_years"]
+
+    # skills: 순서 유지 중복 제거 (dict.fromkeys 활용)
+    merged["skills"] = list(dict.fromkeys(
+        merged.get("skills", []) + part2.get("skills", [])
+    ))
+
+    # projects·awards: 순서 유지 단순 합산
+    merged["projects"] = merged.get("projects", []) + part2.get("projects", [])
+    merged["awards"]   = merged.get("awards", [])   + part2.get("awards", [])
+
+    # links: URL 기준 중복 제거
+    seen_urls: set[str] = set()
+    merged_links: list[dict] = []
+    for lnk in merged.get("links", []) + part2.get("links", []):
+        url = lnk.get("url", "")
+        if url and url not in seen_urls:
+            seen_urls.add(url)
+            merged_links.append(lnk)
+    merged["links"] = merged_links
+
+    # 메타: 토큰·경과 시간 합산
+    t1 = part1.get("_solar_tokens", {})
+    t2 = part2.get("_solar_tokens", {})
+    merged["_solar_tokens"] = {
+        "prompt_tokens":     (t1.get("prompt_tokens")     or 0) + (t2.get("prompt_tokens")     or 0),
+        "completion_tokens": (t1.get("completion_tokens") or 0) + (t2.get("completion_tokens") or 0),
+    }
+    merged["_solar_elapsed"]     = round((part1.get("_solar_elapsed") or 0) + (part2.get("_solar_elapsed") or 0), 2)
+    merged["_split_processed"]   = True
+
+    return merged
+
+
+# ── Solar 파싱 ────────────────────────────────────────────────────
+
+def parse_text(raw_text: str, position: str = "general") -> dict:
+    """
+    자유 형식 텍스트를 Solar로 파싱하여 구조화된 포트폴리오 딕셔너리 반환.
+    position: "general" | "frontend" | "backend" | "data"
+
+    텍스트 길이가 _MAX_CHARS 초과 시 섹션 경계 기준 2파트 분할 처리 후 결과 병합.
+    """
+    if len(raw_text) <= _MAX_CHARS:
+        result, elapsed, usage = _call_single(raw_text, _build_prompt(position), f"position={position}")
+        result["_solar_used"]    = True
+        result["_solar_elapsed"] = elapsed
+        result["_solar_tokens"]  = usage
+        result["_truncated"]     = False
+        _supplement_korean_name(result, raw_text)
+        return result
+
+    # 분할 지점 결정
+    split_pos = _find_split_point(raw_text, _MAX_CHARS)
+    part1_text = raw_text[:split_pos]
+    part2_text = raw_text[split_pos:]
+
+    print(
+        f"[Solar] 문서 분할 처리: 총 {len(raw_text)}자 → "
+        f"Part1 {len(part1_text)}자 / Part2 {len(part2_text)}자 (분할 위치={split_pos})"
+    )
+
+    # Part 1: 기본 파싱
+    r1, e1, u1 = _call_single(part1_text, _build_prompt(position), "Part1")
+    r1.update({"_solar_used": True, "_solar_elapsed": e1, "_solar_tokens": u1, "_truncated": False})
+
+    # Part 2: 후반부 특화 파싱 (길면 추가 절단)
+    hint = _POSITION_HINTS.get(position, "")
+    r2, e2, u2 = _call_single(
+        part2_text[:_MAX_CHARS],
+        _CONTINUATION_PREFIX + _BASE_PROMPT + hint,
+        "Part2(연속)",
+    )
+    r2.update({
+        "_solar_used":    True,
+        "_solar_elapsed": e2,
+        "_solar_tokens":  u2,
+        "_truncated":     len(part2_text) > _MAX_CHARS,
+    })
+
+    merged = _merge_results(r1, r2)
+    merged["_solar_used"] = True
+    merged["_truncated"]  = False
+    _supplement_korean_name(merged, raw_text)
+    return merged
 
 
 def parse_portfolio_url(url: str, position: str = "general") -> dict:

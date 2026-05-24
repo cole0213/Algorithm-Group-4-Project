@@ -1,18 +1,31 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { exportPortfolios, importPortfolios, extractSpecs } from '../api';
 
 export default function TopBar({
   onSearch, requiredSpecs, onSpecsChange, onAnalyze,
-  sortKey, onSortChange, onSettingsClick, onUploadClick, onImported, onMatrixClick,
+  sortKey, onSortChange, onSettingsClick, onUploadClick, onFolderClick, onImported, onMatrixClick,
 }) {
   const searchTimer = useRef(null);
   const importRef = useRef(null);
   const searchRef = useRef(null);
+  const addMenuRef = useRef(null);
+
+  const [addMenuOpen, setAddMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (!addMenuOpen) return;
+    function handler(e) {
+      if (!addMenuRef.current?.contains(e.target)) setAddMenuOpen(false);
+    }
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [addMenuOpen]);
 
   const [historyOpen, setHistoryOpen] = useState(false);
   const [jobDescOpen, setJobDescOpen] = useState(false);
   const [jobDescText, setJobDescText] = useState('');
   const [extracting, setExtracting] = useState(false);
+  const [importDialogFile, setImportDialogFile] = useState(null);
   const [searchHistory, setSearchHistory] = useState(() => {
     try { return JSON.parse(localStorage.getItem('search-history')) || []; }
     catch { return []; }
@@ -27,19 +40,22 @@ export default function TopBar({
     });
   }
 
-  async function handleImport(e) {
+  function handleImport(e) {
     const f = e.target.files[0];
     if (!f) return;
-    const overwrite = window.confirm(
-      '불러오기 방식을 선택하세요.\n\n확인 → 덮어쓰기 (중복 ID는 기존 항목을 교체)\n취소 → 병합 (중복 ID는 새 ID로 추가)'
-    );
+    setImportDialogFile(f);
+    e.target.value = '';
+  }
+
+  async function executeImport(mode) {
+    if (!importDialogFile) return;
+    const file = importDialogFile;
+    setImportDialogFile(null);
     try {
-      const result = await importPortfolios(f, overwrite);
+      const result = await importPortfolios(file, mode);
       onImported?.(result.message);
     } catch (err) {
       alert(err.message);
-    } finally {
-      e.target.value = '';
     }
   }
 
@@ -122,19 +138,21 @@ export default function TopBar({
       {/* 필요 스펙 입력 */}
       <div className="topbar-field" style={{ position: 'relative' }}>
         <span className="topbar-field-label">필요 스펙</span>
-        <input
-          className="topbar-input specs"
-          type="text"
-          placeholder="React, Python, Docker"
-          value={requiredSpecs}
-          onChange={e => onSpecsChange(e.target.value)}
-          onKeyDown={handleKeyDown}
-        />
-        <button
-          className="topbar-icon-btn"
-          title="채용 공고에서 스펙 자동 추출"
-          onClick={() => setJobDescOpen(v => !v)}
-        >📋</button>
+        <div className="specs-input-wrap">
+          <input
+            className="topbar-input specs-inner"
+            type="text"
+            placeholder="React, Python, Docker"
+            value={requiredSpecs}
+            onChange={e => onSpecsChange(e.target.value)}
+            onKeyDown={handleKeyDown}
+          />
+          <button
+            className={`specs-jd-btn${jobDescOpen ? ' active' : ''}`}
+            title="채용 공고에서 스펙 자동 추출"
+            onClick={() => setJobDescOpen(v => !v)}
+          >📋</button>
+        </div>
         {jobDescOpen && (
           <div className="job-desc-popup">
             <div className="job-desc-header">
@@ -174,7 +192,27 @@ export default function TopBar({
       </select>
 
       {/* 포트폴리오 추가 */}
-      <button className="topbar-btn" onClick={onUploadClick}>+ 추가</button>
+      <div className="add-menu-wrap" ref={addMenuRef}>
+        <button className="topbar-btn" onClick={() => setAddMenuOpen(v => !v)}>+ 추가 ▾</button>
+        {addMenuOpen && (
+          <div className="add-menu-dropdown">
+            <button className="add-menu-item" onClick={() => { setAddMenuOpen(false); onUploadClick(); }}>
+              <span className="add-menu-icon">📄</span>
+              <span className="add-menu-text">
+                <span className="add-menu-label">단일 파일 추가</span>
+                <span className="add-menu-sub">PDF · MD · TXT 파일 1개</span>
+              </span>
+            </button>
+            <button className="add-menu-item" onClick={() => { setAddMenuOpen(false); onFolderClick?.(); }}>
+              <span className="add-menu-icon">📁</span>
+              <span className="add-menu-text">
+                <span className="add-menu-label">폴더 전체 불러오기</span>
+                <span className="add-menu-sub">폴더 내 모든 파일 일괄 처리</span>
+              </span>
+            </button>
+          </div>
+        )}
+      </div>
 
       {/* 스킬 매트릭스 */}
       <button
@@ -199,7 +237,33 @@ export default function TopBar({
       <button className="topbar-icon-btn" title="불러오기 (JSON)" onClick={() => importRef.current?.click()}>⬆</button>
 
       {/* 설정 */}
-      <button className="topbar-btn" onClick={onSettingsClick}>⚙ 설정</button>
+      <button className="topbar-btn" style={{ marginLeft: 'auto' }} onClick={onSettingsClick}>⚙ 설정</button>
+
+      {/* 불러오기 확인 다이얼로그 */}
+      {importDialogFile && (
+        <div className="import-dialog-overlay" onClick={() => setImportDialogFile(null)}>
+          <div className="import-dialog" onClick={e => e.stopPropagation()}>
+            <div className="import-dialog-title">⬆ 포트폴리오 불러오기</div>
+            <div className="import-dialog-filename">{importDialogFile.name}</div>
+            <p className="import-dialog-desc">불러오기 방식을 선택하세요.</p>
+            <div className="import-dialog-options">
+              <button className="import-option-btn" onClick={() => executeImport('overwrite')}>
+                <span className="import-option-icon">🔄</span>
+                <span className="import-option-label">덮어쓰기</span>
+                <span className="import-option-desc">중복 ID는 파일 내용으로 교체, 나머지는 유지</span>
+              </button>
+              <button className="import-option-btn danger" onClick={() => executeImport('reset')}>
+                <span className="import-option-icon">🗑</span>
+                <span className="import-option-label">전체 초기화</span>
+                <span className="import-option-desc">기존 포트폴리오를 모두 삭제하고 파일로 교체</span>
+              </button>
+            </div>
+            <div className="import-dialog-footer">
+              <button className="import-cancel-btn" onClick={() => setImportDialogFile(null)}>취소</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

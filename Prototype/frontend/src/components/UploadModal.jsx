@@ -17,6 +17,8 @@ export default function UploadModal({ onClose, onAdded }) {
   const [uploadStep, setUploadStep] = useState(null); // null | 'reading' | 'parsing' | 'saving' | 'done'
   const [error, setError]       = useState('');
   const [solarLog, setSolarLog] = useState(null);
+  // 내용 중복 경고: null | { id, name, similarity, pendingResult }
+  const [dupWarning, setDupWarning] = useState(null);
   const fileInputRef = useRef(null);
 
   function handleFile(f) {
@@ -43,7 +45,7 @@ export default function UploadModal({ onClose, onAdded }) {
     if (pasted) { setText(pasted); setFile(null); }
   }
 
-  async function handleSubmit() {
+  async function handleSubmit({ bypass = false } = {}) {
     if (!file && !text.trim()) {
       setError('파일 또는 텍스트를 입력해주세요.');
       return;
@@ -51,10 +53,23 @@ export default function UploadModal({ onClose, onAdded }) {
     setLoading(true);
     setUploadStep('reading');
     setError('');
+    setDupWarning(null);
     try {
       setUploadStep('parsing');
-      const result = await uploadPortfolio({ file, text, name, position: 'general' });
+      const result = await uploadPortfolio({
+        file, text, name, position: 'general',
+        bypassDuplicateCheck: bypass,
+      });
       setSolarLog(result.solar);
+
+      // ── 내용 중복 감지 ──────────────────────────────────────────
+      if (result.content_duplicate) {
+        setLoading(false);
+        setUploadStep(null);
+        setDupWarning({ ...result.content_duplicate, pendingResult: result });
+        return;
+      }
+
       if (result.duplicate_file) {
         setLoading(false);
         setUploadStep(null);
@@ -71,21 +86,31 @@ export default function UploadModal({ onClose, onAdded }) {
           return;
         }
       }
-      setUploadStep('saving');
-      if (result.solar?.used) {
-        setTimeout(() => {
-          setUploadStep('done');
-          setTimeout(() => { setLoading(false); onAdded(result); onClose(); }, 800);
-        }, 1200);
-      } else {
-        setUploadStep('done');
-        setTimeout(() => { setLoading(false); onAdded(result); onClose(); }, 800);
-      }
+      finishAdd(result);
     } catch (e) {
       setLoading(false);
       setUploadStep(null);
       setError(e.message || '업로드 중 오류가 발생했습니다.');
     }
+  }
+
+  function finishAdd(result) {
+    setUploadStep('saving');
+    if (result.solar?.used) {
+      setTimeout(() => {
+        setUploadStep('done');
+        setTimeout(() => { setLoading(false); onAdded(result); onClose(); }, 800);
+      }, 1200);
+    } else {
+      setUploadStep('done');
+      setTimeout(() => { setLoading(false); onAdded(result); onClose(); }, 800);
+    }
+  }
+
+  async function handleForceAdd() {
+    // 중복 경고 무시하고 강제 추가
+    setDupWarning(null);
+    await handleSubmit({ bypass: true });
   }
 
   return (
@@ -155,6 +180,27 @@ export default function UploadModal({ onClose, onAdded }) {
           />
 
           {error && <div className="upload-error">{error}</div>}
+
+          {/* 내용 중복 경고 */}
+          {dupWarning && (
+            <div className="dup-warning-box">
+              <div className="dup-warning-title">⚠ 중복 포트폴리오 감지</div>
+              <div className="dup-warning-body">
+                <span className="dup-warning-name">"{dupWarning.name}"</span>
+                <span>과 원문이 </span>
+                <span className="dup-warning-pct">{dupWarning.similarity}%</span>
+                <span> 일치합니다.</span>
+              </div>
+              <div className="dup-warning-actions">
+                <button className="dup-btn-cancel" onClick={() => setDupWarning(null)}>
+                  추가 취소
+                </button>
+                <button className="dup-btn-force" onClick={handleForceAdd}>
+                  그래도 추가
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* 업로드 단계 표시 */}
           {uploadStep && (

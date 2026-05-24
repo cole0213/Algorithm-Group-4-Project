@@ -52,20 +52,22 @@ export default function PortfolioArea({
           <span>동기화 스크롤</span>
           <div className={`toggle-pill ${settings.syncScroll ? 'on' : ''}`} />
         </div>
-        {selectedIds.length === 2 && onDiffClick && (
-          <button
-            className="diff-trigger-btn"
-            title="두 지원자 항목별 비교 분석"
-            onClick={() => onDiffClick(selectedIds[0], selectedIds[1])}
-          >
-            ⇄ 비교
-          </button>
-        )}
-        {selectedIds.length > 0 && (
-          <span className="panel-count-badge" title="현재 열린 패널 수 (최대 4개)">
-            패널 {selectedIds.length}/4
-          </span>
-        )}
+        <div className="toolbar-right">
+          {selectedIds.length === 2 && onDiffClick && (
+            <button
+              className="diff-trigger-btn"
+              title="두 지원자 항목별 비교 분석"
+              onClick={() => onDiffClick(selectedIds[0], selectedIds[1])}
+            >
+              ⇄ 비교
+            </button>
+          )}
+          {selectedIds.length > 0 && (
+            <span className="panel-count-badge" title="현재 열린 패널 수 (최대 4개)">
+              패널 {selectedIds.length}/4
+            </span>
+          )}
+        </div>
       </div>
 
       {/* 패널 영역 */}
