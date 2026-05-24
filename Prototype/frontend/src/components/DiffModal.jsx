@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { diffPortfolios } from '../api';
 
+const LABELS = ['A', 'B', 'C', 'D'];
+
 const STYLES = {
   overlay: {
     position: 'fixed',
@@ -15,7 +17,7 @@ const STYLES = {
     background: 'var(--bg-panel, #fff)',
     borderRadius: '12px',
     boxShadow: '0 8px 40px rgba(0,0,0,0.28)',
-    width: 'min(900px, 95vw)',
+    width: 'min(1200px, 95vw)',
     maxHeight: '85vh',
     display: 'flex',
     flexDirection: 'column',
@@ -64,6 +66,7 @@ const STYLES = {
   },
   body: {
     overflowY: 'auto',
+    overflowX: 'auto',
     padding: '20px',
     flex: 1,
   },
@@ -79,6 +82,7 @@ const STYLES = {
     width: '100%',
     borderCollapse: 'collapse',
     fontSize: '14px',
+    minWidth: '600px',
   },
   th: {
     padding: '10px 14px',
@@ -118,6 +122,16 @@ const STYLES = {
     fontWeight: 700,
     fontSize: '13px',
   },
+  nameChip: {
+    display: 'inline-block',
+    fontSize: '11px',
+    fontWeight: 700,
+    color: '#fff',
+    background: 'var(--primary, #4361EE)',
+    padding: '1px 6px',
+    borderRadius: '4px',
+    marginRight: '6px',
+  },
 };
 
 function CellContent({ value, isWinner }) {
@@ -133,34 +147,35 @@ function CellContent({ value, isWinner }) {
   );
 }
 
-export default function DiffModal({ applicantA, applicantB, onClose }) {
+export default function DiffModal({ applicants, onClose }) {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const ids = (applicants || []).map(a => a.id);
+  const idsKey = ids.join('|');
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
     setError(null);
-    diffPortfolios(applicantA.id, applicantB.id)
+    diffPortfolios(ids)
       .then(data => {
-        if (!cancelled) {
-          // API 응답: { diff: { 경력: {A, B, winner}, ... }, solar, name_a, name_b }
-          const items = Object.entries(data.diff || {}).map(([label, val]) => ({
-            label,
-            a: val.A,
-            b: val.B,
-            winner: val.winner === 'A' ? 'a' : val.winner === 'B' ? 'b' : null,
-          }));
-          setResult({ items, solar: data.solar });
-          setLoading(false);
-        }
+        if (cancelled) return;
+        // API 응답: { diff: { 항목: {A, B, C, winner} | {A, B, C} }, labels, names, solar }
+        const labels = data.labels || LABELS.slice(0, applicants.length);
+        const items = Object.entries(data.diff || {}).map(([label, val]) => {
+          const cells = labels.map(L => val?.[L]);
+          const winnerLabel = val?.winner;
+          return { label, cells, winnerLabel, labels };
+        });
+        setResult({ items, labels, solar: data.solar });
+        setLoading(false);
       })
       .catch(e => { if (!cancelled) { setError(e.message); setLoading(false); } });
     return () => { cancelled = true; };
-  }, [applicantA.id, applicantB.id]);
+  }, [idsKey]);
 
-  // Esc 키로 닫기
   useEffect(() => {
     const handler = (e) => { if (e.key === 'Escape') onClose(); };
     window.addEventListener('keydown', handler);
@@ -171,15 +186,14 @@ export default function DiffModal({ applicantA, applicantB, onClose }) {
     if (e.target === e.currentTarget) onClose();
   };
 
-  const nameA = applicantA?.name || applicantA?.id || 'A';
-  const nameB = applicantB?.name || applicantB?.id || 'B';
+  const labels = LABELS.slice(0, applicants.length);
+  const title = applicants.map((a, i) => `${labels[i]}.${a?.name || labels[i]}`).join(' · ');
 
   return (
     <div className="diff-overlay" style={STYLES.overlay} onClick={handleOverlayClick}>
       <div className="diff-modal" style={STYLES.modal} onClick={e => e.stopPropagation()}>
-        {/* 헤더 */}
         <div style={STYLES.header}>
-          <h2 style={STYLES.headerTitle}>{nameA} vs {nameB}</h2>
+          <h2 style={STYLES.headerTitle}>{title} 비교</h2>
           <div style={STYLES.headerRight}>
             {result && (
               <span
@@ -193,29 +207,33 @@ export default function DiffModal({ applicantA, applicantB, onClose }) {
           </div>
         </div>
 
-        {/* 본문 */}
         <div style={STYLES.body}>
-          {loading && (
-            <div style={STYLES.center}>비교 분석 중...</div>
-          )}
-          {error && (
-            <div style={{ ...STYLES.center, color: '#EF4444' }}>오류: {error}</div>
-          )}
+          {loading && (<div style={STYLES.center}>{applicants.length}명 비교 분석 중...</div>)}
+          {error && (<div style={{ ...STYLES.center, color: '#EF4444' }}>오류: {error}</div>)}
           {!loading && !error && result && (
             <table className="diff-table" style={STYLES.table}>
               <thead>
                 <tr>
                   <th style={{ ...STYLES.th, ...STYLES.thItem }}>항목</th>
-                  <th style={STYLES.th}>{nameA}</th>
-                  <th style={STYLES.th}>{nameB}</th>
+                  {applicants.map((a, i) => (
+                    <th key={i} style={STYLES.th}>
+                      <span style={STYLES.nameChip}>{labels[i]}</span>
+                      {a?.name || labels[i]}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
-                {Array.isArray(result.items) && result.items.map((item, idx) => (
+                {result.items.map((item, idx) => (
                   <tr key={idx}>
                     <td style={{ ...STYLES.td, ...STYLES.tdLabel }}>{item.label}</td>
-                    <CellContent value={item.a} isWinner={item.winner === 'a'} />
-                    <CellContent value={item.b} isWinner={item.winner === 'b'} />
+                    {item.cells.map((cell, ci) => (
+                      <CellContent
+                        key={ci}
+                        value={cell}
+                        isWinner={item.winnerLabel === item.labels[ci]}
+                      />
+                    ))}
                   </tr>
                 ))}
               </tbody>

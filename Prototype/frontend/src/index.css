@@ -148,62 +148,43 @@ input, textarea, select { font-family: inherit; }
 .topbar-input.search { width: 200px; }
 .topbar-input.specs  { width: 200px; }
 
-/* 필요 스펙 — 입력창 + 📋 버튼을 하나의 박스로 */
-.specs-input-wrap {
-  display: flex;
-  align-items: center;
-  height: 34px;
-  background: var(--surface);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--r-md);
-  overflow: hidden;
-  transition: border-color 0.15s, box-shadow 0.15s;
-}
-.specs-input-wrap:focus-within {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-tint);
-}
-.topbar-input.specs-inner {
-  flex: 1;
-  height: 100%;
-  width: 160px;
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  padding: 0 10px;
-  font-size: 13px;
-  color: var(--text-primary);
-  outline: none;
-  box-shadow: none;
-}
-.topbar-input.specs-inner::placeholder { color: var(--text-placeholder); }
-.specs-jd-btn {
-  flex-shrink: 0;
-  width: 30px;
-  height: 100%;
-  background: none;
-  border: none;
-  border-left: 1px solid var(--border);
-  font-size: 13px;
-  line-height: 1;
-  cursor: pointer;
-  color: var(--text-muted);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.12s, color 0.12s;
-}
-.specs-jd-btn:hover,
-.specs-jd-btn.active {
-  background: var(--primary-tint);
-  color: var(--primary);
-}
+/* 인라인 아이콘 버튼이 있는 입력은 우측 패딩 확보 */
+.topbar-input-wrap .topbar-input { padding-right: 30px; }
 
 /* 검색창 라벨 래퍼 */
 .topbar-field {
   display: flex;
   flex-direction: column;
   gap: 1px;
+  position: relative;
+}
+
+/* 입력 + 인라인 아이콘 버튼 래퍼 */
+.topbar-input-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* 입력 우측 인라인 아이콘 버튼 */
+.topbar-input-icon-btn {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  color: var(--text-muted);
+  padding: 4px 6px;
+  border-radius: var(--r-xs);
+  transition: background 0.1s, color 0.1s;
+}
+.topbar-input-icon-btn:hover {
+  background: var(--hover-bg);
+  color: var(--text-primary);
 }
 .topbar-field-label {
   font-size: 10px;
@@ -984,217 +965,6 @@ input, textarea, select { font-family: inherit; }
   padding-top: 48px;
 }
 
-/* ─── 스킬 매트릭스 ──────────────────────────── */
-.matrix-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.55);
-  z-index: 300;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: fadeIn 0.15s ease;
-}
-.matrix-modal {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  width: min(92vw, 1100px);
-  max-height: 82vh;
-  display: flex;
-  flex-direction: column;
-  box-shadow: var(--shadow-4);
-  animation: modalIn 0.16s cubic-bezier(0.4,0,0.2,1);
-}
-.matrix-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 20px;
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-}
-.matrix-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text-primary);
-  letter-spacing: -0.01em;
-}
-.matrix-subtitle {
-  font-size: 12px;
-  color: var(--text-muted);
-  background: var(--sidebar-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--r-full);
-  padding: 2px 9px;
-}
-.matrix-close {
-  margin-left: auto;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 15px;
-  color: var(--text-muted);
-  padding: 3px 7px;
-  border-radius: var(--r-xs);
-  transition: background 0.1s, color 0.1s;
-}
-.matrix-close:hover { background: var(--hover-bg); color: var(--text-primary); }
-
-.matrix-body {
-  overflow: auto;
-  flex: 1;
-}
-
-/* 테이블 — 스킬이 행, 지원자가 열 */
-.matrix-table {
-  border-collapse: collapse;
-  width: max-content;
-  min-width: 100%;
-  font-size: 13px;
-}
-
-/* 헤더 행 (지원자 이름) — sticky */
-.matrix-table thead tr {
-  position: sticky;
-  top: 0;
-  z-index: 3;
-}
-.matrix-skill-header {
-  position: sticky;
-  left: 0;
-  z-index: 4;
-  background: var(--sidebar-bg);
-  border: 1px solid var(--border);
-  padding: 8px 14px;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  min-width: 140px;
-  white-space: nowrap;
-}
-.matrix-applicant-col {
-  background: var(--sidebar-bg);
-  border: 1px solid var(--border);
-  padding: 8px 6px;
-  text-align: center;
-  min-width: 72px;
-  max-width: 100px;
-}
-.matrix-applicant-name {
-  display: block;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 90px;
-}
-.matrix-count-col {
-  background: var(--sidebar-bg);
-  border: 1px solid var(--border);
-  padding: 8px 12px;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  min-width: 72px;
-  text-align: center;
-  white-space: nowrap;
-}
-
-/* 스킬 행 */
-.matrix-row:nth-child(even) .matrix-skill-cell,
-.matrix-row:nth-child(even) { background: var(--bg); }
-.matrix-row:hover .matrix-skill-cell,
-.matrix-row:hover td { background: var(--hover-bg) !important; }
-
-.matrix-skill-cell {
-  position: sticky;
-  left: 0;
-  z-index: 2;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  padding: 7px 14px;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-primary);
-  white-space: nowrap;
-  min-width: 140px;
-}
-
-/* 보유 여부 셀 */
-.matrix-cell {
-  border: 1px solid var(--border);
-  text-align: center;
-  padding: 7px 6px;
-  font-size: 14px;
-  transition: background 0.1s;
-}
-.matrix-cell.has-skill {
-  background: #DCFCE7;
-  color: #16A34A;
-  font-weight: 700;
-}
-.matrix-cell.no-skill {
-  color: var(--border-strong);
-  font-size: 10px;
-}
-body.dark .matrix-cell.has-skill { background: #14532d; color: #86EFAC; }
-body.dark .matrix-cell.no-skill  { color: #334155; }
-
-/* 보유 인원 셀 */
-.matrix-count-cell {
-  border: 1px solid var(--border);
-  text-align: center;
-  padding: 7px 12px;
-}
-.matrix-ratio-bar {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  position: relative;
-}
-.matrix-ratio-bar::before {
-  content: '';
-  display: inline-block;
-  width: 36px;
-  height: 5px;
-  border-radius: 3px;
-  background: var(--border);
-  position: relative;
-  overflow: hidden;
-}
-.matrix-ratio-bar::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: calc(36px * var(--ratio));
-  height: 5px;
-  border-radius: 3px;
-  background: var(--primary);
-  transition: width 0.3s ease;
-}
-
-/* 다크 모드 */
-body.dark .matrix-skill-header,
-body.dark .matrix-applicant-col,
-body.dark .matrix-count-col  { background: #0F172A; }
-body.dark .matrix-skill-cell  { background: #1E293B; }
-body.dark .matrix-row:nth-child(even) .matrix-skill-cell,
-body.dark .matrix-row:nth-child(even) { background: #162032; }
-body.dark .matrix-row:hover .matrix-skill-cell,
-body.dark .matrix-row:hover td { background: #273549 !important; }
-
 /* 원본 뷰어 원본/마크다운 토글 */
 .raw-view-toggle {
   display: flex;
@@ -1719,6 +1489,45 @@ body.dark .matrix-row:hover td { background: #273549 !important; }
 }
 .analyze-summary-banner .banner-close:hover { opacity: 1; }
 
+/* AI 필터 활성 배너 */
+.filter-active-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: var(--primary-tint);
+  border-bottom: 1px solid var(--primary);
+  font-size: 12.5px;
+  color: var(--primary);
+  font-weight: 500;
+  flex-wrap: wrap;
+}
+.filter-active-banner .filter-chip {
+  background: var(--surface);
+  border: 1px solid var(--primary);
+  border-radius: var(--r-full);
+  padding: 1px 9px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--primary);
+}
+.filter-active-banner .filter-count {
+  margin-left: auto;
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+.filter-active-banner .banner-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--primary);
+  opacity: 0.6;
+  padding: 0 2px;
+}
+.filter-active-banner .banner-close:hover { opacity: 1; }
+
 /* ─── 패널 메모 영역 ────────────────────────────── */
 .panel-note-section {
   margin-top: 20px;
@@ -2166,6 +1975,15 @@ body.dark .toggle-pill.on        { background: var(--primary); }
 .job-desc-header button {
   background: none; border: none; cursor: pointer; font-size: 14px; color: var(--text-muted);
 }
+.job-desc-hint {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  background: var(--primary-tint);
+  border-radius: var(--r-sm);
+  padding: 8px 10px;
+}
+.job-desc-hint b { color: var(--primary); font-weight: 600; }
 .job-desc-textarea {
   width: 100%; box-sizing: border-box; resize: vertical;
   padding: 8px; border: 1px solid var(--border); border-radius: 6px;

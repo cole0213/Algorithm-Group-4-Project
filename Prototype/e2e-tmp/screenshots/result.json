@@ -1,0 +1,19 @@
+{
+  "specsBefore": "React, Python, Docker",
+  "specsAfter": "Python, FastAPI, PostgreSQL, AWS, Kubernetes, gRPC",
+  "sectionsBefore": [
+    "기본 정보",
+    "기술 스택",
+    "자기소개",
+    "프로젝트",
+    "수상 및 활동"
+  ],
+  "sectionsAfter": [
+    "기본 정보",
+    "기술 스택",
+    "프로젝트"
+  ],
+  "toast": "AI 설정 적용: 스펙 6개 · 섹션 3개 · 프로젝트 가중치 35%",
+  "issues": [],
+  "pass": true
+}

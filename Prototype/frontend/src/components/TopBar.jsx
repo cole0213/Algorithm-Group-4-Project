@@ -1,9 +1,10 @@
 import { useRef, useState, useEffect } from 'react';
-import { exportPortfolios, importPortfolios, extractSpecs } from '../api';
+import { exportPortfolios, importPortfolios, extractConfig } from '../api';
 
 export default function TopBar({
   onSearch, requiredSpecs, onSpecsChange, onAnalyze,
   sortKey, onSortChange, onSettingsClick, onUploadClick, onFolderClick, onImported, onMatrixClick,
+  onApplyConfig,
 }) {
   const searchTimer = useRef(null);
   const importRef = useRef(null);
@@ -72,8 +73,12 @@ export default function TopBar({
     if (!jobDescText.trim()) return;
     setExtracting(true);
     try {
-      const { specs_text } = await extractSpecs(jobDescText);
-      onSpecsChange(specs_text);
+      const cfg = await extractConfig(jobDescText);
+      if (onApplyConfig) {
+        onApplyConfig(cfg);
+      } else {
+        onSpecsChange(cfg.specs_text);
+      }
       setJobDescOpen(false);
       setJobDescText('');
     } catch (e) {
@@ -95,16 +100,29 @@ export default function TopBar({
       {/* 지원자 검색 */}
       <div className="topbar-field topbar-field-search">
         <span className="topbar-field-label">지원자 검색</span>
-        <input
-          className="topbar-input search"
-          type="text"
-          placeholder="🔍  이름 · 기술 · 키워드"
-          onChange={handleSearchInput}
-          onFocus={() => setHistoryOpen(true)}
-          onBlur={() => setTimeout(() => setHistoryOpen(false), 150)}
-        />
+        <div className="topbar-input-wrap">
+          <input
+            ref={searchRef}
+            className="topbar-input search"
+            type="text"
+            placeholder="이름 · 기술 · 키워드"
+            onChange={handleSearchInput}
+            onFocus={() => setHistoryOpen(true)}
+            onBlur={() => setTimeout(() => setHistoryOpen(false), 150)}
+          />
+          <button
+            className="topbar-input-icon-btn"
+            title="검색 히스토리"
+            tabIndex={-1}
+            onMouseDown={(e) => {
+              e.preventDefault();
+              searchRef.current?.focus();
+              setHistoryOpen(v => !v);
+            }}
+          >🔍</button>
+        </div>
         {historyOpen && searchHistory.length > 0 && (
-          <div className="search-history-dropdown" ref={searchRef}>
+          <div className="search-history-dropdown">
             {searchHistory.map((h, i) => (
               <div
                 key={i}
@@ -136,11 +154,11 @@ export default function TopBar({
       <div className="topbar-divider" />
 
       {/* 필요 스펙 입력 */}
-      <div className="topbar-field" style={{ position: 'relative' }}>
+      <div className="topbar-field topbar-field-specs">
         <span className="topbar-field-label">필요 스펙</span>
-        <div className="specs-input-wrap">
+        <div className="topbar-input-wrap">
           <input
-            className="topbar-input specs-inner"
+            className="topbar-input specs"
             type="text"
             placeholder="React, Python, Docker"
             value={requiredSpecs}
@@ -148,30 +166,35 @@ export default function TopBar({
             onKeyDown={handleKeyDown}
           />
           <button
-            className={`specs-jd-btn${jobDescOpen ? ' active' : ''}`}
-            title="채용 공고에서 스펙 자동 추출"
+            className="topbar-input-icon-btn"
+            title="AI 설정 자동 생성 — 채용 요구사항 + 보고싶은 항목 자연어 입력"
+            tabIndex={-1}
             onClick={() => setJobDescOpen(v => !v)}
           >📋</button>
         </div>
         {jobDescOpen && (
           <div className="job-desc-popup">
             <div className="job-desc-header">
-              <span>채용 공고 텍스트 붙여넣기</span>
+              <span>AI 설정 자동 생성</span>
               <button onClick={() => setJobDescOpen(false)}>✕</button>
+            </div>
+            <div className="job-desc-hint">
+              채용 요구사항 + 포트폴리오에서 보고 싶은 항목을 자연어로 입력하세요.
+              <br />Solar LLM이 <b>필요 스펙·표시 섹션·가중치</b>를 자동 세팅합니다.
             </div>
             <textarea
               className="job-desc-textarea"
-              placeholder="채용 공고 내용을 붙여넣으세요..."
+              placeholder={"예) 백엔드 채용. Python·FastAPI 필수, AWS·Kubernetes 우대.\n경력·기술·프로젝트만 보고 싶고 자기소개나 수상은 빼줘. 프로젝트 비중 크게."}
               value={jobDescText}
               onChange={e => setJobDescText(e.target.value)}
-              rows={6}
+              rows={7}
             />
             <button
               className="job-desc-extract-btn"
               onClick={handleExtract}
               disabled={extracting || !jobDescText.trim()}
             >
-              {extracting ? '추출 중...' : '🔍 스펙 자동 추출'}
+              {extracting ? '추출 중...' : '✨ AI 설정 자동 적용'}
             </button>
           </div>
         )}
@@ -214,10 +237,10 @@ export default function TopBar({
         )}
       </div>
 
-      {/* 스킬 매트릭스 */}
+      {/* 스킬 매트릭스 CSV 내보내기 */}
       <button
         className="topbar-icon-btn"
-        title="스킬 매트릭스 — 지원자 × 스킬 격자 보기"
+        title="스킬 매트릭스 CSV 내보내기 — 지원자 × 스킬 격자를 CSV 파일로 다운로드"
         onClick={onMatrixClick}
       >
         ⊞

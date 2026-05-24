@@ -125,11 +125,26 @@ export async function extractSpecs(text) {
   return res.json();
 }
 
-export async function diffPortfolios(idA, idB) {
+export async function extractConfig(text) {
+  const res = await fetch(`${BASE}/extract-config`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text }),
+  });
+  if (!res.ok) {
+    const body = await res.text();
+    let detail = '설정 추출 실패';
+    try { detail = JSON.parse(body).detail || detail; } catch {}
+    throw new Error(detail);
+  }
+  return res.json();
+}
+
+export async function diffPortfolios(ids) {
   const res = await fetch(`${BASE}/diff`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ id_a: idA, id_b: idB }),
+    body: JSON.stringify({ ids }),
   });
   if (!res.ok) throw new Error((await res.json()).detail || 'diff 실패');
   return res.json();

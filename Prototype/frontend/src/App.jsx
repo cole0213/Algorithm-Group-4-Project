@@ -7,7 +7,6 @@ import SettingsDrawer from './components/SettingsDrawer';
 import UploadModal from './components/UploadModal';
 import FolderUploadModal from './components/FolderUploadModal';
 import Toaster, { useToast } from './components/Toaster';
-import SkillMatrix from './components/SkillMatrix';
 import DiffModal from './components/DiffModal';
 
 const DEFAULT_SPECS = 'React, Python, Docker';
@@ -36,12 +35,18 @@ export default function App() {
   const [folderOpen, setFolderOpen]     = useState(false);
   const [analyzeBanner, setAnalyzeBanner] = useState(null); // null | { total, high }
   const [scrollPos, setScrollPos]       = useState({}); // { [portfolioId]: scrollTop }
-  const [showMatrix, setShowMatrix]     = useState(false);
   const [showDiff, setShowDiff]         = useState(false);
-  const [diffIds, setDiffIds]           = useState([null, null]);
+  const [diffIds, setDiffIds]           = useState([]);  // 2~4명 ID 배열
 
   const [analyzing, setAnalyzing]       = useState(false);
   const [weights, setWeights]           = useState({ skill: 60, career: 25, project: 15 });
+
+  const ALL_SECTIONS = ['info', 'skills', 'intro', 'projects', 'awards', 'links'];
+  const [visibleSections, setVisibleSections] = useState(ALL_SECTIONS);
+
+  // AI 자동 설정으로 들어온 필터 (지원자 사이드바 필터링용)
+  // null이거나 모든 필드 없으면 비활성. 활성 시 visibleApplicants에서 제외.
+  const [extractedFilter, setExtractedFilter] = useState(null);
 
   const [settings, setSettings]         = useState({
     highlight:   true,
@@ -211,9 +216,103 @@ export default function App() {
     setSettings(prev => ({ ...prev, [key]: !prev[key] }));
   }, []);
 
-  const visibleApplicants = visibleIds
-    ? applicants.filter(a => visibleIds.has(a.id))
-    : applicants;
+  // ── 스킬 매트릭스 CSV 내보내기 ──────────────────
+  // 지원자 × 스킬 격자를 CSV 파일로 다운로드
+  const exportSkillMatrixCsv = useCallback(() => {
+    if (!applicants.length) {
+      toast('내보낼 지원자가 없습니다', 'error');
+      return;
+    }
+    // 모든 스킬 — 빈도 내림차순
+    const allSkills = [...new Set(applicants.flatMap(a => a.skills || []))]
+      .sort((a, b) =>
+        applicants.filter(ap => (ap.skills || []).includes(b)).length
+        - applicants.filter(ap => (ap.skills || []).includes(a)).length
+      );
+
+    const ok = window.confirm(
+      `스킬 매트릭스를 CSV로 다운로드합니다.\n\n` +
+      `· 지원자: ${applicants.length}명\n` +
+      `· 스킬: ${allSkills.length}개\n` +
+      `· 파일명: skill-matrix_${new Date().toISOString().slice(0, 10)}.csv\n\n` +
+      `진행할까요?`
+    );
+    if (!ok) return;
+
+    const esc = (v) => {
+      const s = String(v ?? '');
+      return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    };
+    const header = ['지원자', '경력(년)', '스킬수', ...allSkills].map(esc).join(',');
+    const rows = applicants.map(a => {
+      const skillSet = new Set(a.skills || []);
+      const cells = [
+        a.name || '',
+        a.career_years ?? 0,
+        (a.skills || []).length,
+        ...allSkills.map(s => skillSet.has(s) ? '1' : ''),
+      ];
+      return cells.map(esc).join(',');
+    });
+    // UTF-8 BOM — Excel에서 한글 깨짐 방지
+    const csv = '﻿' + [header, ...rows].join('\r\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const today = new Date().toISOString().slice(0, 10);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `skill-matrix_${today}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    toast(`스킬 매트릭스 CSV 내보냄 — ${applicants.length}명 × ${allSkills.length}개 스킬`, 'success');
+  }, [applicants, toast]);
+
+  // ── AI 자동 설정 적용 ────────────────────────────
+  // /api/extract-config 결과를 한 번에 반영하고 재분석 트리거
+  const applyExtractedConfig = useCallback((cfg) => {
+    // 입력에 기술 키워드가 없으면 기존 스펙 유지 (사용자가 비기술 조건만 추가한 의도 보존)
+    const specs = cfg.specs_text || requiredSpecs;
+    const w = cfg.weights || weights;
+    const sections = (cfg.visible_sections?.length ? cfg.visible_sections : ALL_SECTIONS);
+    setRequiredSpecs(specs);
+    setWeights(w);
+    setVisibleSections(sections);
+
+    // 필터 활성화 — 셋 중 하나라도 있으면 활성
+    const filter = {
+      min_career_years: cfg.min_career_years ?? null,
+      education_keywords: cfg.education_keywords || [],
+      position: cfg.position || null,
+    };
+    const filterActive = filter.min_career_years !== null
+      || filter.education_keywords.length > 0
+      || !!filter.position;
+    setExtractedFilter(filterActive ? filter : null);
+
+    // weights/sections이 바뀌면 매칭 점수도 다시 계산해야 함 (스펙이 비어있어도)
+    if (specs.trim()) runAnalyze(specs, sortKey, w);
+  }, [weights, sortKey, runAnalyze, requiredSpecs]);
+
+  // 1차: 검색 필터(visibleIds)
+  // 2차: AI 자동 설정 필터(extractedFilter — 경력/학력/직군)
+  const visibleApplicants = (() => {
+    let list = visibleIds ? applicants.filter(a => visibleIds.has(a.id)) : applicants;
+    if (extractedFilter) {
+      const { min_career_years, education_keywords, position } = extractedFilter;
+      list = list.filter(a => {
+        if (min_career_years !== null && (a.career_years ?? 0) < min_career_years) return false;
+        if (education_keywords?.length) {
+          const edu = (a.education || '').toLowerCase();
+          if (!education_keywords.some(k => edu.includes(k.toLowerCase()))) return false;
+        }
+        if (position && a._position && a._position !== 'general' && a._position !== position) return false;
+        return true;
+      });
+    }
+    return list;
+  })();
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
@@ -228,12 +327,41 @@ export default function App() {
         onUploadClick={() => setUploadOpen(true)}
         onFolderClick={() => setFolderOpen(true)}
         onImported={(msg) => { runAnalyze(); toast(msg || '불러오기 완료', 'success'); }}
-        onMatrixClick={() => setShowMatrix(true)}
+        onMatrixClick={exportSkillMatrixCsv}
+        onApplyConfig={(cfg) => {
+          applyExtractedConfig(cfg);
+          const parts = [];
+          if (cfg.specs?.length) parts.push(`스펙 ${cfg.specs.length}개`);
+          if (cfg.visible_sections?.length && cfg.visible_sections.length < 6) parts.push(`섹션 ${cfg.visible_sections.length}개`);
+          if (cfg.min_career_years !== null && cfg.min_career_years !== undefined) parts.push(`경력 ${cfg.min_career_years}년↑`);
+          if (cfg.education_keywords?.length) parts.push(`학력 ${cfg.education_keywords.join('·')}`);
+          if (cfg.position) parts.push(`직군 ${cfg.position}`);
+          const summary = parts.length ? parts.join(' · ') : '기본값 유지';
+          toast(`AI 설정 적용: ${summary}`, 'success');
+        }}
       />
       {analyzeBanner && (
         <div className="analyze-summary-banner">
           <span>📊 분석 완료 — 총 {analyzeBanner.total}명 중 {analyzeBanner.high}명이 70% 이상 매칭</span>
           <button className="banner-close" onClick={() => setAnalyzeBanner(null)}>✕</button>
+        </div>
+      )}
+      {extractedFilter && (
+        <div className="filter-active-banner">
+          <span>🎯 AI 필터 활성</span>
+          {extractedFilter.min_career_years !== null && (
+            <span className="filter-chip">경력 {extractedFilter.min_career_years}년↑</span>
+          )}
+          {extractedFilter.education_keywords?.length > 0 && (
+            <span className="filter-chip">학력 {extractedFilter.education_keywords.join('·')}</span>
+          )}
+          {extractedFilter.position && (
+            <span className="filter-chip">직군 {extractedFilter.position}</span>
+          )}
+          <span className="filter-count">
+            {visibleApplicants.length} / {applicants.length}명 표시
+          </span>
+          <button className="banner-close" onClick={() => setExtractedFilter(null)} title="필터 해제">✕</button>
         </div>
       )}
       <div className="main-layout">
@@ -252,7 +380,7 @@ export default function App() {
           selectedIds={selectedIds}
           onClose={toggleSelected}
           similarMap={similarMap}
-          settings={settings}
+          settings={{ ...settings, visibleSections }}
           searchQuery={searchQuery}
           visibleIds={visibleIds}
           onSyncToggle={() => toggleSetting('syncScroll')}
@@ -260,7 +388,7 @@ export default function App() {
           onUploadClick={() => setUploadOpen(true)}
           scrollPos={scrollPos}
           onScrollSave={handleScrollSave}
-          onDiffClick={(idA, idB) => { setDiffIds([idA, idB]); setShowDiff(true); }}
+          onDiffClick={(ids) => { setDiffIds(ids); setShowDiff(true); }}
         />
       </div>
       {drawerOpen && (
@@ -313,16 +441,9 @@ export default function App() {
           }}
         />
       )}
-      {showMatrix && (
-        <SkillMatrix
-          applicants={applicants}
-          onClose={() => setShowMatrix(false)}
-        />
-      )}
-      {showDiff && diffIds[0] && diffIds[1] && (
+      {showDiff && diffIds.length >= 2 && (
         <DiffModal
-          applicantA={applicants.find(a => a.id === diffIds[0])}
-          applicantB={applicants.find(a => a.id === diffIds[1])}
+          applicants={diffIds.map(id => applicants.find(a => a.id === id)).filter(Boolean)}
           onClose={() => setShowDiff(false)}
         />
       )}

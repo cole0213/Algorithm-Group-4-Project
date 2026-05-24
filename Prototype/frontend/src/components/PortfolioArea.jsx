@@ -53,13 +53,13 @@ export default function PortfolioArea({
           <div className={`toggle-pill ${settings.syncScroll ? 'on' : ''}`} />
         </div>
         <div className="toolbar-right">
-          {selectedIds.length === 2 && onDiffClick && (
+          {selectedIds.length >= 2 && selectedIds.length <= 4 && onDiffClick && (
             <button
               className="diff-trigger-btn"
-              title="두 지원자 항목별 비교 분석"
-              onClick={() => onDiffClick(selectedIds[0], selectedIds[1])}
+              title={`${selectedIds.length}명 항목별 비교 분석`}
+              onClick={() => onDiffClick(selectedIds)}
             >
-              ⇄ 비교
+              ⇄ {selectedIds.length}명 비교
             </button>
           )}
           {selectedIds.length > 0 && (
