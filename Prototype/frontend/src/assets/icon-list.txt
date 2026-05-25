@@ -1,0 +1,29 @@
+# 아이콘 이미지 목록
+# 이 파일에 명시된 이름으로 아이콘 이미지를 저장하세요.
+# 저장 형식: SVG 또는 PNG (24x24 권장)
+
+## 버튼 아이콘
+search.svg        - 검색 버튼 (돋보기 아이콘)
+history.svg       - 검색 히스토리 버튼 (시계 아이콘)
+settings.svg      - 설정 버튼 (톱니바퀴 아이콘)
+upload-file.svg   - 단일 파일 추가 (문서 아이콘)
+upload-folder.svg - 폴더 추가 (폴더 아이콘)
+export.svg        - 내보내기 (아래 화살표 아이콘)
+import.svg        - 불러오기 (위 화살표 아이콘)
+matrix.svg        - 스킬 매트릭스 (격자 아이콘)
+analyze.svg       - 전체 재분석 (새로고침/분석 아이콘)
+ai-magic.svg      - AI 설정 자동 생성 (반짝이/마법봉 아이콘)
+
+## 링크 로고
+github-logo.svg   - GitHub 로고
+notion-logo.svg   - Notion 로고
+linkedin-logo.svg - LinkedIn 로고
+youtube-logo.svg  - YouTube 로고
+figma-logo.svg    - Figma 로고
+
+## 패널 아이콘
+fullscreen.svg    - 전체화면 (확장 아이콘)
+fullscreen-exit.svg - 전체화면 해제 (축소 아이콘)
+eye-show.svg      - 표시 (눈 아이콘)
+eye-hide.svg      - 숨기기 (눈에 선 그어진 아이콘)
+close.svg         - 닫기 (X 아이콘)
