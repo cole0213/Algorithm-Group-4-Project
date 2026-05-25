@@ -6,6 +6,7 @@
 from __future__ import annotations
 from .alias_map import ALIAS_MAP, normalize, get_aliases
 from .edit_distance import edit_distance
+from ._common import merge_ranges
 
 # 오타 허용 임계값 (이하이면 매칭)
 _TYPO_THRESHOLD = 2
@@ -89,15 +90,7 @@ def highlight_positions(text: str, query: str) -> list[tuple[int, int]]:
             start = idx + 1
 
     # 겹치는 구간 병합
-    positions.sort()
-    merged: list[tuple[int, int]] = []
-    for s, e in positions:
-        if merged and s <= merged[-1][1]:
-            merged[-1] = (merged[-1][0], max(merged[-1][1], e))
-        else:
-            merged.append((s, e))
-
-    return merged
+    return merge_ranges(positions)
 
 
 def _portfolio_text(portfolio: dict) -> str:

@@ -1,10 +1,10 @@
 import { useRef, useState, useEffect } from 'react';
-import { exportPortfolios, importPortfolios, extractConfig } from '../api';
+import { importPortfolios } from '../api';
 
 export default function TopBar({
   onSearch, requiredSpecs, onSpecsChange, onAnalyze,
   sortKey, onSortChange, onSettingsClick, onUploadClick, onFolderClick, onImported, onMatrixClick,
-  onApplyConfig,
+  onApplyConfig, onGoHome, onExportClick, hasLegacy, onJobConfigClick,
 }) {
   const searchTimer = useRef(null);
   const importRef = useRef(null);
@@ -23,9 +23,6 @@ export default function TopBar({
   }, [addMenuOpen]);
 
   const [historyOpen, setHistoryOpen] = useState(false);
-  const [jobDescOpen, setJobDescOpen] = useState(false);
-  const [jobDescText, setJobDescText] = useState('');
-  const [extracting, setExtracting] = useState(false);
   const [importDialogFile, setImportDialogFile] = useState(null);
   const [searchHistory, setSearchHistory] = useState(() => {
     try { return JSON.parse(localStorage.getItem('search-history')) || []; }
@@ -54,7 +51,7 @@ export default function TopBar({
     setImportDialogFile(null);
     try {
       const result = await importPortfolios(file, mode);
-      onImported?.(result.message);
+      onImported?.(result);
     } catch (err) {
       alert(err.message);
     }
@@ -69,31 +66,15 @@ export default function TopBar({
     }, 300);
   }
 
-  async function handleExtract() {
-    if (!jobDescText.trim()) return;
-    setExtracting(true);
-    try {
-      const cfg = await extractConfig(jobDescText);
-      if (onApplyConfig) {
-        onApplyConfig(cfg);
-      } else {
-        onSpecsChange(cfg.specs_text);
-      }
-      setJobDescOpen(false);
-      setJobDescText('');
-    } catch (e) {
-      alert('추출 실패: ' + e.message);
-    } finally {
-      setExtracting(false);
-    }
-  }
-
   function handleKeyDown(e) {
     if (e.key === 'Enter') onAnalyze();
   }
 
   return (
     <div className="topbar">
+      {onGoHome && (
+        <button className="topbar-btn" style={{ marginRight: 4 }} onClick={onGoHome} title="홈으로">← 홈</button>
+      )}
       <span className="topbar-title">Portfolio Reviewer</span>
       <div className="topbar-divider" />
 
@@ -119,7 +100,7 @@ export default function TopBar({
               searchRef.current?.focus();
               setHistoryOpen(v => !v);
             }}
-          >🔍</button>
+          ><span className="icon-btn-img search-icon" /></button>
         </div>
         {historyOpen && searchHistory.length > 0 && (
           <div className="search-history-dropdown">
@@ -167,40 +148,25 @@ export default function TopBar({
           />
           <button
             className="topbar-input-icon-btn"
-            title="AI 설정 자동 생성 — 채용 요구사항 + 보고싶은 항목 자연어 입력"
+            title="채용 설정 — AI 자동 추출·가중치·표시 섹션·필터를 한 곳에서 편집"
             tabIndex={-1}
-            onClick={() => setJobDescOpen(v => !v)}
-          >📋</button>
+            onClick={onJobConfigClick}
+          ><span className="icon-btn-img ai-icon" /></button>
         </div>
-        {jobDescOpen && (
-          <div className="job-desc-popup">
-            <div className="job-desc-header">
-              <span>AI 설정 자동 생성</span>
-              <button onClick={() => setJobDescOpen(false)}>✕</button>
-            </div>
-            <div className="job-desc-hint">
-              채용 요구사항 + 포트폴리오에서 보고 싶은 항목을 자연어로 입력하세요.
-              <br />Solar LLM이 <b>필요 스펙·표시 섹션·가중치</b>를 자동 세팅합니다.
-            </div>
-            <textarea
-              className="job-desc-textarea"
-              placeholder={"예) 백엔드 채용. Python·FastAPI 필수, AWS·Kubernetes 우대.\n경력·기술·프로젝트만 보고 싶고 자기소개나 수상은 빼줘. 프로젝트 비중 크게."}
-              value={jobDescText}
-              onChange={e => setJobDescText(e.target.value)}
-              rows={7}
-            />
-            <button
-              className="job-desc-extract-btn"
-              onClick={handleExtract}
-              disabled={extracting || !jobDescText.trim()}
-            >
-              {extracting ? '추출 중...' : '✨ AI 설정 자동 적용'}
-            </button>
-          </div>
-        )}
       </div>
-      <button className="topbar-btn primary" onClick={onAnalyze}>
-        분석
+      <button
+        className="topbar-btn"
+        onClick={onJobConfigClick}
+        title="채용 설정 통합 모달 열기"
+      >
+        채용 설정 ⚙
+      </button>
+      <button
+        className={`topbar-btn ${hasLegacy ? 'primary active-reanalyze' : ''}`}
+        onClick={onAnalyze}
+        title="채용 설정 기준으로 모든 지원자 포트폴리오를 재분석합니다"
+      >
+        전체 재분석
       </button>
 
       {/* 정렬 */}
@@ -243,11 +209,11 @@ export default function TopBar({
         title="스킬 매트릭스 CSV 내보내기 — 지원자 × 스킬 격자를 CSV 파일로 다운로드"
         onClick={onMatrixClick}
       >
-        ⊞
+        <span className="icon-btn-img matrix-icon" />
       </button>
 
       {/* 내보내기 */}
-      <button className="topbar-icon-btn" title="내보내기 (JSON)" onClick={exportPortfolios}>⬇</button>
+      <button className="topbar-icon-btn" title="내보내기 (JSON)" onClick={onExportClick}><span className="icon-btn-img export-icon" /></button>
 
       {/* 불러오기 */}
       <input
@@ -257,10 +223,10 @@ export default function TopBar({
         style={{ display: 'none' }}
         onChange={handleImport}
       />
-      <button className="topbar-icon-btn" title="불러오기 (JSON)" onClick={() => importRef.current?.click()}>⬆</button>
+      <button className="topbar-icon-btn" title="불러오기 (JSON)" onClick={() => importRef.current?.click()}><span className="icon-btn-img import-icon" /></button>
 
       {/* 설정 */}
-      <button className="topbar-btn" style={{ marginLeft: 'auto' }} onClick={onSettingsClick}>⚙ 설정</button>
+      <button className="topbar-btn" style={{ marginLeft: 'auto' }} onClick={onSettingsClick}><span className="icon-btn-img settings-icon" /> 설정</button>
 
       {/* 불러오기 확인 다이얼로그 */}
       {importDialogFile && (

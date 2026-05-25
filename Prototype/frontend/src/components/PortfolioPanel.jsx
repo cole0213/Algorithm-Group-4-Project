@@ -1,7 +1,11 @@
 import { forwardRef, useState, useRef, useEffect, cloneElement } from 'react';
-import { fetchRaw, searchPortfolios, reanalyzePortfolio } from '../api';
-
-const ACCENT_COLORS = ['#7C3AED','#EA580C','#2DC653','#DC2626','#0284C7','#65A30D'];
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import remarkBreaks from 'remark-breaks';
+import { fetchRaw, searchPortfolios } from '../api';
+import { ACCENT_COLORS, STORAGE_KEYS } from '../constants';
+import { matchClass } from '../utils';
+import Timeline from './Timeline';
 
 function escapeRegex(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -21,13 +25,6 @@ function linkify(text) {
     urlRe.lastIndex = 0;
     return part;
   });
-}
-
-function matchClass(pct) {
-  if (pct === 0)  return 'match-none';
-  if (pct >= 70)  return 'match-high';
-  if (pct >= 40)  return 'match-mid';
-  return 'match-low';
 }
 
 // 유사 문장 하이라이트
@@ -66,94 +63,53 @@ function applySimilarHighlight(text, spans, enabled, hide) {
   });
 }
 
-// 코드블럭(```) 포함 마크다운 파싱
-function parseMarkdownWithCodeBlock(text) {
-  if (!text || typeof text !== 'string') return text;
-  const codeBlockRe = /```(\w*)\n?([\s\S]*?)```/g;
-  const parts = [];
-  let last = 0, m;
-  while ((m = codeBlockRe.exec(text)) !== null) {
-    if (m.index > last) parts.push(<span key={last}>{parseInlineMarkdown(text.slice(last, m.index))}</span>);
-    parts.push(
-      <pre key={m.index} className="md-code-block">
-        <code>{m[2]}</code>
-      </pre>
-    );
-    last = m.index + m[0].length;
-  }
-  if (last < text.length) parts.push(<span key={last}>{parseInlineMarkdown(text.slice(last))}</span>);
-  return parts.length > 1 ? parts : parseInlineMarkdown(text);
-}
+// 원본 뷰어용 마크다운 렌더러 — react-markdown + remark-gfm + remark-breaks
+// 단일 \n도 줄바꿈으로 처리(remark-breaks). GFM 표·체크박스·취소선 지원(remark-gfm).
+const MD_COMPONENTS = {
+  h1: ({ node, ...p }) => <h1 className="raw-md-h1" {...p} />,
+  h2: ({ node, ...p }) => <h2 className="raw-md-h2" {...p} />,
+  h3: ({ node, ...p }) => <h3 className="raw-md-h3" {...p} />,
+  p:  ({ node, ...p }) => <p className="raw-md-p" {...p} />,
+  ul: ({ node, ...p }) => <ul className="raw-md-list" {...p} />,
+  ol: ({ node, ...p }) => <ol className="raw-md-list" {...p} />,
+  blockquote: ({ node, ...p }) => <blockquote className="raw-md-blockquote" {...p} />,
+  hr: ({ node, ...p }) => <hr className="raw-md-hr" {...p} />,
+  code: ({ inline, className, children, ...rest }) =>
+    inline
+      ? <code className="raw-md-code" {...rest}>{children}</code>
+      : <pre className="md-code-block"><code className={className} {...rest}>{children}</code></pre>,
+  table: ({ node, ...p }) => <table className="raw-md-table" {...p} />,
+  a: ({ node, ...p }) => <a target="_blank" rel="noopener noreferrer" className="portfolio-link" {...p} />,
+};
 
-// 마크다운 인라인 파싱: **bold**, *italic*, `code`
-function parseInlineMarkdown(text) {
-  if (!text || typeof text !== 'string') return text;
-  const re = /(\*\*(.+?)\*\*|\*(.+?)\*|`(.+?)`)/g;
-  const parts = [];
-  let last = 0, m;
-  while ((m = re.exec(text)) !== null) {
-    if (m.index > last) parts.push(text.slice(last, m.index));
-    if (m[0].startsWith('**')) parts.push(<strong key={m.index}>{m[2]}</strong>);
-    else if (m[0].startsWith('*')) parts.push(<em key={m.index}>{m[3]}</em>);
-    else parts.push(<code key={m.index} className="md-inline-code">{m[4]}</code>);
-    last = m.index + m[0].length;
-  }
-  if (last < text.length) parts.push(text.slice(last));
-  return parts.length > 1 ? parts : text;
-}
-
-// 원본 뷰어용 마크다운 렌더러
 function renderMarkdown(text) {
   if (!text) return <p className="raw-empty">내용이 없습니다.</p>;
+  return (
+    <ReactMarkdown
+      remarkPlugins={[remarkGfm, remarkBreaks]}
+      components={MD_COMPONENTS}
+    >
+      {text}
+    </ReactMarkdown>
+  );
+}
 
-  const inlineRender = (str) => {
-    const re = /(\*\*(.+?)\*\*|\*(.+?)\*|`(.+?)`)/g;
-    const parts = [];
-    let last = 0, m;
-    while ((m = re.exec(str)) !== null) {
-      if (m.index > last) parts.push(str.slice(last, m.index));
-      if (m[0].startsWith('**')) parts.push(<strong key={m.index}>{m[2]}</strong>);
-      else if (m[0].startsWith('*')) parts.push(<em key={m.index}>{m[3]}</em>);
-      else parts.push(<code key={m.index} className="raw-md-code">{m[4]}</code>);
-      last = m.index + m[0].length;
-    }
-    if (last < str.length) parts.push(str.slice(last));
-    return parts.length > 0 ? parts : str;
-  };
+// 인라인 마크다운 — <p> 래핑 제거 (li 내부 등에서 사용)
+const MD_COMPONENTS_INLINE = {
+  ...MD_COMPONENTS,
+  p: ({ children }) => <>{children}</>,
+};
 
-  const lines = text.split('\n');
-  const result = [];
-  let listBuf = [];
-  let listOrdered = false;
-
-  const flushList = () => {
-    if (!listBuf.length) return;
-    const Tag = listOrdered ? 'ol' : 'ul';
-    result.push(<Tag key={`list-${result.length}`} className="raw-md-list">{listBuf}</Tag>);
-    listBuf = [];
-  };
-
-  lines.forEach((line, i) => {
-    if (/^### /.test(line))      { flushList(); result.push(<h3 key={i} className="raw-md-h3">{inlineRender(line.slice(4))}</h3>); }
-    else if (/^## /.test(line))  { flushList(); result.push(<h2 key={i} className="raw-md-h2">{inlineRender(line.slice(3))}</h2>); }
-    else if (/^# /.test(line))   { flushList(); result.push(<h1 key={i} className="raw-md-h1">{inlineRender(line.slice(2))}</h1>); }
-    else if (/^[-*] /.test(line)) {
-      if (listBuf.length && listOrdered) flushList();
-      listOrdered = false;
-      listBuf.push(<li key={i}>{inlineRender(line.slice(2))}</li>);
-    }
-    else if (/^\d+\. /.test(line)) {
-      if (listBuf.length && !listOrdered) flushList();
-      listOrdered = true;
-      listBuf.push(<li key={i}>{inlineRender(line.replace(/^\d+\. /, ''))}</li>);
-    }
-    else if (/^> /.test(line))   { flushList(); result.push(<blockquote key={i} className="raw-md-blockquote">{inlineRender(line.slice(2))}</blockquote>); }
-    else if (/^---+$/.test(line.trim())) { flushList(); result.push(<hr key={i} className="raw-md-hr" />); }
-    else if (line.trim() === '')  { flushList(); }
-    else                          { flushList(); result.push(<p key={i} className="raw-md-p">{inlineRender(line)}</p>); }
-  });
-  flushList();
-  return result;
+function renderMarkdownInline(text) {
+  if (!text) return null;
+  return (
+    <ReactMarkdown
+      remarkPlugins={[remarkGfm, remarkBreaks]}
+      components={MD_COMPONENTS_INLINE}
+    >
+      {text}
+    </ReactMarkdown>
+  );
 }
 
 // 검색어 하이라이트
@@ -167,14 +123,13 @@ function applySearchHighlight(text, query, className = 'search-highlight') {
   );
 }
 
-const NOTES_KEY = 'portfolio-reviewer-notes';
 function loadNotes() {
-  try { return JSON.parse(localStorage.getItem(NOTES_KEY)) || {}; }
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.NOTES)) || {}; }
   catch { return {}; }
 }
 
 const PortfolioPanel = forwardRef(function PortfolioPanel(
-  { applicant, accentIdx, onClose, similarSpans, settings, searchQuery, onReanalyze, isFiltered, blind, initialScrollTop, onScrollChange },
+  { applicant, accentIdx, onClose, similarSpans, settings, searchQuery, onReanalyze, onSummarize, isFiltered, blind, blindAliases, initialScrollTop, onScrollChange },
   ref
 ) {
   const a = applicant;
@@ -191,7 +146,7 @@ const PortfolioPanel = forwardRef(function PortfolioPanel(
       const next = { ...prev, [a.id]: val };
       clearTimeout(noteTimer.current);
       noteTimer.current = setTimeout(() => {
-        try { localStorage.setItem(NOTES_KEY, JSON.stringify(next)); } catch {}
+        try { localStorage.setItem(STORAGE_KEYS.NOTES, JSON.stringify(next)); } catch {}
       }, 400);
       return next;
     });
@@ -199,10 +154,14 @@ const PortfolioPanel = forwardRef(function PortfolioPanel(
 
   // 원본 뷰어 상태
   const [rawState, setRawState] = useState(null);
-  const [rawViewMode, setRawViewMode] = useState('raw'); // 'raw' | 'md'
+  const [rawViewMode, setRawViewMode] = useState('md'); // 'raw' | 'md'
 
   // Solar AI 재분석 상태
   const [reanalyzeState, setReanalyzeState] = useState(null); // null | 'loading' | 'done' | 'error'
+
+  // 채용 기준 요약 상태
+  const [summaryState, setSummaryState] = useState(null); // null | 'loading' | 'done' | 'error'
+  const [summaryOpen, setSummaryOpen] = useState(false);
 
   // 패널 내 검색 (intra)
   const [intraQuery, setIntraQuery] = useState('');
@@ -323,6 +282,23 @@ const PortfolioPanel = forwardRef(function PortfolioPanel(
     }
   }
 
+  async function handleSummarize() {
+    setSummaryState('loading');
+    try {
+      await onSummarize?.(a.id);
+      setSummaryState('done');
+      setSummaryOpen(true);
+      setTimeout(() => setSummaryState(null), 2500);
+    } catch (e) {
+      setSummaryState('error');
+      alert(`요약 실패: ${e.message}`);
+      setTimeout(() => setSummaryState(null), 2000);
+    }
+  }
+
+  const isSummaryLegacy = a._summary && a._summary_config_version && a._config_version
+    && a._summary_config_version !== a._config_version;
+
   // 텍스트 렌더링: 유사 문장 → 전역 검색어 → intra 검색어 순으로 적용
   // applySimilarHighlight가 JSX 배열을 반환해도 각 string 파트에 재귀 적용
   function applyQueryHighlights(node, sq, ia) {
@@ -346,42 +322,17 @@ const PortfolioPanel = forwardRef(function PortfolioPanel(
   function renderText(text) {
     const withSimilar = applySimilarHighlight(text, similarSpans, settings.similar, effectiveHide);
     const withHighlights = applyQueryHighlights(withSimilar, searchQuery, intraActive);
-    // 하이라이트 없이 순수 문자열인 경우에만 마크다운 파싱 적용
-    if (typeof withHighlights === 'string') return parseMarkdownWithCodeBlock(withHighlights);
+    // 하이라이트 없이 순수 문자열인 경우에만 마크다운 파싱 적용 (인라인 — <p> 래핑 제거)
+    if (typeof withHighlights === 'string') return renderMarkdownInline(withHighlights);
     return withHighlights;
   }
 
-  // 자기소개: 코드블럭은 그대로 <pre>로, 나머지는 줄별 <p>로 렌더링
+  // 자기소개: 유사 문장 하이라이트 우선 적용, 없으면 마크다운 렌더링
   const introLines = (() => {
     const raw = a.intro ?? '';
-    const codeBlockRe = /```(\w*)\n?([\s\S]*?)```/g;
-    const result = [];
-    let last = 0, m, keyIdx = 0;
-    while ((m = codeBlockRe.exec(raw)) !== null) {
-      // 코드블럭 앞 텍스트 → 줄별 <p>
-      if (m.index > last) {
-        raw.slice(last, m.index).split('\n').forEach(line => {
-          const parts = linkify(line);
-          const content = Array.isArray(parts)
-            ? parts.map((part, j) => typeof part === 'string' ? renderText(part) : part)
-            : renderText(parts);
-          result.push(<p key={keyIdx++} className="md-p">{content}</p>);
-        });
-      }
-      result.push(
-        <pre key={keyIdx++} className="md-code-block"><code>{m[2]}</code></pre>
-      );
-      last = m.index + m[0].length;
-    }
-    // 남은 텍스트 → 줄별 <p>
-    raw.slice(last).split('\n').forEach(line => {
-      const parts = linkify(line);
-      const content = Array.isArray(parts)
-        ? parts.map((part, j) => typeof part === 'string' ? renderText(part) : part)
-        : renderText(parts);
-      result.push(<p key={keyIdx++} className="md-p">{content}</p>);
-    });
-    return result;
+    const withSimilar = applySimilarHighlight(raw, similarSpans, settings.similar, effectiveHide);
+    if (typeof withSimilar !== 'string') return applyQueryHighlights(withSimilar, searchQuery, intraActive);
+    return renderMarkdown(withSimilar);
   })();
 
   // 스크롤 위치 저장 (debounce 200 ms)
@@ -410,13 +361,18 @@ const PortfolioPanel = forwardRef(function PortfolioPanel(
       {/* 탭 */}
       <div className="panel-tab">
         <div className="panel-tab-name">
-          {blind ? `지원자 #${accentIdx + 1}` : a.name}
+          {blind ? (blindAliases?.[a.id] || `지원자 #${accentIdx + 1}`) : a.name}
           <span className={`match-badge ${matchClass(a.match_score)}`}>
             {a.match_score}%
           </span>
           {a._solar_used && (
             <span className="panel-ai-label" title="Solar LLM으로 파싱된 포트폴리오입니다. 원본 보기에서 전체 내용을 확인할 수 있습니다.">
               Solar
+            </span>
+          )}
+          {a._is_legacy && (
+            <span className="legacy-badge" title="이 포트폴리오 요약은 현재 채용 설정 이전 버전으로 분석되었습니다">
+              레거시 요약
             </span>
           )}
         </div>
@@ -509,6 +465,19 @@ const PortfolioPanel = forwardRef(function PortfolioPanel(
               : reanalyzeState === 'error' ? '실패'
               : 'Solar AI 재분석'}
           </button>
+          {onSummarize && (
+            <button
+              className={`summarize-btn ${a._summary ? 'has-summary' : ''} ${summaryState === 'done' ? 'done' : summaryState === 'error' ? 'error' : ''} ${isSummaryLegacy ? 'legacy' : ''}`}
+              onClick={a._summary ? () => setSummaryOpen(true) : handleSummarize}
+              disabled={summaryState === 'loading'}
+              title={isSummaryLegacy ? '채용 설정이 변경되어 요약이 오래되었습니다. 클릭해서 보기' : a._summary ? '채용 기준 요약 보기' : '채용 설정 기준으로 AI 요약 생성'}
+            >
+              {summaryState === 'loading' ? '요약 중...'
+                : summaryState === 'done' ? '요약 완료'
+                : summaryState === 'error' ? '실패'
+                : a._summary ? `채용 요약${isSummaryLegacy ? ' ⚠' : ' →'}` : '채용 기준 요약'}
+            </button>
+          )}
         </div>
 
         <div className="md-h1">{blind ? `지원자 #${accentIdx + 1}` : a.name} 포트폴리오</div>
@@ -524,14 +493,14 @@ const PortfolioPanel = forwardRef(function PortfolioPanel(
           function linkIcon(url = '', label = '') {
             const u = url.toLowerCase();
             const l = label.toLowerCase();
-            if (u.includes('github.com') || l === 'github') return '🐙';
-            if (u.includes('notion.so') || l === 'notion') return '📝';
-            if (u.includes('linkedin.com') || l === 'linkedin') return '💼';
-            if (u.includes('velog.io') || u.includes('tistory') || u.includes('medium.com') || l === 'blog') return '✍️';
-            if (u.includes('youtube.com') || u.includes('youtu.be')) return '▶️';
-            if (u.includes('figma.com')) return '🎨';
-            if (l === 'portfolio' || l.includes('포트폴리오')) return '🖼️';
-            return '🔗';
+            if (u.includes('github.com') || l === 'github') return <span className="link-icon github-icon" />;
+            if (u.includes('notion.so') || l === 'notion') return <span className="link-icon notion-icon" />;
+            if (u.includes('linkedin.com') || l === 'linkedin') return <span className="link-icon linkedin-icon" />;
+            if (u.includes('velog.io') || u.includes('tistory') || u.includes('medium.com') || l === 'blog') return <span className="link-icon blog-icon" />;
+            if (u.includes('youtube.com') || u.includes('youtu.be')) return <span className="link-icon youtube-icon" />;
+            if (u.includes('figma.com')) return <span className="link-icon figma-icon" />;
+            if (l === 'portfolio' || l.includes('포트폴리오')) return <span className="link-icon portfolio-icon" />;
+            return <span className="link-icon default-link-icon" />;
           }
           return (
             <div className="panel-links-bar">
@@ -622,6 +591,22 @@ const PortfolioPanel = forwardRef(function PortfolioPanel(
           </>
         )}
 
+        {/* 타임라인 (가로) */}
+        {showSection('timeline') && (a.projects?.length > 0) && (
+          <>
+            <SectionHeader sKey="timeline" label="타임라인" />
+            {!collapsed['timeline'] && (
+              <div className="section-body">
+                <Timeline
+                  projects={a.projects || []}
+                  careerYears={a.career_years || 0}
+                  education={a.education || ''}
+                />
+              </div>
+            )}
+          </>
+        )}
+
         {/* 프로젝트 */}
         {showSection('projects') && (
           <>
@@ -664,6 +649,27 @@ const PortfolioPanel = forwardRef(function PortfolioPanel(
           </>
         )}
 
+        {/* 추가 섹션 — 채용 설정에서 정의한 사용자 정의 섹션 */}
+        {(settings.customSections || []).map(title => {
+          const key = `custom:${title}`;
+          const content = a._custom_sections?.[title];
+          return (
+            <div key={key}>
+              <SectionHeader sKey={key} label={title} />
+              {!collapsed[key] && (
+                <div className="section-body custom-section-body">
+                  {content
+                    ? renderMarkdown(content)
+                    : <p className="custom-section-placeholder">
+                        포트폴리오 재분석 시 AI가 이 섹션에 해당하는 내용을 추출합니다.
+                      </p>
+                  }
+                </div>
+              )}
+            </div>
+          );
+        })}
+
       </div>
 
         {/* 메모 */}
@@ -682,6 +688,36 @@ const PortfolioPanel = forwardRef(function PortfolioPanel(
       {isFiltered && (
         <div className="panel-filter-warn">
           현재 검색 결과에 없는 지원자입니다
+        </div>
+      )}
+
+      {/* 채용 기준 요약 뷰어 모달 */}
+      {summaryOpen && a._summary && (
+        <div className="raw-overlay" onClick={() => setSummaryOpen(false)}>
+          <div className="raw-modal" onClick={e => e.stopPropagation()}>
+            <div className="raw-modal-header">
+              <span className="raw-modal-title">
+                채용 기준 요약 — {a.name}
+                {isSummaryLegacy && (
+                  <span className="legacy-badge" title="현재 채용 설정과 다른 버전으로 생성된 요약입니다">레거시 요약</span>
+                )}
+              </span>
+              <div className="summary-regen-wrap">
+                <button
+                  className="summary-regen-btn"
+                  onClick={async (e) => { e.stopPropagation(); await handleSummarize(); }}
+                  disabled={summaryState === 'loading'}
+                  title="현재 채용 설정 기준으로 다시 요약"
+                >
+                  {summaryState === 'loading' ? '요약 중...' : '재요약'}
+                </button>
+              </div>
+              <button className="drawer-close" onClick={() => setSummaryOpen(false)}>✕</button>
+            </div>
+            <div className="raw-modal-body">
+              <div className="raw-md-body">{renderMarkdown(a._summary)}</div>
+            </div>
+          </div>
         </div>
       )}
 

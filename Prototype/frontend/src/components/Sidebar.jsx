@@ -1,29 +1,22 @@
 import { useState, useRef, Fragment } from 'react';
 import { renamePortfolio } from '../api';
+import { STORAGE_KEYS } from '../constants';
+import { matchClass } from '../utils';
 
 const MARK_LABEL = { pass: '✓', hold: '?', fail: '✗' };
 const MARK_TITLE = { pass: '통과', hold: '보류', fail: '탈락' };
-const MARKS_KEY  = 'portfolio-reviewer-marks';
 
 function loadMarks() {
-  try { return JSON.parse(localStorage.getItem(MARKS_KEY)) || {}; }
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.MARKS)) || {}; }
   catch { return {}; }
 }
 
-const BOOKMARKS_KEY = 'portfolio-reviewer-bookmarks';
 function loadBookmarks() {
-  try { return new Set(JSON.parse(localStorage.getItem(BOOKMARKS_KEY)) || []); }
+  try { return new Set(JSON.parse(localStorage.getItem(STORAGE_KEYS.BOOKMARKS)) || []); }
   catch { return new Set(); }
 }
 
-function matchClass(pct) {
-  if (pct === 0)  return 'match-none';
-  if (pct >= 70)  return 'match-high';
-  if (pct >= 40)  return 'match-mid';
-  return 'match-low';
-}
-
-export default function Sidebar({ applicants, selectedIds, onToggle, onDelete, onRename, onUploadClick, blind, analyzing = false }) {
+export default function Sidebar({ applicants, selectedIds, onToggle, onDelete, onRename, onUploadClick, blind, blindAliases, analyzing = false }) {
   const [editingId, setEditingId] = useState(null);
   const [editValue, setEditValue]  = useState('');
   const inputRef = useRef(null);
@@ -43,7 +36,7 @@ export default function Sidebar({ applicants, selectedIds, onToggle, onDelete, o
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
-      try { localStorage.setItem(BOOKMARKS_KEY, JSON.stringify([...next])); } catch {}
+      try { localStorage.setItem(STORAGE_KEYS.BOOKMARKS, JSON.stringify([...next])); } catch {}
       return next;
     });
   }
@@ -55,7 +48,7 @@ export default function Sidebar({ applicants, selectedIds, onToggle, onDelete, o
       const updated = { ...prev };
       if (value === null) delete updated[id];
       else updated[id] = value;
-      try { localStorage.setItem(MARKS_KEY, JSON.stringify(updated)); } catch {}
+      try { localStorage.setItem(STORAGE_KEYS.MARKS, JSON.stringify(updated)); } catch {}
       return updated;
     });
   }
@@ -237,8 +230,8 @@ export default function Sidebar({ applicants, selectedIds, onToggle, onDelete, o
                         onClick={e => e.stopPropagation()}
                       />
                     ) : blind ? (
-                      <span className="applicant-name blind-name">
-                        지원자 #{idx + 1}
+                      <span className="applicant-name">
+                        {blindAliases?.[a.id] || `지원자 #${idx + 1}`}
                       </span>
                     ) : (
                       <span

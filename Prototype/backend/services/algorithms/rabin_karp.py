@@ -5,8 +5,13 @@
 # 사용처: routers/portfolios.py (similar 엔드포인트)
 
 from __future__ import annotations
+import re as _re
 from dataclasses import dataclass, field
 from .lcs import lcs_length
+from ._common import merge_ranges
+
+_TOKEN_RE   = _re.compile(r'\S+')
+_STRIP_CHARS = ".,;:!?()\"'"
 
 # ── 상수 ───────────────────────────────────────────────────────────
 _BASE = 31
@@ -14,7 +19,7 @@ _MOD = (1 << 61) - 1       # 메르센 소수
 _WORD_WINDOW = 5            # 비교 단위: 연속 n개 단어
 _LCS_THRESHOLD = 0.7        # LCS 유사도 임계값 (70% 이상 → 유사)
 
-# UI accent 색상 (design.md 기준)
+# UI 유사 문장 그룹 색상 — 프론트엔드 SettingsDrawer.jsx의 colorful 팔레트와 순서·값 동일하게 유지
 _GROUP_COLORS = [
     "#DC2626",  # red
     "#EA580C",  # orange
@@ -40,9 +45,15 @@ class SimilarSpan:
 
 # ── Rabin-Karp 해시 계산 ───────────────────────────────────────────
 
-def _words(text: str) -> list[str]:
-    """텍스트를 소문자 단어 리스트로 변환."""
-    return [w.strip(".,;:!?()\"'") for w in text.lower().split() if w.strip(".,;:!?()\"'")]
+def _tokenize(text: str) -> list[tuple[str, int, int]]:
+    """(소문자_정제어, 원문_시작_char, 원문_끝_char) 목록 반환.
+    span 텍스트를 원문에서 직접 잘라내기 위해 문자 위치를 함께 추적한다."""
+    result = []
+    for m in _TOKEN_RE.finditer(text):
+        cleaned = m.group().strip(_STRIP_CHARS).lower()
+        if cleaned:
+            result.append((cleaned, m.start(), m.end()))
+    return result
 
 
 def _hash_word(w: str) -> int:
@@ -82,62 +93,129 @@ def _rolling_hashes(words: list[str], window: int) -> dict[int, list[int]]:
 
 # ── 유사 문장 감지 메인 함수 ──────────────────────────────────────
 
+def _merge_ranges(positions: set[int], window: int) -> list[tuple[int, int]]:
+    """매칭된 윈도우 시작 위치들을 인접/겹치는 구간으로 병합."""
+    return merge_ranges([(p, p + window) for p in positions])
+
+
+# _SectionInfo: (section_text, section_tokens, combined_word_start, combined_word_end)
+_SectionInfo = tuple[str, list[tuple[str, int, int]], int, int]
+
+
+def _build_sections(portfolio: dict) -> tuple[str, list[_SectionInfo]]:
+    """
+    포트폴리오의 섹션별(intro + 프로젝트 desc) 텍스트·토큰·단어 인덱스 경계를 계산.
+
+    Returns:
+        combined_text: 모든 섹션을 공백으로 이은 문자열 (해시 비교용)
+        sections:      [(섹션원문, 섹션토큰, 합산_단어시작, 합산_단어끝), ...]
+    """
+    intro = portfolio.get("intro", "") or ""
+    descs = [proj.get("desc", "") or "" for proj in portfolio.get("projects", [])]
+    all_parts = [intro] + descs
+
+    sections: list[_SectionInfo] = []
+    word_pos = 0
+    for sec_text in all_parts:
+        sec_tokens = _tokenize(sec_text)
+        sections.append((sec_text, sec_tokens, word_pos, word_pos + len(sec_tokens)))
+        word_pos += len(sec_tokens)
+
+    combined_text = " ".join(all_parts)
+    return combined_text, sections
+
+
+def _section_spans(
+    merged: list[tuple[int, int]],
+    sections: list[_SectionInfo],
+    portfolio_id: str,
+    group: int,
+) -> list[SimilarSpan]:
+    """
+    병합된 합산-단어-인덱스 범위를 섹션 경계에서 잘라 SimilarSpan 목록으로 변환.
+
+    하나의 merged 범위가 intro와 desc를 동시에 포함하더라도
+    각 섹션 원문에서 독립적으로 잘라내므로 프론트엔드 indexOf 탐색이 성공한다.
+    """
+    result: list[SimilarSpan] = []
+    for rng_s, rng_e in merged:
+        for sec_text, sec_tokens, sec_ws, sec_we in sections:
+            c_s = max(rng_s, sec_ws)
+            c_e = min(rng_e, sec_we)
+            if c_s >= c_e or not sec_tokens:
+                continue
+            local_s = c_s - sec_ws
+            local_e = min(c_e - sec_ws, len(sec_tokens))
+            if local_s >= local_e:
+                continue
+            char_s = sec_tokens[local_s][1]
+            char_e = sec_tokens[local_e - 1][2]
+            span_text = sec_text[char_s:char_e]
+            if span_text.strip():
+                result.append(SimilarSpan(portfolio_id, span_text, group))
+    return result
+
+
 def detect_similar(portfolios: list[dict]) -> list[SimilarSpan]:
     """
     모든 포트폴리오 쌍에 대해 유사 문장 검출.
 
     단계:
-    1. 각 포트폴리오의 intro + project desc를 단어 리스트로 변환
+    1. 각 포트폴리오의 intro + project desc를 섹션별로 토큰화
     2. Rabin-Karp 롤링 해시로 n-gram 해시 충돌 빠르게 탐지
     3. 충돌 구간에 LCS 유사도 검증 (false positive 제거)
-    4. 임계값 초과 구간에 그룹 번호 부여
+    4. 인접/겹치는 윈도우를 병합해 하나의 연속 구간으로 합산
+    5. 병합 구간을 섹션 경계에서 잘라 각 섹션 원문 기준의 span 텍스트 추출
+    6. 병합된 구간에 그룹 번호 부여
 
     Returns: 유사 구간 목록 (SimilarSpan)
     """
-    # 포트폴리오별 단어 목록 추출
-    entries: list[tuple[str, list[str], str]] = []
+    entries: list[tuple[str, list[tuple[str, int, int]], list[_SectionInfo]]] = []
     for p in portfolios:
-        text = _extract_text(p)
-        words = _words(text)
-        entries.append((p["id"], words, text))
+        combined_text, sections = _build_sections(p)
+        tokens = _tokenize(combined_text)
+        entries.append((p["id"], tokens, sections))
 
     spans: list[SimilarSpan] = []
     group = 0
-    seen_pairs: set[tuple[str, str, int, int]] = set()
 
     for i in range(len(entries)):
-        id_a, words_a, _ = entries[i]
+        id_a, tokens_a, sections_a = entries[i]
+        words_a = [t[0] for t in tokens_a]
         hashes_a = _rolling_hashes(words_a, _WORD_WINDOW)
 
         for j in range(i + 1, len(entries)):
-            id_b, words_b, _ = entries[j]
+            id_b, tokens_b, sections_b = entries[j]
+            words_b = [t[0] for t in tokens_b]
             hashes_b = _rolling_hashes(words_b, _WORD_WINDOW)
 
-            # 해시 충돌 탐지
             common_hashes = set(hashes_a.keys()) & set(hashes_b.keys())
             if not common_hashes:
                 continue
 
+            matched_a: set[int] = set()
+            matched_b: set[int] = set()
+            seen: set[tuple[int, int]] = set()
+
             for h in common_hashes:
                 for pos_a in hashes_a[h]:
                     for pos_b in hashes_b[h]:
-                        pair_key = (id_a, id_b, pos_a, pos_b)
-                        if pair_key in seen_pairs:
+                        if (pos_a, pos_b) in seen:
                             continue
-                        seen_pairs.add(pair_key)
-
+                        seen.add((pos_a, pos_b))
                         chunk_a = words_a[pos_a: pos_a + _WORD_WINDOW]
                         chunk_b = words_b[pos_b: pos_b + _WORD_WINDOW]
-
-                        # LCS 유사도 검증
                         lcs = lcs_length(chunk_a, chunk_b)
-                        sim = lcs / _WORD_WINDOW
-                        if sim >= _LCS_THRESHOLD:
-                            text_a = " ".join(chunk_a)
-                            text_b = " ".join(chunk_b)
-                            spans.append(SimilarSpan(id_a, text_a, group))
-                            spans.append(SimilarSpan(id_b, text_b, group))
-                            group += 1
+                        if lcs / _WORD_WINDOW >= _LCS_THRESHOLD:
+                            matched_a.add(pos_a)
+                            matched_b.add(pos_b)
+
+            if not matched_a:
+                continue
+
+            spans += _section_spans(_merge_ranges(matched_a, _WORD_WINDOW), sections_a, id_a, group)
+            spans += _section_spans(_merge_ranges(matched_b, _WORD_WINDOW), sections_b, id_b, group)
+            group += 1
 
     return spans
 
@@ -154,10 +232,3 @@ def detect_similar_response(portfolios: list[dict]) -> list[dict]:
         }
         for s in spans
     ]
-
-
-def _extract_text(portfolio: dict) -> str:
-    parts = [portfolio.get("intro", "")]
-    for proj in portfolio.get("projects", []):
-        parts.append(proj.get("desc", ""))
-    return " ".join(parts)

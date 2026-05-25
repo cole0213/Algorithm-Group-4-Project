@@ -1,5 +1,29 @@
 import { useState } from 'react';
 
+// 팔레트 테마 정의
+export const SIMILAR_PALETTES = [
+  {
+    id: 'dim',
+    name: '흐리게 보기',
+    desc: '유사 문장을 흐리게 처리합니다 (기본)',
+    colors: ['#9CA3AF', '#9CA3AF', '#9CA3AF', '#9CA3AF', '#9CA3AF', '#9CA3AF'],
+    isDefault: true,
+  },
+  {
+    id: 'single',
+    name: '단일 색상',
+    desc: '모든 유사 문장을 같은 색상으로 표시합니다',
+    colors: ['#4361EE', '#4361EE', '#4361EE', '#4361EE', '#4361EE', '#4361EE'],
+  },
+  {
+    id: 'colorful',
+    name: '컬러풀',
+    desc: '유사 문장 그룹을 다양한 색상으로 구분합니다',
+    // 백엔드 rabin_karp.py의 _GROUP_COLORS와 순서·값 동일하게 유지
+    colors: ['#DC2626', '#EA580C', '#0284C7', '#65A30D', '#7C3AED', '#0D9488'],
+  },
+];
+
 const TOGGLES = [
   { key: 'highlight',    label: '스킬 하이라이트',          desc: '필요 스펙과 일치하는 기술을 주황색으로 표시합니다.' },
   { key: 'similar',      label: '유사 문장 표시',            desc: '포트폴리오 간 유사한 문장을 색상으로 강조합니다.' },
@@ -23,12 +47,40 @@ export default function SettingsDrawer({
   settings, onToggle,
   similarScope, onScopeChange,
   groupColors, onColorChange,
+  selectedPalette, onPaletteChange,
   onRefreshSimilar,
   weights,
   onWeightsChange,
   onClose,
 }) {
-  const [openGroup, setOpenGroup] = useState(null); // 색상 팔레트 열린 그룹 index
+  const [openGroup, setOpenGroup] = useState(null); // 색상 팔레트 열린 그룹 index (legacy)
+  const [editingWeights, setEditingWeights] = useState(false);
+  const [localWeights, setLocalWeights] = useState(null);
+
+  const handleStartEdit = () => {
+    setLocalWeights({ ...weights });
+    setEditingWeights(true);
+  };
+
+  const handleApplyWeights = () => {
+    const total = Object.values(localWeights).reduce((s, v) => s + v, 0);
+    if (total > 0) {
+      const normalized = {};
+      const keys = Object.keys(localWeights);
+      let sum = 0;
+      keys.forEach((k, i) => {
+        if (i === keys.length - 1) {
+          normalized[k] = 100 - sum;
+        } else {
+          normalized[k] = Math.round(localWeights[k] / total * 100);
+          sum += normalized[k];
+        }
+      });
+      onWeightsChange?.(normalized);
+    }
+    setEditingWeights(false);
+    setLocalWeights(null);
+  };
 
   return (
     <div className="drawer-overlay" onClick={onClose}>
@@ -78,37 +130,26 @@ export default function SettingsDrawer({
               : '현재 열린 패널 간에서만 유사 문장을 검출합니다.'}
           </p>
 
-          {/* 그룹 색상 커스텀 */}
-          <div className="drawer-row" style={{ alignItems: 'flex-start', flexDirection: 'column', gap: 8 }}>
-            <span>그룹 색상</span>
-            <div className="group-color-list">
-              {groupColors.map((color, idx) => (
-                <div key={idx} className="group-color-item">
-                  <span className="group-color-label">{GROUP_LABELS[idx]}</span>
-                  <button
-                    className="color-swatch"
-                    style={{ background: color }}
-                    title={`${GROUP_LABELS[idx]} 색상 변경`}
-                    onClick={() => setOpenGroup(openGroup === idx ? null : idx)}
-                  />
-                  {openGroup === idx && (
-                    <div className="color-palette">
-                      {COLOR_PRESETS.map(preset => (
-                        <button
-                          key={preset}
-                          className={`color-preset ${color === preset ? 'selected' : ''}`}
-                          style={{ background: preset }}
-                          onClick={() => {
-                            onColorChange(idx, preset);
-                            setOpenGroup(null);
-                          }}
-                        />
-                      ))}
-                    </div>
-                  )}
+          {/* 유사 문장 표기 팔레트 */}
+          <div className="drawer-section-title">유사 문장 표기 팔레트</div>
+          <div className="palette-list">
+            {SIMILAR_PALETTES.map(palette => (
+              <div
+                key={palette.id}
+                className={`palette-item ${selectedPalette === palette.id ? 'selected' : ''}`}
+                onClick={() => onPaletteChange?.(palette.id)}
+              >
+                <div className="palette-colors">
+                  {palette.colors.slice(0, 3).map((c, i) => (
+                    <span key={i} className="palette-color-dot" style={{ background: c }} />
+                  ))}
                 </div>
-              ))}
-            </div>
+                <div>
+                  <div className="palette-name">{palette.name}{palette.isDefault ? ' (기본)' : ''}</div>
+                  <div className="palette-desc">{palette.desc}</div>
+                </div>
+              </div>
+            ))}
           </div>
 
           {/* 수동 재실행 버튼 */}
@@ -119,7 +160,13 @@ export default function SettingsDrawer({
           {/* ── 매칭 점수 가중치 슬라이더 ── */}
           {weights && (
             <div className="settings-section">
-              <div className="settings-section-title">매칭 점수 가중치</div>
+              <div className="settings-section-title" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span>매칭 점수 가중치</span>
+                {editingWeights
+                  ? <button className="weight-edit-btn apply" onClick={handleApplyWeights}>적용</button>
+                  : <button className="weight-edit-btn" onClick={handleStartEdit}>수정</button>
+                }
+              </div>
               {[
                 { key: 'skill',   label: '스킬 일치' },
                 { key: 'career',  label: '경력' },
@@ -131,27 +178,49 @@ export default function SettingsDrawer({
                     type="range"
                     min={0}
                     max={100}
-                    value={weights[key]}
+                    value={editingWeights ? (localWeights?.[key] ?? weights[key]) : weights[key]}
                     onChange={e => {
                       const val = Number(e.target.value);
-                      const others = Object.keys(weights).filter(k => k !== key);
-                      const remaining = 100 - val;
-                      const total = others.reduce((s, k) => s + weights[k], 0);
-                      const next = { ...weights, [key]: val };
-                      if (total > 0) {
-                        others.forEach(k => { next[k] = Math.round(weights[k] / total * remaining); });
+                      if (editingWeights) {
+                        setLocalWeights(prev => ({ ...prev, [key]: val }));
                       } else {
-                        const per = Math.floor(remaining / others.length);
-                        others.forEach((k, i) => { next[k] = i === 0 ? remaining - per * (others.length - 1) : per; });
+                        const others = Object.keys(weights).filter(k => k !== key);
+                        const remaining = 100 - val;
+                        const total = others.reduce((s, k) => s + weights[k], 0);
+                        const next = { ...weights, [key]: val };
+                        if (total > 0) {
+                          others.forEach(k => { next[k] = Math.round(weights[k] / total * remaining); });
+                        } else {
+                          const per = Math.floor(remaining / others.length);
+                          others.forEach((k, i) => { next[k] = i === 0 ? remaining - per * (others.length - 1) : per; });
+                        }
+                        onWeightsChange?.(next);
                       }
-                      onWeightsChange?.(next);
                     }}
                     className="weight-slider"
                   />
-                  <span className="weight-value">{weights[key]}%</span>
+                  {editingWeights ? (
+                    <input
+                      type="number"
+                      className="weight-input"
+                      min={0}
+                      max={100}
+                      value={localWeights?.[key] ?? weights[key]}
+                      onChange={e => {
+                        const val = Math.max(0, Math.min(100, Number(e.target.value) || 0));
+                        setLocalWeights(prev => ({ ...prev, [key]: val }));
+                      }}
+                    />
+                  ) : (
+                    <span className="weight-value">{weights[key]}%</span>
+                  )}
                 </div>
               ))}
-              <div className="weight-total">합계: {Object.values(weights).reduce((s, v) => s + v, 0)}%</div>
+              <div className="weight-total">
+                합계: {editingWeights
+                  ? Object.values(localWeights || {}).reduce((s, v) => s + v, 0)
+                  : Object.values(weights).reduce((s, v) => s + v, 0)}%
+              </div>
             </div>
           )}
 

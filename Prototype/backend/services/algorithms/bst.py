@@ -49,16 +49,29 @@ class _Node:
     right: "_Node | None" = field(default=None, repr=False)
 
 
+# ── BST 공통 베이스 ─────────────────────────────────────────────────
+
+class _BSTBase:
+    """ApplicantIndex와 TextIndex가 공유하는 BST 탐색 로직."""
+
+    def __init__(self) -> None:
+        self._root: _Node | None = None
+
+    def _find(self, node: _Node | None, key: str) -> _Node | None:
+        if node is None or node.key == key:
+            return node
+        if key < node.key:
+            return self._find(node.left, key)
+        return self._find(node.right, key)
+
+
 # ── Cross-Portfolio BST ──────────────────────────────────────────────
 
-class ApplicantIndex:
+class ApplicantIndex(_BSTBase):
     """
     전체 지원자를 대상으로 기술/키워드 → 지원자 ID 매핑.
     BST로 구성하여 O(log n) 검색.
     """
-
-    def __init__(self) -> None:
-        self._root: _Node | None = None
 
     # ── 삽입 ──────────────────────────────────────────────────────
     def insert(self, keyword: str, portfolio_id: str) -> None:
@@ -83,13 +96,6 @@ class ApplicantIndex:
         key = normalize(keyword)
         node = self._find(self._root, key)
         return node.portfolio_ids if node else []
-
-    def _find(self, node: _Node | None, key: str) -> _Node | None:
-        if node is None or node.key == key:
-            return node
-        if key < node.key:
-            return self._find(node.left, key)
-        return self._find(node.right, key)
 
     # ── 전체 빌드 헬퍼 ────────────────────────────────────────────
     @classmethod
@@ -118,13 +124,13 @@ class ApplicantIndex:
 
 # ── Intra-Portfolio BST ─────────────────────────────────────────────
 
-class TextIndex:
+class TextIndex(_BSTBase):
     """
     단일 포트폴리오 텍스트를 토큰화하여 키워드 위치를 BST로 인덱싱.
     """
 
     def __init__(self, text: str) -> None:
-        self._root: _Node | None = None
+        super().__init__()
         self._text = text
         self._build(text)
 
@@ -151,13 +157,6 @@ class TextIndex:
         key = normalize(keyword)
         node = self._find(self._root, key)
         return node.positions if node else []
-
-    def _find(self, node: _Node | None, key: str) -> _Node | None:
-        if node is None or node.key == key:
-            return node
-        if key < node.key:
-            return self._find(node.left, key)
-        return self._find(node.right, key)
 
     def search_context(self, keyword: str, window: int = 5) -> list[str]:
         """

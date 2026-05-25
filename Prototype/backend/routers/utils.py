@@ -1,7 +1,9 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 import os
-import json as json_mod
+from services.solar import CHAT_URL, MODEL, extract_json, TECH_STACK_DEFINITION
+from services._solar_http import call_solar_chat
+from routers.portfolios import DEFAULT_W_SKILL, DEFAULT_W_CAREER, DEFAULT_W_PROJECT
 
 router = APIRouter(prefix="/api", tags=["utils"])
 
@@ -11,56 +13,33 @@ class ExtractSpecsRequest(BaseModel):
 @router.post("/extract-specs")
 async def extract_specs(req: ExtractSpecsRequest):
     """채용 공고 텍스트에서 필요 기술 스택을 추출합니다 (Solar LLM 사용)."""
-    api_key = os.getenv("SOLAR_API_KEY") or os.getenv("UPSTAGE_API_KEY")
-    if not api_key:
-        raise HTTPException(status_code=503, detail="Solar API 키가 설정되지 않았습니다.")
-
-    import httpx
-    import re as re_mod
-
     system_prompt = """당신은 채용 공고 분석 전문가입니다.
-주어진 채용 공고 텍스트(비정형 자연어)에서 기술 스택과 자격 요건을 추출하세요.
+주어진 채용 공고 텍스트(비정형 자연어)에서 기술 스택을 추출하세요.
 
 반드시 아래 JSON 형식으로만 응답하세요. 설명, 마크다운 코드블럭, 추가 문장 금지:
 {"required": ["기술1", "기술2"], "preferred": ["기술3", "기술4"]}
 
 규칙:
-- required: 필수 사항, 우대 사항이 아닌 기술/자격 요건
-- preferred: 우대 사항 기술/자격 요건
-- 기술명은 원래 표기 보존 (React, AWS, C# 등), 버전 번호 제거
-- 경력 년수 조건은 제외 (기술명만 추출)
-- 없으면 빈 배열 []"""
+- required: 필수 사항으로 명시된 기술 (예: "필수", "필요", "반드시" 등)
+- preferred: 우대 사항 기술 (예: "우대", "가산점", "있으면 좋음" 등)
+- 어느 분류로도 명확하지 않으면 required로 분류
+- 경력 년수, 학력, 소프트스킬 조건은 제외 (오직 기술 스택만 추출)
+- 없으면 빈 배열 []
+- 아래의 [기술 스택 정의]를 엄격히 따르세요. 카테고리에 없는 항목은 절대 포함하지 마세요.
 
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json",
-    }
-    body = {
-        "model": "solar-pro",
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": req.text[:4000]},
-        ],
-        "max_tokens": 300,
-        "temperature": 0.1,
-    }
+""" + TECH_STACK_DEFINITION
 
-    async with httpx.AsyncClient(timeout=30) as client:
-        resp = await client.post(
-            "https://api.upstage.ai/v1/chat/completions",
-            headers=headers,
-            json=body,
-        )
-    if resp.status_code != 200:
-        raise HTTPException(status_code=502, detail=f"Solar API 오류: {resp.status_code}")
+    content = await call_solar_chat(
+        system_prompt,
+        req.text[:4000],
+        max_tokens=300,
+        temperature=0.1,
+        timeout=30,
+    )
 
-    content = resp.json()["choices"][0]["message"]["content"].strip()
-
-    # JSON 추출 — 코드블럭 무관하게 파싱
-    match = re_mod.search(r"\{[\s\S]*\}", content)
-    if match:
+    parsed = extract_json(content)
+    if parsed:
         try:
-            parsed = json_mod.loads(match.group())
             required = [s.strip() for s in parsed.get("required", []) if isinstance(s, str) and s.strip()]
             preferred = [s.strip() for s in parsed.get("preferred", []) if isinstance(s, str) and s.strip()]
             specs = required + [s for s in preferred if s not in required]
@@ -77,11 +56,12 @@ async def extract_specs(req: ExtractSpecsRequest):
 # 사용자가 자연어로 "백엔드 채용. Python 필수, AWS 우대. 경력·프로젝트 위주로 보고싶음" 같은
 # 문장을 던지면 Solar LLM이 settings JSON으로 변환해 반환한다.
 
-KNOWN_SECTIONS = ["info", "skills", "intro", "projects", "awards", "links"]
+KNOWN_SECTIONS = ["info", "skills", "intro", "timeline", "projects", "awards", "links"]
 SECTION_KO = {
     "info": "기본 정보",
     "skills": "기술 스택",
     "intro": "자기소개",
+    "timeline": "타임라인",
     "projects": "프로젝트",
     "awards": "수상 및 활동",
     "links": "중요 링크",
@@ -95,13 +75,6 @@ class ExtractConfigRequest(BaseModel):
 @router.post("/extract-config")
 async def extract_config(req: ExtractConfigRequest):
     """채용 요구사항 + 포폴 목차 자연어를 받아 settings JSON을 반환합니다 (Solar LLM)."""
-    api_key = os.getenv("SOLAR_API_KEY") or os.getenv("UPSTAGE_API_KEY")
-    if not api_key:
-        raise HTTPException(status_code=503, detail="Solar API 키가 설정되지 않았습니다.")
-
-    import httpx
-    import re as re_mod
-
     sections_desc = ", ".join(f'"{k}"({v})' for k, v in SECTION_KO.items())
 
     system_prompt = f"""당신은 채용 담당자의 요구사항을 구조화하는 전문가입니다.
@@ -119,9 +92,10 @@ async def extract_config(req: ExtractConfigRequest):
 }}
 
 규칙:
-- required: 필수 자격 요건의 기술/언어/도구
-- preferred: 우대 사항의 기술/언어/도구
-- 기술명 원본 표기 보존, 버전·연차 제외
+- required: 필수 자격 요건으로 명시된 기술 (필수·필요·반드시 등)
+- preferred: 우대 사항으로 명시된 기술 (우대·가산점·있으면 좋음 등)
+- 어느 분류로도 명확하지 않으면 required로 분류
+- 기술 추출 시 아래의 [기술 스택 정의]를 엄격히 따르세요. 정의에 없는 항목(회사명·직무명·소프트스킬·분야명 등)은 절대 포함하지 마세요.
 - visible_sections: 포트폴리오에서 보고 싶다고 언급된 섹션. 가능한 키: {sections_desc}
   - 사용자가 "기본정보·기술·프로젝트만" 같이 언급하면 그 키들만 배열에 포함
   - 명시적 언급이 전혀 없으면 전체 6개 키를 모두 포함
@@ -139,40 +113,19 @@ async def extract_config(req: ExtractConfigRequest):
   - "프론트", "FE" → "frontend"
   - "데이터", "ML" → "data"
   - 언급 없거나 풀스택·기타면 null
-- 알 수 없으면 기본값 사용"""
+- 알 수 없으면 기본값 사용
 
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json",
-    }
-    body = {
-        "model": "solar-pro",
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": req.text[:4000]},
-        ],
-        "max_tokens": 400,
-        "temperature": 0.1,
-    }
+""" + TECH_STACK_DEFINITION
 
-    async with httpx.AsyncClient(timeout=30) as client:
-        resp = await client.post(
-            "https://api.upstage.ai/v1/chat/completions",
-            headers=headers,
-            json=body,
-        )
-    if resp.status_code != 200:
-        raise HTTPException(status_code=502, detail=f"Solar API 오류: {resp.status_code}")
+    content = await call_solar_chat(
+        system_prompt,
+        req.text[:4000],
+        max_tokens=400,
+        temperature=0.1,
+        timeout=30,
+    )
 
-    content = resp.json()["choices"][0]["message"]["content"].strip()
-
-    parsed = None
-    match = re_mod.search(r"\{[\s\S]*\}", content)
-    if match:
-        try:
-            parsed = json_mod.loads(match.group())
-        except Exception:
-            parsed = None
+    parsed = extract_json(content)
 
     if not isinstance(parsed, dict):
         raise HTTPException(status_code=502, detail="Solar 응답 JSON 파싱 실패")
@@ -196,7 +149,7 @@ async def extract_config(req: ExtractConfigRequest):
             return max(0, min(100, int(v)))
         except Exception:
             return default
-    weights = {"skill": _w("skill", 60), "career": _w("career", 25), "project": _w("project", 15)}
+    weights = {"skill": _w("skill", DEFAULT_W_SKILL), "career": _w("career", DEFAULT_W_CAREER), "project": _w("project", DEFAULT_W_PROJECT)}
     total = sum(weights.values()) or 1
     if total != 100:
         # 정규화 — 합이 100이 되도록 비례 조정
@@ -300,27 +253,30 @@ async def diff_portfolios(req: DiffRequest):
     import httpx
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
     body = {
-        "model": "solar-pro",
+        "model": MODEL,
         "messages": [{"role": "user", "content": prompt}],
         "max_tokens": 1200,
         "temperature": 0.1,
     }
     async with httpx.AsyncClient(timeout=45) as client:
         resp = await client.post(
-            "https://api.upstage.ai/v1/chat/completions",
+            CHAT_URL,
             headers=headers, json=body,
         )
     if resp.status_code != 200:
+        print(f"[Diff] Solar 오류 {resp.status_code}: {resp.text[:200]}")
         return _local_diff(targets, labels, names)
 
-    content = resp.json()["choices"][0]["message"]["content"].strip()
     try:
-        if "```" in content:
-            content = content.split("```")[1]
-            if content.startswith("json"):
-                content = content[4:]
-        diff_data = json_mod.loads(content)
+        resp_data = resp.json()
+        content = resp_data["choices"][0]["message"]["content"].strip()
     except Exception:
+        print(f"[Diff] Solar 응답 파싱 실패: {resp.text[:200]}")
+        return _local_diff(targets, labels, names)
+
+    diff_data = extract_json(content)
+    if diff_data is None:
+        print("[Diff] JSON 파싱 실패")
         return _local_diff(targets, labels, names)
 
     return {"diff": diff_data, "labels": labels, "names": names, "solar": True}

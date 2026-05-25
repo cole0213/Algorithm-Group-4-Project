@@ -3,8 +3,8 @@ import PortfolioPanel from './PortfolioPanel';
 
 export default function PortfolioArea({
   applicants, selectedIds, onClose,
-  similarMap, settings, searchQuery, visibleIds, onSyncToggle, onReanalyze, onUploadClick,
-  scrollPos, onScrollSave, onDiffClick,
+  similarMap, settings, searchQuery, visibleIds, onSyncToggle, onReanalyze, onSummarize, onUploadClick,
+  scrollPos, onScrollSave, onDiffClick, blindAliases,
 }) {
   const panelRefs = useRef([]);
   const isSyncing = useRef(false);
@@ -96,8 +96,10 @@ export default function PortfolioArea({
               settings={settings}
               searchQuery={searchQuery}
               onReanalyze={onReanalyze}
+              onSummarize={onSummarize}
               isFiltered={visibleIds !== null && !visibleIds.has(a.id)}
               blind={settings.blind}
+              blindAliases={blindAliases}
               initialScrollTop={scrollPos?.[a.id] ?? 0}
               onScrollChange={(top) => onScrollSave?.(a.id, top)}
             />

@@ -7,7 +7,7 @@
 # GET  /api/similar                  - 유사 문장 검출
 
 from __future__ import annotations
-import os, time, json, hashlib
+import os, time, json, hashlib as hashlib_mod
 from datetime import datetime
 from pathlib import Path
 from fastapi import APIRouter, HTTPException, Query, UploadFile, File, Form
@@ -24,14 +24,57 @@ from services.parser import clean_name as _clean_name
 # ── 내용 유사도 헬퍼 ─────────────────────────────────────────────
 
 _CONTENT_DUP_THRESHOLD = 0.95  # 95% 이상이면 중복
+_CONTENT_DUP_RAW_LIMIT = 10_000  # 내용 유사도 비교 시 원문 절단 길이
+_CAREER_SCALE_YEARS = 10.0       # 경력 점수 스케일 기준 (년)
+_PROJECT_SCALE_COUNT = 10.0      # 프로젝트 수 점수 스케일 기준 (개)
+
+
+def _compute_config_version(required_specs: list, weights: dict) -> str:
+    """채용 설정의 해시 버전 생성"""
+    cfg_str = json.dumps({"specs": sorted(required_specs), "weights": weights}, ensure_ascii=False, sort_keys=True)
+    return hashlib_mod.md5(cfg_str.encode()).hexdigest()[:8]
+
+
+def _normalize_weights_fraction(w: Optional["WeightsModel"]) -> tuple[float, float, float]:
+    """WeightsModel → (skill_frac, career_frac, project_frac), all summing to 1.0.
+    Falls back to DEFAULT_W_* / 100 if w is None or all zero."""
+    if w is not None:
+        total = w.skill + w.career + w.project
+        if total > 0:
+            return (w.skill / total, w.career / total, w.project / total)
+    return (DEFAULT_W_SKILL / 100, DEFAULT_W_CAREER / 100, DEFAULT_W_PROJECT / 100)
+
+
+def _normalize_weights_percent(w: Optional["WeightsModel"]) -> dict:
+    """WeightsModel → {'skill': int, 'career': int, 'project': int} summing to 100.
+    Falls back to {DEFAULT_W_SKILL, DEFAULT_W_CAREER, DEFAULT_W_PROJECT} if w is None or zero."""
+    if w is not None:
+        total = w.skill + w.career + w.project
+        if total > 0:
+            return {
+                "skill":   round(w.skill   / total * 100),
+                "career":  round(w.career  / total * 100),
+                "project": round(w.project / total * 100),
+            }
+    return {"skill": DEFAULT_W_SKILL, "career": DEFAULT_W_CAREER, "project": DEFAULT_W_PROJECT}
+
+
+def _find_portfolio(portfolios: list, pid: str) -> Optional[dict]:
+    """ID로 포트폴리오 검색."""
+    return next((p for p in portfolios if p.get("id") == pid), None)
+
+
+def _find_portfolio_idx(portfolios: list, pid: str) -> Optional[int]:
+    """ID로 포트폴리오 인덱스 검색."""
+    return next((i for i, p in enumerate(portfolios) if p.get("id") == pid), None)
 
 
 def _content_similarity(raw_a: str, raw_b: str) -> float:
     """두 원문의 내용 유사도 (0.0~1.0). difflib.SequenceMatcher 기반."""
     if not raw_a or not raw_b:
         return 0.0
-    a = raw_a[:10_000]
-    b = raw_b[:10_000]
+    a = raw_a[:_CONTENT_DUP_RAW_LIMIT]
+    b = raw_b[:_CONTENT_DUP_RAW_LIMIT]
     sm = SequenceMatcher(None, a, b, autojunk=False)
     if sm.quick_ratio() < _CONTENT_DUP_THRESHOLD:
         return sm.quick_ratio()
@@ -57,7 +100,7 @@ from services.algorithms.hash_table import SpecMatcher
 from services.algorithms.lcs import match_score, matched_skills
 from services.algorithms.sort import sort_applicants
 from services.algorithms.bst import ApplicantIndex, TextIndex, invalidate_cache as bst_invalidate, get_or_build_bst
-from services.algorithms.alias_search import portfolio_matches_query, highlight_positions
+from services.algorithms.alias_search import portfolio_matches_query, highlight_positions, _portfolio_text as _portfolio_full_text
 from services.algorithms.rabin_karp import detect_similar_response
 
 router = APIRouter(prefix="/api")
@@ -89,7 +132,7 @@ def _get_portfolios() -> list[dict]:
             _portfolio_cache = data.get("portfolios", [])
             print(f"[Session] session.json에서 {len(_portfolio_cache)}개 로드")
         except Exception as e:
-            print(f"[Session] session.json 로드 실패: {e} — 빈 목록으로 시작")
+            print(f"[Session] session.json 로드 실패: {e} | 빈 목록으로 시작")
             _portfolio_cache = []
     return _portfolio_cache
 
@@ -105,17 +148,50 @@ def _save_session() -> None:
         print(f"[Session] 저장 실패: {e}")
 
 
+# ── 가중치 기본값 (utils.py / 프론트엔드와 동기화 필요) ──────────
+DEFAULT_W_SKILL   = 60
+DEFAULT_W_CAREER  = 25
+DEFAULT_W_PROJECT = 15
+
+# ── 포트폴리오 헬퍼 ──────────────────────────────────────────────
+
+_PORTFOLIO_FIELD_DEFAULTS = [
+    ("projects", []), ("awards", []), ("skills", []),
+    ("intro", ""), ("career_years", 0),
+    ("education", ""), ("email", ""), ("github", ""), ("file", ""),
+]
+
+
+def _ensure_portfolio_defaults(portfolio: dict) -> None:
+    for k, default in _PORTFOLIO_FIELD_DEFAULTS:
+        portfolio.setdefault(k, default)
+
+
+def _extract_solar_debug(portfolio: dict) -> dict:
+    return {
+        "used":      portfolio.get("_solar_used", False),
+        "elapsed":   portfolio.pop("_solar_elapsed", None),
+        "tokens":    portfolio.pop("_solar_tokens", {}),
+        "truncated": portfolio.get("_truncated", False),
+    }
+
+
 # ── 요청/응답 모델 ────────────────────────────────────────────────
 
 class WeightsModel(BaseModel):
-    skill: float = 60.0
-    career: float = 25.0
-    project: float = 15.0
+    skill:   float = DEFAULT_W_SKILL
+    career:  float = DEFAULT_W_CAREER
+    project: float = DEFAULT_W_PROJECT
 
 
 class AnalyzeRequest(BaseModel):
     required_specs: list[str]
     sort_key: str = "match"   # "match" | "career" | "name"
+    weights: Optional[WeightsModel] = None
+
+
+class SummarizeRequest(BaseModel):
+    required_specs: list[str] = []
     weights: Optional[WeightsModel] = None
 
 
@@ -194,16 +270,11 @@ async def add_portfolio(
             uid=uid,
         )
     except Exception as e:
-        print(f"[Solar] 파싱 실패: {e} — 기본 파서 사용")
+        print(f"[Solar] 파싱 실패: {e} | 기본 파서 사용")
         portfolio = parse_text_basic(raw_text, name=name or "", uid=uid)
 
     # ── 필수 필드 보완 ─────────────────────────────────────────────
-    for k, default in [
-        ("projects", []), ("awards", []), ("skills", []),
-        ("intro", ""), ("career_years", 0),
-        ("education", ""), ("email", ""), ("github", ""), ("file", ""),
-    ]:
-        portfolio.setdefault(k, default)
+    _ensure_portfolio_defaults(portfolio)
 
     # ── 캐시에 추가 (중복 ID 방지) ────────────────────────────────
     portfolios = _get_portfolios()
@@ -218,17 +289,12 @@ async def add_portfolio(
     portfolio["_added_at"] = datetime.now().strftime("%Y-%m-%d %H:%M")
 
     # ── Solar 디버그 정보 분리 ─────────────────────────────────────
-    solar_debug = {
-        "used":      portfolio.get("_solar_used", False),
-        "elapsed":   portfolio.pop("_solar_elapsed", None),
-        "tokens":    portfolio.pop("_solar_tokens",  {}),
-        "truncated": portfolio.get("_truncated", False),
-    }
+    solar_debug = _extract_solar_debug(portfolio)
 
     # ── 파일 중복 감지 ─────────────────────────────────────────────
-    raw_hash = hashlib.md5(raw_text.encode("utf-8")).hexdigest()
+    raw_hash = hashlib_mod.md5(raw_text.encode("utf-8")).hexdigest()
     duplicate_file = any(
-        hashlib.md5((p.get("_raw") or "").encode("utf-8")).hexdigest() == raw_hash
+        hashlib_mod.md5((p.get("_raw") or "").encode("utf-8")).hexdigest() == raw_hash
         for p in portfolios
     )
 
@@ -274,7 +340,7 @@ async def reanalyze_portfolio(portfolio_id: str):
     from services import solar as solar_svc
 
     portfolios = _get_portfolios()
-    idx = next((i for i, p in enumerate(portfolios) if p["id"] == portfolio_id), None)
+    idx = _find_portfolio_idx(portfolios, portfolio_id)
     if idx is None:
         raise HTTPException(status_code=404, detail="포트폴리오를 찾을 수 없습니다.")
 
@@ -298,19 +364,8 @@ async def reanalyze_portfolio(portfolio_id: str):
     portfolio["_raw_ext"]  = existing.get("_raw_ext", "txt")
     portfolio["_position"] = pos
 
-    for k, default in [
-        ("projects", []), ("awards", []), ("skills", []),
-        ("intro", ""), ("career_years", 0),
-        ("education", ""), ("email", ""), ("github", ""), ("file", ""),
-    ]:
-        portfolio.setdefault(k, default)
-
-    solar_debug = {
-        "used":      portfolio.get("_solar_used", False),
-        "elapsed":   portfolio.pop("_solar_elapsed", None),
-        "tokens":    portfolio.pop("_solar_tokens", {}),
-        "truncated": portfolio.get("_truncated", False),
-    }
+    _ensure_portfolio_defaults(portfolio)
+    solar_debug = _extract_solar_debug(portfolio)
 
     portfolios[idx] = portfolio
     _save_session()
@@ -319,11 +374,89 @@ async def reanalyze_portfolio(portfolio_id: str):
     return {"message": "재분석 완료", "portfolio": portfolio, "solar": solar_debug}
 
 
+@router.post("/portfolios/summarize-all")
+async def summarize_all_portfolios(req: SummarizeRequest):
+    """채용 설정 기준으로 모든 포트폴리오를 AI 요약한다."""
+    from services import solar as solar_svc
+
+    portfolios = _get_portfolios()
+
+    w_dict = _normalize_weights_percent(req.weights)
+
+    config_version = _compute_config_version(req.required_specs, w_dict)
+    job_config = {
+        "specs_text": ", ".join(req.required_specs),
+        "required_specs": req.required_specs,
+    }
+
+    results = []
+    for p in portfolios:
+        raw_text = p.get("_raw", "")
+        if not raw_text.strip():
+            results.append({"id": p["id"], "skipped": True})
+            continue
+        pos = p.get("_position", "general")
+        try:
+            result = solar_svc.summarize_text(raw_text, position=pos, job_config=job_config)
+            p["_summary"] = result["summary"]
+            p["_summary_config_version"] = config_version
+            results.append({"id": p["id"], "elapsed": result["elapsed"]})
+        except Exception as e:
+            print(f"[Summarize] {p['id']} 실패: {e}")
+            results.append({"id": p["id"], "error": str(e)})
+
+    _save_session()
+    return {"results": results, "config_version": config_version, "total": len(results)}
+
+
+@router.post("/portfolios/{portfolio_id}/summarize")
+async def summarize_portfolio(portfolio_id: str, req: SummarizeRequest):
+    """채용 설정 기준으로 단일 포트폴리오를 AI 요약한다."""
+    from services import solar as solar_svc
+
+    portfolios = _get_portfolios()
+    idx = _find_portfolio_idx(portfolios, portfolio_id)
+    if idx is None:
+        raise HTTPException(status_code=404, detail="포트폴리오를 찾을 수 없습니다.")
+
+    existing = portfolios[idx]
+    raw_text = existing.get("_raw", "")
+    if not raw_text.strip():
+        raise HTTPException(status_code=422, detail="원본 텍스트가 없습니다. 요약 불가.")
+
+    pos = existing.get("_position", "general")
+
+    w_dict = _normalize_weights_percent(req.weights)
+
+    config_version = _compute_config_version(req.required_specs, w_dict)
+    job_config = {
+        "specs_text": ", ".join(req.required_specs),
+        "required_specs": req.required_specs,
+    }
+
+    try:
+        result = solar_svc.summarize_text(raw_text, position=pos, job_config=job_config)
+    except solar_svc.NotConfiguredError:
+        raise HTTPException(status_code=503, detail="Solar API 키가 설정되지 않았습니다.")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"요약 실패: {e}")
+
+    existing["_summary"] = result["summary"]
+    existing["_summary_config_version"] = config_version
+    _save_session()
+
+    return {
+        "summary": result["summary"],
+        "elapsed": result["elapsed"],
+        "config_version": config_version,
+    }
+
+
 @router.get("/portfolios/{portfolio_id}/raw")
 def get_raw(portfolio_id: str):
     """포트폴리오 원본 텍스트 반환."""
     portfolios = _get_portfolios()
-    p = next((x for x in portfolios if x["id"] == portfolio_id), None)
+    p = _find_portfolio(portfolios, portfolio_id)
     if not p:
         raise HTTPException(status_code=404, detail="포트폴리오 없음")
 
@@ -372,12 +505,13 @@ async def import_portfolios(
     if not isinstance(imported, list):
         raise HTTPException(status_code=422, detail="portfolios 배열이 없습니다.")
     imported = [p for p in imported if isinstance(p, dict) and "id" in p]
+    imported_settings = data.get("settings", None)
 
     if mode == "reset":
         _portfolio_cache = imported
         _save_session()
         bst_invalidate()
-        return {"message": f"초기화 후 {len(imported)}개 불러오기 완료", "total": len(imported)}
+        return {"message": f"초기화 후 {len(imported)}개 불러오기 완료", "total": len(imported), "settings": imported_settings}
 
     # mode == "overwrite"
     portfolios = _get_portfolios()
@@ -399,7 +533,7 @@ async def import_portfolios(
     parts = []
     if added:       parts.append(f"{added}개 추가")
     if overwritten: parts.append(f"{overwritten}개 덮어쓰기")
-    return {"message": f"{', '.join(parts)} 완료", "total": len(portfolios), "added": added, "overwritten": overwritten}
+    return {"message": f"{', '.join(parts)} 완료", "total": len(portfolios), "added": added, "overwritten": overwritten, "settings": imported_settings}
 
 
 @router.patch("/portfolios/{portfolio_id}/name")
@@ -409,7 +543,7 @@ def rename_portfolio(portfolio_id: str, body: dict):
     if not new_name:
         raise HTTPException(status_code=400, detail="이름을 입력해주세요.")
     portfolios = _get_portfolios()
-    p = next((x for x in portfolios if x["id"] == portfolio_id), None)
+    p = _find_portfolio(portfolios, portfolio_id)
     if not p:
         raise HTTPException(status_code=404, detail="포트폴리오 없음")
     p["name"] = new_name
@@ -421,7 +555,7 @@ def rename_portfolio(portfolio_id: str, body: dict):
 def delete_portfolio(portfolio_id: str):
     """포트폴리오 삭제."""
     portfolios = _get_portfolios()
-    idx = next((i for i, p in enumerate(portfolios) if p["id"] == portfolio_id), None)
+    idx = _find_portfolio_idx(portfolios, portfolio_id)
     if idx is None:
         raise HTTPException(status_code=404, detail="포트폴리오 없음")
     portfolios.pop(idx)
@@ -443,18 +577,13 @@ def analyze(req: AnalyzeRequest):
     matcher = SpecMatcher(req.required_specs)
 
     # 가중치 정규화 (합계가 0이 되지 않도록 보호)
-    w = req.weights
-    if w is not None:
-        w_total = w.skill + w.career + w.project
-        if w_total > 0:
-            w_skill   = w.skill   / w_total
-            w_career  = w.career  / w_total
-            w_project = w.project / w_total
-        else:
-            w_skill = w_career = w_project = 1 / 3
-    else:
-        # 기본값: skill 60%, career 25%, project 15%
-        w_skill, w_career, w_project = 0.60, 0.25, 0.15
+    w_skill, w_career, w_project = _normalize_weights_fraction(req.weights)
+
+    current_config_version = _compute_config_version(req.required_specs, {
+        "skill": round(w_skill * 100),
+        "career": round(w_career * 100),
+        "project": round(w_project * 100),
+    })
 
     results = []
     for p in portfolios:
@@ -465,11 +594,11 @@ def analyze(req: AnalyzeRequest):
 
         # 경력 점수: career_years를 최대 10년 기준으로 0–100 스케일
         career_years = float(p.get("career_years") or 0)
-        career_score = min(career_years / 10.0, 1.0) * 100
+        career_score = min(career_years / _CAREER_SCALE_YEARS, 1.0) * 100
 
         # 프로젝트 수 점수: 최대 10개 기준으로 0–100 스케일
         project_count = len(p.get("projects") or [])
-        project_score = min(project_count / 10.0, 1.0) * 100
+        project_score = min(project_count / _PROJECT_SCALE_COUNT, 1.0) * 100
 
         # 가중 합산 점수
         weighted_score = round(
@@ -477,6 +606,9 @@ def analyze(req: AnalyzeRequest):
             career_score  * w_career +
             project_score * w_project
         )
+
+        p_config_version = p.get("_config_version", None)
+        is_legacy = p_config_version is not None and p_config_version != current_config_version
 
         results.append({
             **p,
@@ -486,6 +618,8 @@ def analyze(req: AnalyzeRequest):
             "project_score": round(project_score),
             "skills_match": skills_match,   # { "React": True, "Vue": False, ... }
             "matched_skills": matched,
+            "_config_version": current_config_version,
+            "_is_legacy": is_legacy,
         })
 
     sorted_results = sort_applicants(results, req.sort_key)
@@ -524,7 +658,7 @@ def search(
     elif mode == "intra":
         if not portfolio_id:
             raise HTTPException(status_code=400, detail="intra 모드는 portfolio_id 필요")
-        target = next((p for p in portfolios if p["id"] == portfolio_id), None)
+        target = _find_portfolio(portfolios, portfolio_id)
         if not target:
             raise HTTPException(status_code=404, detail=f"포트폴리오 '{portfolio_id}' 없음")
 
@@ -556,12 +690,3 @@ def similar(ids: str | None = Query(None, description="쉼표 구분 포트폴�
     return {"spans": spans, "count": len(spans)}
 
 
-# ── 헬퍼 ─────────────────────────────────────────────────────────
-
-def _portfolio_full_text(p: dict) -> str:
-    parts = [p.get("intro", "")]
-    for proj in p.get("projects", []):
-        parts.append(proj.get("desc", ""))
-        parts.append(proj.get("stack", ""))
-    parts.extend(p.get("awards", []))
-    return " ".join(parts)
