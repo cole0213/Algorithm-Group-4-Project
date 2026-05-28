@@ -13,7 +13,7 @@
 | #2 해시 테이블 | `backend/services/algorithms/hash_table.py` | `class SpecMatcher` |
 | #3 Edit Distance | `backend/services/algorithms/edit_distance.py` | `edit_distance()`, `is_similar()` |
 | #4 LCS | `backend/services/algorithms/lcs.py` | `lcs_length()`, `match_score()` |
-| #5 정렬 | `backend/services/algorithms/sort.py` | `sort_portfolios()` |
+| #5 정렬 | `backend/services/algorithms/sort.py` | `sort_applicants()` |
 | #6 BST (전체 검색) | `backend/services/algorithms/bst.py` | `class ApplicantIndex` |
 | #6 BST (내부 검색) | `backend/services/algorithms/bst.py` | `class TextIndex` |
 | #7a 별칭 사전 | `backend/services/algorithms/alias_map.py` | `normalize()`, `get_aliases()` |
@@ -30,13 +30,14 @@
 | `POST /portfolios/add` | `backend/routers/portfolios.py` | 포트폴리오 업로드·파싱 |
 | `POST /portfolios/{id}/reanalyze` | `backend/routers/portfolios.py` | Solar 재파싱 |
 | `DELETE /portfolios/{id}` | `backend/routers/portfolios.py` | 포트폴리오 삭제 |
-| `POST /portfolios/analyze` | `backend/routers/portfolios.py` | 스펙 매칭 + 매칭 점수 산출 |
-| `POST /portfolios/search` | `backend/routers/portfolios.py` | 별칭 확장 + BST 검색 |
-| `POST /portfolios/similar` | `backend/routers/portfolios.py` | Rabin-Karp 유사 문장 검출 |
-| `POST /portfolios/diff` | `backend/routers/portfolios.py` | 두 포트폴리오 비교 |
-| `POST /portfolios/export` | `backend/routers/portfolios.py` | 세션 JSON 내보내기 |
+| `POST /analyze` | `backend/routers/portfolios.py` | 스펙 매칭 + 매칭 점수 산출 |
+| `GET /search` | `backend/routers/portfolios.py` | 별칭 확장 + BST 검색 |
+| `GET /similar` | `backend/routers/portfolios.py` | Rabin-Karp 유사 문장 검출 |
+| `POST /diff` | `backend/routers/utils.py` | 두 포트폴리오 비교 |
+| `GET /portfolios/export` | `backend/routers/portfolios.py` | 세션 JSON 내보내기 |
 | `POST /portfolios/import` | `backend/routers/portfolios.py` | 세션 JSON 가져오기 |
 | `POST /extract-config` | `backend/routers/utils.py` | Solar로 채용 설정 자동 추출 |
+| `POST /extract-specs` | `backend/routers/utils.py` | 채용 공고 텍스트에서 스펙 키워드 추출 |
 
 ---
 
@@ -79,7 +80,9 @@
 | 파일 | 내용 |
 |------|------|
 | `backend/routers/utils.py` | `_ensure_portfolio_defaults()`, 기본 가중치 상수, KNOWN_SECTIONS |
-| `backend/services/parser.py` | `parse_pdf()` (pdfplumber), `parse_text()` 폴백 파싱 |
+| `backend/services/parser.py` | `parse_pdf()` (pdfplumber), `parse_text()` 폴백 파싱, `clean_name()` |
+| `backend/services/_solar_http.py` | `call_solar_chat()` — httpx 비동기 Solar API 호출 래퍼 |
+| `backend/services/algorithms/_common.py` | `merge_ranges()` — Rabin-Karp·alias_search 공유 구간 병합 유틸 |
 
 ---
 
@@ -114,7 +117,7 @@ JobConfigModal.jsx: [Apply]
   → POST /portfolios/analyze (portfolios.py)
   → hash_table.py: SpecMatcher.match_skills()
   → lcs.py: match_score()
-  → sort.py: sort_portfolios()
+  → sort.py: sort_applicants()
   → Sidebar.jsx: 매칭률 배지 표시
   → PortfolioPanel.jsx: 스킬 하이라이트
 ```

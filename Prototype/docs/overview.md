@@ -56,7 +56,8 @@ FastAPI 서버 (:8000)
    ├── routers/portfolios.py   ← 포트폴리오 CRUD·분석·검색
    ├── routers/utils.py        ← 채용 설정 추출 헬퍼
    └── services/
-        ├── solar.py           ← Upstage Solar API 호출·파싱
+        ├── solar.py           ← Upstage Solar API 호출·파싱·프롬프트
+        ├── _solar_http.py     ← httpx 비동기 HTTP 래퍼
         ├── parser.py          ← PDF/텍스트 파싱 (pdfplumber)
         └── algorithms/        ← 핵심 알고리즘 8종 (파일별 분리)
 ```
@@ -67,4 +68,4 @@ FastAPI 서버 (:8000)
 
 - **팀명**: Algorithm Group 4
 - **프로젝트명**: 개발자 포트폴리오 정형화·비교 시스템
-- **최종 업데이트**: 2026-05-26
+- **최종 업데이트**: 2026-05-28

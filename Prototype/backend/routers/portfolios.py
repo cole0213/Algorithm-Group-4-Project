@@ -17,7 +17,6 @@ from typing import Optional
 
 from difflib import SequenceMatcher
 
-from services import parser as parser_svc
 from services.parser import clean_name as _clean_name
 
 
@@ -99,7 +98,7 @@ def _find_content_duplicate(portfolios: list[dict], new_name: str, raw_text: str
 from services.algorithms.hash_table import SpecMatcher
 from services.algorithms.lcs import match_score, matched_skills
 from services.algorithms.sort import sort_applicants
-from services.algorithms.bst import ApplicantIndex, TextIndex, invalidate_cache as bst_invalidate, get_or_build_bst
+from services.algorithms.bst import TextIndex, invalidate_cache as bst_invalidate, get_or_build_bst
 from services.algorithms.alias_search import portfolio_matches_query, highlight_positions, _portfolio_text as _portfolio_full_text
 from services.algorithms.rabin_karp import detect_similar_response
 

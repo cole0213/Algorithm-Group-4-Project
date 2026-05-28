@@ -4,7 +4,7 @@
 # 사용처: parser.py, routers/portfolios.py (analyze 엔드포인트)
 
 from __future__ import annotations
-from .alias_map import normalize, get_aliases
+from .alias_map import normalize
 
 
 class SpecMatcher:

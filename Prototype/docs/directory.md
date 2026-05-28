@@ -2,12 +2,18 @@
 
 ```
 Prototype/
-├── docs/                              # 프로젝트 문서 (신규)
+├── docs/                              # 프로젝트 문서
 │   ├── overview.md                    # 프로젝트 개요
 │   ├── features.md                    # 기능 명세
+│   ├── algorithms.md                  # 알고리즘 설명 + 코드 위치
 │   ├── directory.md                   # 이 파일 — 디렉토리 구조
-│   ├── algorithms.md                  # 알고리즘 설명
-│   └── code_location.md               # 코드 위치 참조
+│   ├── code_location.md               # 기능·컴포넌트별 파일 참조
+│   ├── setup.md                       # 설치·실행 명령어
+│   ├── deploy.md                      # 배포 방안 및 접근 제어
+│   ├── workflow.md                    # 스프린트별 개발 진행 내역
+│   ├── validation.md                  # 기능 검증 체크리스트
+│   ├── backlog.md                     # 미구현 기능 아이디어
+│   └── history/                       # 스프린트 기록 보관
 │
 ├── backend/                           # Python + FastAPI 서버
 │   ├── main.py                        # FastAPI 앱 진입점, CORS 설정
@@ -22,8 +28,8 @@ Prototype/
 │   │
 │   └── services/                      # 비즈니스 로직·외부 연동
 │       ├── __init__.py
-│       ├── solar.py                   # Upstage Solar API 호출 및 파싱 로직
-│       ├── _solar_http.py             # Solar HTTP 클라이언트 (httpx 래퍼)
+│       ├── solar.py                   # Upstage Solar API 호출·파싱·프롬프트
+│       ├── _solar_http.py             # Solar HTTP 클라이언트 (httpx 비동기 래퍼)
 │       ├── parser.py                  # PDF 파싱 (pdfplumber), 폴백 텍스트 파싱
 │       └── algorithms/                # 핵심 알고리즘 구현 (파일별 분리)
 │           ├── __init__.py
@@ -43,11 +49,11 @@ Prototype/
 │   ├── index.html                     # HTML 진입점
 │   └── src/
 │       ├── main.jsx                   # React 진입점
-│       ├── App.jsx                    # 라우팅 (HomePage / WorkflowPage)
+│       ├── App.jsx                    # 라우팅 + 전역 상태 관리
 │       ├── index.css                  # 전역 스타일 (색상 팔레트, 레이아웃)
 │       ├── api.js                     # 백엔드 API 호출 함수 모음
-│       ├── constants.js               # 앱 전역 상수
-│       ├── utils.js                   # 공통 유틸 함수
+│       ├── constants.js               # STORAGE_KEYS·DEFAULT_WEIGHTS·ACCENT_COLORS 등 전역 상수
+│       ├── utils.js                   # matchClass·날짜 파싱 등 공통 유틸 함수
 │       │
 │       ├── pages/
 │       │   ├── HomePage.jsx           # 랜딩 페이지
@@ -67,15 +73,15 @@ Prototype/
 │           ├── SkillMatrix.jsx        # 지원자 × 스킬 매트릭스 그리드
 │           └── Toaster.jsx            # 토스트 알림
 │
-├── 비정형화_포트폴리오/               # 테스트용 샘플 포트폴리오 PDF
+├── 비정형화_포트폴리오/               # 테스트용 샘플 포트폴리오 (MD)
 ├── ui-prototype/                      # UI 목업 파일
-├── logo/                              # 프로젝트 로고 에셋
 │
 ├── CLAUDE.md                          # Claude Code 작업 규칙 (프로젝트 지침)
-├── 기획초안.md                        # 기획 초안 (UI 구성, 알고리즘 설명, 기능 목록)
-├── 개발환경.md                        # 개발 환경 설정 가이드
+├── INDEX.md                           # 전체 문서 색인
 ├── style.md                           # 디자인 시스템 (색상·타이포·레이아웃 기준)
-└── start.bat                          # Windows 실행 스크립트
+├── design.md                          # Notion 브랜드 외부 참고 자료
+├── start.bat                          # Windows 원클릭 실행 스크립트
+└── start.sh                           # macOS 원클릭 실행 스크립트
 ```
 
 ---

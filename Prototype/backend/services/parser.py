@@ -9,7 +9,6 @@
 #   ## 수상 및 활동 (불릿)
 
 from __future__ import annotations
-import os
 import re
 from pathlib import Path
 
