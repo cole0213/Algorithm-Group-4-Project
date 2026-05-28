@@ -213,9 +213,15 @@ def detect_similar(portfolios: list[dict]) -> list[SimilarSpan]:
             if not matched_a:
                 continue
 
-            spans += _section_spans(_merge_ranges(matched_a, _WORD_WINDOW), sections_a, id_a, group)
-            spans += _section_spans(_merge_ranges(matched_b, _WORD_WINDOW), sections_b, id_b, group)
-            group += 1
+            merged_a = _merge_ranges(matched_a, _WORD_WINDOW)
+            merged_b = _merge_ranges(matched_b, _WORD_WINDOW)
+            n_groups = max(len(merged_a), len(merged_b))
+            for k in range(n_groups):
+                if k < len(merged_a):
+                    spans += _section_spans([merged_a[k]], sections_a, id_a, group)
+                if k < len(merged_b):
+                    spans += _section_spans([merged_b[k]], sections_b, id_b, group)
+                group += 1
 
     return spans
 

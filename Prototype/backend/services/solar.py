@@ -17,7 +17,7 @@ load_dotenv()
 _API_KEY   = os.getenv("SOLAR_API_KEY", "")
 _BASE_URL  = "https://api.upstage.ai/v1"
 CHAT_URL   = f"{_BASE_URL}/chat/completions"
-MODEL      = os.getenv("SOLARMODEL", "solar-pro")
+MODEL      = os.getenv("SOLAR_MODEL", "solar-pro")
 _MAX_CHARS = 30000  # solar-pro 32k 토큰 기준 (한국어 3–4자/토큰 → 약 28k 토큰 사용 가능)
 
 _JSON_RE = re.compile(r"\{[\s\S]*\}")  # LLM 응답에서 JSON 객체 추출용
@@ -114,9 +114,10 @@ def _call_solar_api(headers: dict, body: dict, max_retries: int = 3) -> requests
 
 
 def _headers() -> dict:
-    if not _API_KEY:
+    key = _API_KEY or os.getenv("UPSTAGE_API_KEY", "")
+    if not key:
         raise NotConfiguredError("SOLAR_API_KEY가 .env에 설정되지 않았습니다.")
-    return {"Authorization": f"Bearer {_API_KEY}", "Content-Type": "application/json"}
+    return {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
 
 
 # ── 스키마 ────────────────────────────────────────────────────────

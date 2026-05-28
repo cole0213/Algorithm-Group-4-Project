@@ -62,7 +62,11 @@ npm run dev
 
 ```
 SOLAR_API_KEY=your_api_key_here
+SOLAR_MODEL=solar-pro
 ```
+
+- `SOLAR_API_KEY` 또는 `UPSTAGE_API_KEY` 중 하나만 있으면 됩니다.
+- `SOLAR_MODEL`은 생략 시 `solar-pro`가 기본값입니다.
 
 `.env.example` 참고
 

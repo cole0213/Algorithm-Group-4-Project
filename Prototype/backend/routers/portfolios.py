@@ -30,7 +30,8 @@ _PROJECT_SCALE_COUNT = 10.0      # 프로젝트 수 점수 스케일 기준 (개
 
 def _compute_config_version(required_specs: list, weights: dict) -> str:
     """채용 설정의 해시 버전 생성"""
-    cfg_str = json.dumps({"specs": sorted(required_specs), "weights": weights}, ensure_ascii=False, sort_keys=True)
+    safe_specs = sorted(s for s in required_specs if isinstance(s, str))
+    cfg_str = json.dumps({"specs": safe_specs, "weights": weights}, ensure_ascii=False, sort_keys=True)
     return hashlib_mod.md5(cfg_str.encode()).hexdigest()[:8]
 
 
@@ -163,7 +164,8 @@ _PORTFOLIO_FIELD_DEFAULTS = [
 
 def _ensure_portfolio_defaults(portfolio: dict) -> None:
     for k, default in _PORTFOLIO_FIELD_DEFAULTS:
-        portfolio.setdefault(k, default)
+        if k not in portfolio:
+            portfolio[k] = list(default) if isinstance(default, list) else default
 
 
 def _extract_solar_debug(portfolio: dict) -> dict:
@@ -362,6 +364,7 @@ async def reanalyze_portfolio(portfolio_id: str):
     portfolio["_raw"]      = raw_text
     portfolio["_raw_ext"]  = existing.get("_raw_ext", "txt")
     portfolio["_position"] = pos
+    portfolio["_added_at"] = existing.get("_added_at", "")
 
     _ensure_portfolio_defaults(portfolio)
     solar_debug = _extract_solar_debug(portfolio)
@@ -388,21 +391,27 @@ async def summarize_all_portfolios(req: SummarizeRequest):
         "required_specs": req.required_specs,
     }
 
+    try:
+        solar_svc._headers()
+    except solar_svc.NotConfiguredError:
+        raise HTTPException(status_code=503, detail="Solar API 키가 설정되지 않았습니다.")
+
     results = []
     for p in portfolios:
+        pid = p.get("id", "")
         raw_text = p.get("_raw", "")
         if not raw_text.strip():
-            results.append({"id": p["id"], "skipped": True})
+            results.append({"id": pid, "skipped": True})
             continue
         pos = p.get("_position", "general")
         try:
             result = solar_svc.summarize_text(raw_text, position=pos, job_config=job_config)
             p["_summary"] = result["summary"]
             p["_summary_config_version"] = config_version
-            results.append({"id": p["id"], "elapsed": result["elapsed"]})
+            results.append({"id": pid, "elapsed": result["elapsed"]})
         except Exception as e:
-            print(f"[Summarize] {p['id']} 실패: {e}")
-            results.append({"id": p["id"], "error": str(e)})
+            print(f"[Summarize] {pid} 실패: {e}")
+            results.append({"id": pid, "error": str(e)})
 
     _save_session()
     return {"results": results, "config_version": config_version, "total": len(results)}
@@ -587,7 +596,7 @@ def analyze(req: AnalyzeRequest):
     results = []
     for p in portfolios:
         # LCS 기반 스킬 매칭 점수 (0–100)
-        skill_score = match_score(req.required_specs, p["skills"])
+        skill_score = match_score(req.required_specs, p.get("skills", []))
         skills_match = matcher.match_skills(p["skills"])
         matched = matched_skills(req.required_specs, p["skills"])
 

@@ -90,11 +90,13 @@
 
 | 항목 | 위치 |
 |------|------|
-| Solar API 키 | `backend/.env` → `SOLAR_API_KEY` |
+| Solar API 키 | `backend/.env` → `SOLAR_API_KEY` (또는 `UPSTAGE_API_KEY`) |
 | Solar 모델 이름 | `backend/.env` → `SOLAR_MODEL=solar-pro` |
 | Vite API 프록시 | `frontend/vite.config.js` → `/api` → `http://localhost:8000` |
 | pip 의존성 | `backend/requirements.txt` |
 | npm 의존성 | `frontend/package.json` |
+
+> `SOLAR_API_KEY`와 `UPSTAGE_API_KEY` 중 하나만 설정해도 모든 기능이 동작합니다.
 
 ---
 
