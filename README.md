@@ -88,12 +88,14 @@ SOLAR_MODEL=solar-pro
 
 | 파일 | 설명 |
 |------|------|
-| `Prototype/기능_명세서.md` | 구현된 전체 기능 상세 명세 |
-| `Prototype/기획서.md` | API 명세, 데이터 스키마, UI 구조 |
-| `Prototype/INDEX.md` | 전체 파일 색인 |
-| `Prototype/solar-설계.md` | Solar LLM 프롬프트 설계 |
-| `Prototype/개발환경.md` | 디렉토리 구조, 설치 명령어 |
-| `Prototype/런칭-가이드.md` | 서버 실행 및 배포 절차 |
+| `Prototype/docs/overview.md` | 프로젝트 목적, 기술 스택, 시스템 구성도 |
+| `Prototype/docs/features.md` | 전체 기능 상세 명세 |
+| `Prototype/docs/algorithms.md` | 알고리즘 8종 설명 + 코드 위치 |
+| `Prototype/docs/setup.md` | 설치·실행 명령어, 환경 변수 |
+| `Prototype/docs/deploy.md` | 배포 방안, 접근 제어 |
+| `Prototype/docs/code_location.md` | 기능·컴포넌트별 파일 참조 |
+| `Prototype/docs/directory.md` | 디렉토리 구조 |
+| `Prototype/INDEX.md` | 전체 문서 색인 |
 
 ---
 

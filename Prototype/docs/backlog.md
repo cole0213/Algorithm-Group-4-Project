@@ -50,7 +50,7 @@
 | 항목 | 이유 |
 |------|------|
 | 구글 드라이브 연동 | OAuth 구성 필요 |
-| 채용 설정 기준 재요약 API | `solar.py::summarize_text()` 구현됨, 백엔드 엔드포인트·프론트엔드 UI 미구현 |
+| 채용 설정 기준 재요약 프론트엔드 UI | 백엔드 엔드포인트 구현 완료 (`/portfolios/summarize-all`, `/portfolios/{id}/summarize`), 프론트엔드 UI 미구현 |
 | 이모지 → 실제 아이콘 이미지 교체 | `assets/icon-list.txt`에 이미지 목록 명시, 이미지 파일 직접 추가 필요 |
 | 이미지 스캔본 OCR | 이미지 PDF/스캔본 처리 (GPT-4o, Gemini 대비 Solar 한계) |
 

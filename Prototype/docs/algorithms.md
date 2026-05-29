@@ -267,7 +267,7 @@ hash = (w₁×31⁴ + w₂×31³ + w₃×31² + w₄×31 + w₅) mod (2³¹−1)
 | `_section_spans(merged, sections, …)` — 섹션 경계 분할 | `backend/services/algorithms/rabin_karp.py` | L128–L156 |
 | `detect_similar(portfolios)` — 메인 검출 함수 | `backend/services/algorithms/rabin_karp.py` | L159–L220 |
 | 해시 충돌 → LCS 검증 (70% 이상만 통과) | `backend/services/algorithms/rabin_karp.py` | L208–L210 |
-| `detect_similar_response()` — API 응답 직렬화 | `backend/services/algorithms/rabin_karp.py` | L223–L234 |
+| `detect_similar_response()` — API 응답 직렬화 | `backend/services/algorithms/rabin_karp.py` | L229–L240 |
 | 라우터에서 import | `backend/routers/portfolios.py` | L104 |
 | `detect_similar_response()` 호출 | `backend/routers/portfolios.py` | L689 |
 
@@ -309,7 +309,7 @@ routers/portfolios.py
   │     └─ TextIndex + search_context                  intra BST (bst.py:L161)
   │
   └─ GET /similar (L681)
-        └─ detect_similar_response (rabin_karp.py:L223)
+        └─ detect_similar_response (rabin_karp.py:L229)
               ├─ _rolling_hashes (rabin_karp.py:L66)  Rabin-Karp
               └─ lcs_length (lcs.py:L10)              LCS 검증
 ```

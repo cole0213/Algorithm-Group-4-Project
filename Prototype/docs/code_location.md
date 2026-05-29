@@ -38,6 +38,8 @@
 | `POST /portfolios/import` | `backend/routers/portfolios.py` | 세션 JSON 가져오기 |
 | `POST /extract-config` | `backend/routers/utils.py` | Solar로 채용 설정 자동 추출 |
 | `POST /extract-specs` | `backend/routers/utils.py` | 채용 공고 텍스트에서 스펙 키워드 추출 |
+| `POST /portfolios/summarize-all` | `backend/routers/portfolios.py` | 채용 설정 기준으로 전체 포트폴리오 AI 요약 |
+| `POST /portfolios/{id}/summarize` | `backend/routers/portfolios.py` | 채용 설정 기준으로 단일 포트폴리오 AI 요약 |
 
 ---
 

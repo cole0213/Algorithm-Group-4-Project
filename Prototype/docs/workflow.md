@@ -137,6 +137,26 @@ git commit → push
 
 ---
 
+### Phase 6 — 알고리즘·API·문서 보완 (5월 30일)
+
+| 커밋 | 내용 |
+|------|------|
+| `docs: 코드 품질 개선 및 문서 구조 정비` → `4999786` | rabin_karp 그룹 번호 개선, solar.py 재시도 백오프, 포트폴리오 요약 API 추가, 문서 보완 |
+
+**주요 변경**
+
+| 파일 | 변경 내용 |
+|------|-----------|
+| `rabin_karp.py` | 한 쌍에서 독립적인 유사 구간이 여러 개일 때 각각 다른 그룹 번호 할당 (`n_groups = max(len(merged_a), len(merged_b))`) |
+| `solar.py` | `_call_solar_api()` 재시도 백오프 추가 (429 rate limit 지수 백오프, 5xx 1회 재시도), `SolarAPIError` 예외 클래스 추가 |
+| `portfolios.py` | `POST /portfolios/summarize-all`, `POST /portfolios/{id}/summarize` 엔드포인트 신규 추가 — 채용 설정 기준 포트폴리오 AI 요약 |
+| `utils.py` | `extract-specs` 엔드포인트 소폭 개선 |
+| `docs/algorithms.md` | Rabin-Karp 흐름 설명 보완 (독립 구간별 그룹 번호 부여 명시) |
+| `docs/code_location.md` | `SOLAR_API_KEY` / `UPSTAGE_API_KEY` 대체 사용 가능 주석 추가 |
+| `README.md` | `SOLAR_MODEL` 환경 변수 설명 및 `UPSTAGE_API_KEY` 대체 사용 안내 추가 |
+
+---
+
 ## 미완료 / 보류 항목
 
 | 항목 | 상태 | 비고 |
