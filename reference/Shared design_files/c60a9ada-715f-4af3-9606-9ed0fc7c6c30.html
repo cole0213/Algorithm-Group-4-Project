@@ -1,0 +1,383 @@
+
+<!-- saved from url=(0085)https://variant.com/design/c60a9ada-715f-4af3-9606-9ed0fc7c6c30.html?t=1779949889249# -->
+<html lang="en" vid="0"><head vid="1"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" vid="3">
+    <title vid="4">Indexes Dashboard</title>
+    <style vid="5">
+        :root {
+            --color-bg: #ffffff;
+            --color-text: #0d0d0d;
+            --color-text-muted: #666666;
+            --color-blue: #b4c6e7;
+            --color-grey: #c2c2c2;
+            --color-green: #c5e0b4;
+            --color-black: #000000;
+            --color-border: #eeeeee;
+            
+            --radius-lg: 24px;
+            --radius-sm: 12px;
+            --radius-pill: 100px;
+            
+            --font-main: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            font-family: var(--font-main);
+            padding: 0 40px 40px 40px;
+        }
+
+        
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100px;
+            margin-bottom: 20px;
+        }
+
+        .nav-left, .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            font-size: 20px;
+            letter-spacing: -0.03em;
+        }
+
+        .logo-icon {
+            background: var(--color-black);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .separator {
+            color: var(--color-grey);
+            font-weight: 300;
+            font-size: 20px;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--color-text);
+            font-size: 14px;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .nav-link:hover {
+            opacity: 0.6;
+        }
+
+        .nav-link.dropdown::after {
+            content: "▾";
+            margin-left: 4px;
+            font-size: 10px;
+        }
+
+        .nav-hr {
+            flex-grow: 1;
+            height: 1px;
+            background: var(--color-text);
+            margin: 0 40px;
+            opacity: 0.1;
+        }
+
+        
+        header {
+            margin-bottom: 48px;
+            max-width: 800px;
+        }
+
+        h1 {
+            font-size: 48px;
+            line-height: 1.1;
+            letter-spacing: -0.04em;
+            font-weight: 700;
+        }
+
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: auto auto;
+            gap: 24px;
+        }
+
+        
+        .card {
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 240px;
+            position: relative;
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .card-label {
+            font-size: 24px;
+            font-weight: 500;
+            letter-spacing: -0.02em;
+        }
+
+        .action-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-pill);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #f8f8f8;
+        }
+
+        .card-content {
+            margin-top: 24px;
+        }
+
+        .card-stat {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--color-text);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .card-description {
+            font-size: 14px;
+            line-height: 1.5;
+            color: rgba(13, 13, 13, 0.7);
+            max-width: 280px;
+        }
+
+        
+        .card-manage { background-color: var(--color-blue); }
+        .card-trade { background-color: var(--color-grey); }
+        .card-invest { background-color: var(--color-green); }
+        .card-dark { 
+            background-color: var(--color-black); 
+            color: white; 
+        }
+        .card-dark .card-description { color: rgba(255, 255, 255, 0.7); }
+
+        .card-outline {
+            background-color: transparent;
+            border: 1px solid var(--color-border);
+            grid-column: span 2;
+        }
+
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+        }
+
+        .data-table td {
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .text-right { text-align: right; }
+        .tabular { font-variant-numeric: tabular-nums; }
+        
+        .trend-up { color: #2d8a39; font-weight: 600; }
+        .trend-down { color: #d93025; font-weight: 600; }
+
+        
+        .image-container {
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            height: 100%;
+            background: #f5f5f5;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .card-outline {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body vid="6">
+
+    <nav vid="7">
+        <div class="nav-left" vid="8">
+            <div class="logo" vid="9">
+                <div class="logo-icon" vid="10">↗</div>
+                indexes
+            </div>
+            <span class="separator" vid="11">/</span>
+            <a href="https://variant.com/design/c60a9ada-715f-4af3-9606-9ed0fc7c6c30.html?t=1779949889249#" class="nav-link" vid="12">Trade</a>
+            <a href="https://variant.com/design/c60a9ada-715f-4af3-9606-9ed0fc7c6c30.html?t=1779949889249#" class="nav-link" vid="13">Planning</a>
+            <a href="https://variant.com/design/c60a9ada-715f-4af3-9606-9ed0fc7c6c30.html?t=1779949889249#" class="nav-link" vid="14">News</a>
+            <a href="https://variant.com/design/c60a9ada-715f-4af3-9606-9ed0fc7c6c30.html?t=1779949889249#" class="nav-link dropdown" vid="15">Products</a>
+            <a href="https://variant.com/design/c60a9ada-715f-4af3-9606-9ed0fc7c6c30.html?t=1779949889249#" class="nav-link" vid="16">Company</a>
+        </div>
+        <div class="nav-hr" vid="17"></div>
+        <div class="nav-right" vid="18">
+            <a href="https://variant.com/design/c60a9ada-715f-4af3-9606-9ed0fc7c6c30.html?t=1779949889249#" class="nav-link" vid="19">Log In</a>
+            <span class="separator" vid="20">/</span>
+            <a href="https://variant.com/design/c60a9ada-715f-4af3-9606-9ed0fc7c6c30.html?t=1779949889249#" class="nav-link" vid="21">Sign Up</a>
+        </div>
+    </nav>
+
+    <header vid="22">
+        <h1 vid="23">Portfolio Overview and Market Activity</h1>
+    </header>
+
+    <div class="dashboard-grid" vid="24">
+        
+        <div class="card card-manage" vid="25">
+            <div class="card-header" vid="26">
+                <span class="card-label" vid="27">manage</span>
+                <button class="action-btn" vid="28">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" vid="29"><path d="M7 1V13M1 7H13" stroke="black" stroke-width="2" stroke-linecap="round" vid="30"></path></svg>
+                </button>
+            </div>
+            <div class="card-content" vid="31">
+                <div class="card-stat" vid="32">
+                    <span vid="33">Active accounts</span>
+                    <span class="separator" vid="34">/</span>
+                    <span class="tabular" vid="35">04</span>
+                </div>
+                <p class="card-description" vid="36">Set up recurring deposits or manage your existing capital allocations across multiple portfolios.</p>
+            </div>
+        </div>
+
+        <div class="card card-outline" vid="37">
+            <div class="card-header" vid="38">
+                <span class="card-label" vid="39">library</span>
+            </div>
+            <div class="card-content" vid="40">
+                <table class="data-table" vid="41">
+                    <tbody vid="42"><tr vid="43">
+                        <td vid="44">Market Strategy Guide</td>
+                        <td class="text-right color-text-muted" vid="45">Educational</td>
+                        <td class="text-right tabular" vid="46">12 min read</td>
+                    </tr>
+                    <tr vid="47">
+                        <td vid="48">Understanding Yield Curves</td>
+                        <td class="text-right color-text-muted" vid="49">Technical</td>
+                        <td class="text-right tabular" vid="50">08 min read</td>
+                    </tr>
+                    <tr vid="51">
+                        <td vid="52">Risk Management 101</td>
+                        <td class="text-right color-text-muted" vid="53">Basics</td>
+                        <td class="text-right tabular" vid="54">15 min read</td>
+                    </tr>
+                </tbody></table>
+            </div>
+        </div>
+
+        
+        <div class="card card-trade" vid="55">
+            <div class="card-header" vid="56">
+                <span class="card-label" vid="57">trade</span>
+                <button class="action-btn" vid="58">
+                    <svg width="14" height="2" viewBox="0 0 14 2" fill="none" vid="59"><path d="M1 1H13" stroke="black" stroke-width="2" stroke-linecap="round" vid="60"></path></svg>
+                </button>
+            </div>
+            <div class="card-content" vid="61">
+                <table class="data-table" style="margin-top: -10px;" vid="62">
+                    <tbody vid="63"><tr vid="64">
+                        <td vid="65">AAPL</td>
+                        <td class="text-right tabular" vid="66">$182.41</td>
+                        <td class="text-right trend-up" vid="67">+1.2%</td>
+                    </tr>
+                    <tr vid="68">
+                        <td vid="69">TSLA</td>
+                        <td class="text-right tabular" vid="70">$238.10</td>
+                        <td class="text-right trend-down" vid="71">-0.4%</td>
+                    </tr>
+                </tbody></table>
+            </div>
+        </div>
+
+        <div class="card card-invest" vid="72">
+            <div class="card-header" vid="73">
+                <span class="card-label" vid="74">invest</span>
+                <button class="action-btn" vid="75">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" vid="76"><path d="M7 1V13M1 7H13" stroke="black" stroke-width="2" stroke-linecap="round" vid="77"></path></svg>
+                </button>
+            </div>
+            <div class="card-content" vid="78">
+                <div class="card-stat" vid="79">
+                    <span vid="80">New opportunities</span>
+                    <span class="separator" vid="81">/</span>
+                    <span class="tabular" vid="82">12</span>
+                </div>
+                <p class="card-description" vid="83">View curated stock bundles and high-yield index funds based on your risk profile.</p>
+            </div>
+        </div>
+
+        <div class="card card-dark" vid="84">
+            <div class="card-header" vid="85">
+                <span class="card-label" vid="86">learn more</span>
+                <button class="action-btn" style="background: white;" vid="87">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" vid="88"><path d="M3 11L11 3M11 3H5M11 3V9" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vid="89"></path></svg>
+                </button>
+            </div>
+            <div class="card-content" vid="90">
+                <p class="card-description" vid="91">Deep dive into advanced financial planning and tax-optimized trading strategies.</p>
+            </div>
+        </div>
+
+    </div>
+
+
+</body></html>

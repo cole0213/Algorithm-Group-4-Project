@@ -1,12 +1,18 @@
-import { useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import PortfolioPanel from './PortfolioPanel';
+
+const ACCEPTED_EXTS = ['.md', '.pdf'];
+const isValidDrop = f => ACCEPTED_EXTS.some(ext => f.name.toLowerCase().endsWith(ext));
 
 export default function PortfolioArea({
   applicants, selectedIds, onClose,
-  similarMap, settings, searchQuery, visibleIds, onSyncToggle, onReanalyze, onSummarize, onUploadClick,
-  scrollPos, onScrollSave, onDiffClick, blindAliases,
+  similarMap, settings, searchQuery, stageSearch, visibleIds, onReanalyze, onSummarize, onUploadClick,
+  scrollPos, onScrollSave, blindAliases, onDropFile,
 }) {
   const panelRefs = useRef([]);
+  const [slotState, setSlotState] = useState('idle'); // idle | over | dropped | error
+  const [slotLabel, setSlotLabel] = useState('＋ Add Document');
+  const leaveTimerRef = useRef(null);
   const isSyncing = useRef(false);
   const syncEnabled = useRef(settings.syncScroll);
 
@@ -44,34 +50,42 @@ export default function PortfolioArea({
     .map(id => applicants.find(a => a.id === id))
     .filter(Boolean);
 
+  function handleSlotDragEnter(e) {
+    e.preventDefault();
+    clearTimeout(leaveTimerRef.current);
+    setSlotState('over');
+  }
+  function handleSlotDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+    clearTimeout(leaveTimerRef.current);
+    setSlotState('over');
+  }
+  function handleSlotDragLeave() {
+    leaveTimerRef.current = setTimeout(() => setSlotState('idle'), 80);
+  }
+  function handleSlotDrop(e) {
+    e.preventDefault();
+    clearTimeout(leaveTimerRef.current);
+    const files = Array.from(e.dataTransfer.files).filter(isValidDrop);
+    if (files.length === 0) {
+      setSlotState('error');
+      setSlotLabel('.md / .pdf only');
+      setTimeout(() => { setSlotState('idle'); setSlotLabel('＋ Add Document'); }, 1600);
+      return;
+    }
+    const f = files[0];
+    const displayName = f.name.length > 14 ? f.name.slice(0, 12) + '…' : f.name;
+    setSlotState('dropped');
+    setSlotLabel('✓ ' + displayName);
+    setTimeout(() => { setSlotState('idle'); setSlotLabel('＋ Add Document'); }, 2200);
+    onDropFile?.(f);
+  }
+
   return (
     <div className="portfolio-area">
-      {/* 툴바 */}
-      <div className="portfolio-toolbar">
-        <div className="sync-toggle" onClick={onSyncToggle} title={settings.syncScroll ? '동기화 스크롤 끄기 — 각 패널이 독립 스크롤됩니다' : '동기화 스크롤 켜기 — 모든 패널이 함께 스크롤됩니다'}>
-          <span>동기화 스크롤</span>
-          <div className={`toggle-pill ${settings.syncScroll ? 'on' : ''}`} />
-        </div>
-        <div className="toolbar-right">
-          {selectedIds.length >= 2 && selectedIds.length <= 4 && onDiffClick && (
-            <button
-              className="diff-trigger-btn"
-              title={`${selectedIds.length}명 항목별 비교 분석`}
-              onClick={() => onDiffClick(selectedIds)}
-            >
-              ⇄ {selectedIds.length}명 비교
-            </button>
-          )}
-          {selectedIds.length > 0 && (
-            <span className="panel-count-badge" title="현재 열린 패널 수 (최대 4개)">
-              패널 {selectedIds.length}/4
-            </span>
-          )}
-        </div>
-      </div>
-
       {/* 패널 영역 */}
-      <div className="portfolio-panels">
+      <div className={`portfolio-panels${settings.panelAnimation ? ' panels-anim' : ''}`}>
         {selectedApplicants.length === 0 ? (
           <div className="empty-state">
             <div className="empty-icon">📋</div>
@@ -85,25 +99,40 @@ export default function PortfolioArea({
             )}
           </div>
         ) : (
-          selectedApplicants.map((a, idx) => (
-            <PortfolioPanel
-              key={a.id}
-              ref={el => { panelRefs.current[idx] = el; }}
-              applicant={a}
-              accentIdx={idx}
-              onClose={() => onClose(a.id)}
-              similarSpans={similarMap[a.id] || []}
-              settings={settings}
-              searchQuery={searchQuery}
-              onReanalyze={onReanalyze}
-              onSummarize={onSummarize}
-              isFiltered={visibleIds !== null && !visibleIds.has(a.id)}
-              blind={settings.blind}
-              blindAliases={blindAliases}
-              initialScrollTop={scrollPos?.[a.id] ?? 0}
-              onScrollChange={(top) => onScrollSave?.(a.id, top)}
-            />
-          ))
+          <>
+            {selectedApplicants.map((a, idx) => (
+              <PortfolioPanel
+                key={a.id}
+                ref={el => { panelRefs.current[idx] = el; }}
+                applicant={a}
+                accentIdx={idx}
+                onClose={() => onClose(a.id)}
+                similarSpans={similarMap[a.id] || []}
+                settings={settings}
+                searchQuery={stageSearch || searchQuery}
+                onReanalyze={onReanalyze}
+                onSummarize={onSummarize}
+                isFiltered={visibleIds !== null && !visibleIds.has(a.id)}
+                blind={settings.blind}
+                blindAliases={blindAliases}
+                initialScrollTop={scrollPos?.[a.id] ?? 0}
+                onScrollChange={(top) => onScrollSave?.(a.id, top)}
+              />
+            ))}
+            {selectedIds.length < 4 && (
+              <div
+                className={`panel-add-slot ${slotState}`}
+                title=".md 또는 .pdf 파일을 드래그 & 드롭하거나 클릭하세요"
+                onClick={onUploadClick}
+                onDragEnter={handleSlotDragEnter}
+                onDragOver={handleSlotDragOver}
+                onDragLeave={handleSlotDragLeave}
+                onDrop={handleSlotDrop}
+              >
+                {slotLabel}
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

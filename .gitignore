@@ -10,3 +10,10 @@ dist/
 build/
 .DS_Store
 Thumbs.db
+
+# Playwright auto-generated screenshots
+.playwright-mcp/
+Prototype/.playwright-mcp/
+
+# E2E temp files
+Prototype/e2e-tmp/

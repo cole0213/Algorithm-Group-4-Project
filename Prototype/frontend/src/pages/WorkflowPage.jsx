@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { SIMILAR_PALETTES } from '../components/SettingsDrawer';
 import { analyzePortfolios, searchPortfolios, fetchSimilarMap, deletePortfolio, reanalyzePortfolio, exportPortfolios, summarizePortfolio, summarizeAllPortfolios } from '../api';
-import TopBar from '../components/TopBar';
-import Sidebar from '../components/Sidebar';
+import DeskPanel from '../components/DeskPanel';
 import PortfolioArea from '../components/PortfolioArea';
 import SettingsDrawer from '../components/SettingsDrawer';
 import UploadModal from '../components/UploadModal';
@@ -17,7 +16,19 @@ function loadCache() {
   catch { return []; }
 }
 
-export default function WorkflowPage({ onGoHome }) {
+const _defaultSettings = {
+  highlight:      true,
+  similar:        true,
+  hideSimlar:     true,
+  syncScroll:     false,
+  originalLink:   true,
+  aliasSearch:    true,
+  blind:          false,
+  dark:           false,
+  panelAnimation: true,
+};
+
+export default function WorkflowPage() {
   const { toasts, toast } = useToast();
   const [applicants, setApplicants]     = useState(loadCache);
   const [visibleIds, setVisibleIds]     = useState(null);
@@ -29,7 +40,10 @@ export default function WorkflowPage({ onGoHome }) {
     '#9CA3AF','#9CA3AF','#9CA3AF','#9CA3AF','#9CA3AF','#9CA3AF',
   ]);
   const [sortKey, setSortKey]           = useState('match');
-  const [requiredSpecs, setRequiredSpecs] = useState(DEFAULT_SPECS);
+  const [requiredSpecs, setRequiredSpecs] = useState(() => {
+    try { return localStorage.getItem(STORAGE_KEYS.SPECS) || DEFAULT_SPECS; }
+    catch { return DEFAULT_SPECS; }
+  });
   const [searchQuery, setSearchQuery]   = useState('');
   const [drawerOpen, setDrawerOpen]     = useState(false);
   const [uploadOpen, setUploadOpen]     = useState(false);
@@ -42,7 +56,13 @@ export default function WorkflowPage({ onGoHome }) {
 
   const [analyzing, setAnalyzing]       = useState(false);
   // 기본 가중치 — 백엔드 portfolios.py의 DEFAULT_W_* 상수와 동일하게 유지
-  const [weights, setWeights]           = useState(DEFAULT_WEIGHTS);
+  const [weights, setWeights]           = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEYS.WEIGHTS));
+      const total = saved && Object.values(saved).reduce((a, b) => a + b, 0);
+      return total > 0 ? saved : DEFAULT_WEIGHTS;
+    } catch { return DEFAULT_WEIGHTS; }
+  });
 
   const ALL_SECTIONS = ['info', 'skills', 'intro', 'timeline', 'projects', 'awards', 'links'];
   // 기본 7개 섹션은 항상 표시 — 토글 UI 제거됨. visibleSections는 export/import 호환용으로만 유지.
@@ -53,27 +73,41 @@ export default function WorkflowPage({ onGoHome }) {
   const [blindOrderedIds, setBlindOrderedIds] = useState([]);
   const [hasLegacy, setHasLegacy] = useState(false);
   const specsTimer = useRef(null);
+  const sortKeyRef = useRef(sortKey);
+  const weightsRef = useRef(weights);
+  useEffect(() => { sortKeyRef.current = sortKey; }, [sortKey]);
+  useEffect(() => { weightsRef.current = weights; }, [weights]);
   const [summarizeAllConfirm, setSummarizeAllConfirm] = useState(false);
   const [summarizeProgress, setSummarizeProgress] = useState(null);
   // null | { total, completed, current, currentName, errors: [{id,name,msg}], status: 'running'|'done'|'cancelled' }
   const [selectedSummarizeIds, setSelectedSummarizeIds] = useState(() => new Set());
   const cancelSummarizeRef = useRef(false);
   const [jobConfigOpen, setJobConfigOpen] = useState(false);
+  const [dropFile, setDropFile] = useState(null);
+  const [stageSearch, setStageSearch] = useState('');
 
-  const [settings, setSettings]         = useState({
-    highlight:   true,
-    similar:     true,
-    hideSimlar:  true,
-    syncScroll:  false,
-    originalLink: true,
-    aliasSearch: true,
-    blind:       false,
-    dark:        false,
+  const [settings, setSettings]         = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEYS.SETTINGS));
+      return saved ? { ..._defaultSettings, ...saved, blind: false } : _defaultSettings;
+    } catch { return _defaultSettings; }
   });
 
   useEffect(() => {
     document.body.classList.toggle('dark', settings.dark);
   }, [settings.dark]);
+
+  useEffect(() => {
+    try { localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings)); } catch {}
+  }, [settings]);
+
+  useEffect(() => {
+    try { localStorage.setItem(STORAGE_KEYS.SPECS, requiredSpecs); } catch {}
+  }, [requiredSpecs]);
+
+  useEffect(() => {
+    try { localStorage.setItem(STORAGE_KEYS.WEIGHTS, JSON.stringify(weights)); } catch {}
+  }, [weights]);
 
   useEffect(() => {
     function onKeyDown(e) {
@@ -123,19 +157,21 @@ export default function WorkflowPage({ onGoHome }) {
   }, [requiredSpecs, sortKey, weights]);
 
   useEffect(() => {
-    runAnalyze(DEFAULT_SPECS, 'match');
+    runAnalyze(requiredSpecs, sortKey, weights);
   }, []);
 
   // requiredSpecs 변경 시 debounce 자동 분석 + 기존 요약 있으면 팝업
-  const isFirstRender = useRef(true);
+  // prevSpecsRef: StrictMode의 이중 effect 실행에서도 안전하게 초기 렌더 무시
+  const prevSpecsRef = useRef(requiredSpecs);
   useEffect(() => {
-    if (isFirstRender.current) { isFirstRender.current = false; return; }
+    const prev = prevSpecsRef.current;
+    prevSpecsRef.current = requiredSpecs;
+    if (prev === requiredSpecs) return;
     clearTimeout(specsTimer.current);
     if (!requiredSpecs.trim()) return;
     setHasLegacy(true);
     specsTimer.current = setTimeout(() => {
-      runAnalyze(requiredSpecs, sortKey, weights);
-      // 기존 요약이 있는 포트폴리오가 있으면 재요약 팝업 (자동 전체 선택)
+      runAnalyze(requiredSpecs, sortKeyRef.current, weightsRef.current);
       const summaryIds = applicants.filter(a => a._summary).map(a => a.id);
       if (summaryIds.length) {
         setSelectedSummarizeIds(new Set(summaryIds));
@@ -425,9 +461,8 @@ export default function WorkflowPage({ onGoHome }) {
   })();
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
-      <TopBar
-        onSearch={handleSearch}
+    <div className="app-layout">
+      <DeskPanel
         requiredSpecs={requiredSpecs}
         onSpecsChange={setRequiredSpecs}
         onAnalyze={async () => {
@@ -435,19 +470,18 @@ export default function WorkflowPage({ onGoHome }) {
           const hasSummaries = applicants.some(a => a._summary);
           if (hasSummaries) await handleSummarizeAll();
         }}
+        hasLegacy={hasLegacy}
+        onJobConfigClick={() => setJobConfigOpen(true)}
         sortKey={sortKey}
         onSortChange={handleSortChange}
-        onSettingsClick={() => setDrawerOpen(true)}
-        onUploadClick={() => setUploadOpen(true)}
+        onUploadClick={() => { setDropFile(null); setUploadOpen(true); }}
         onFolderClick={() => setFolderOpen(true)}
         onImported={(result) => {
           runAnalyze();
           toast(result?.message || result || '불러오기 완료', 'success');
-          // 임포트된 settings 복원
           if (result?.settings) {
             const s = result.settings;
             if (s.weights) setWeights(s.weights);
-            if (s.visibleSections) setVisibleSections(s.visibleSections);
             if (typeof s.highlight !== 'undefined' || typeof s.dark !== 'undefined') {
               setSettings(prev => ({ ...prev, ...s }));
             }
@@ -455,51 +489,39 @@ export default function WorkflowPage({ onGoHome }) {
         }}
         onMatrixClick={exportSkillMatrixCsv}
         onExportClick={() => exportPortfolios({ ...settings, weights, visibleSections })}
-        onGoHome={onGoHome}
-        hasLegacy={hasLegacy}
-        onJobConfigClick={() => setJobConfigOpen(true)}
-        onApplyConfig={(cfg) => {
-          applyExtractedConfig(cfg);
-          const parts = [];
-          if (cfg.specs?.length) parts.push(`스펙 ${cfg.specs.length}개`);
-          if (cfg.visible_sections?.length && cfg.visible_sections.length < 6) parts.push(`섹션 ${cfg.visible_sections.length}개`);
-          if (cfg.min_career_years !== null && cfg.min_career_years !== undefined) parts.push(`경력 ${cfg.min_career_years}년↑`);
-          if (cfg.education_keywords?.length) parts.push(`학력 ${cfg.education_keywords.join('·')}`);
-          if (cfg.position) parts.push(`직군 ${cfg.position}`);
-          const summary = parts.length ? parts.join(' · ') : '기본값 유지';
-          toast(`AI 설정 적용: ${summary}`, 'success');
-        }}
+        onSettingsClick={() => setDrawerOpen(true)}
+        applicants={visibleApplicants}
+        selectedIds={selectedIds}
+        onToggle={toggleSelected}
+        onDelete={handleDelete}
+        onRename={handleRename}
+        blind={settings.blind}
+        blindAliases={blindAliases}
+        analyzing={analyzing}
+        onSearch={handleSearch}
+        stageSearch={stageSearch}
+        onStageSearchChange={setStageSearch}
+        onDiffClick={(ids) => { setDiffIds(ids); setShowDiff(true); }}
       />
-      {extractedFilter && (
-        <div className="filter-active-banner">
-          <span>AI 필터 활성</span>
-          {extractedFilter.min_career_years !== null && (
-            <span className="filter-chip">경력 {extractedFilter.min_career_years}년↑</span>
-          )}
-          {extractedFilter.education_keywords?.length > 0 && (
-            <span className="filter-chip">학력 {extractedFilter.education_keywords.join('·')}</span>
-          )}
-          {extractedFilter.position && (
-            <span className="filter-chip">직군 {extractedFilter.position}</span>
-          )}
-          <span className="filter-count">
-            {visibleApplicants.length} / {applicants.length}명 표시
-          </span>
-          <button className="banner-close" onClick={() => setExtractedFilter(null)} title="필터 해제">✕</button>
-        </div>
-      )}
-      <div className="main-layout">
-        <Sidebar
-          applicants={visibleApplicants}
-          selectedIds={selectedIds}
-          onToggle={toggleSelected}
-          onDelete={handleDelete}
-          onRename={handleRename}
-          onUploadClick={() => setUploadOpen(true)}
-          blind={settings.blind}
-          blindAliases={blindAliases}
-          analyzing={analyzing}
-        />
+      <div className="stage-wrap">
+        {extractedFilter && (
+          <div className="filter-active-banner">
+            <span>AI 필터 활성</span>
+            {extractedFilter.min_career_years !== null && (
+              <span className="filter-chip">경력 {extractedFilter.min_career_years}년↑</span>
+            )}
+            {extractedFilter.education_keywords?.length > 0 && (
+              <span className="filter-chip">학력 {extractedFilter.education_keywords.join('·')}</span>
+            )}
+            {extractedFilter.position && (
+              <span className="filter-chip">직군 {extractedFilter.position}</span>
+            )}
+            <span className="filter-count">
+              {visibleApplicants.length} / {applicants.length}명 표시
+            </span>
+            <button className="banner-close" onClick={() => setExtractedFilter(null)} title="필터 해제">✕</button>
+          </div>
+        )}
         <PortfolioArea
           applicants={applicants}
           selectedIds={selectedIds}
@@ -507,14 +529,14 @@ export default function WorkflowPage({ onGoHome }) {
           similarMap={similarMap}
           settings={{ ...settings, visibleSections, customSections }}
           searchQuery={searchQuery}
+          stageSearch={stageSearch}
           visibleIds={visibleIds}
-          onSyncToggle={() => toggleSetting('syncScroll')}
           onReanalyze={handleReanalyze}
           onSummarize={handleSummarize}
-          onUploadClick={() => setUploadOpen(true)}
+          onUploadClick={() => { setDropFile(null); setUploadOpen(true); }}
+          onDropFile={(f) => { setDropFile(f); setUploadOpen(true); }}
           scrollPos={scrollPos}
           onScrollSave={handleScrollSave}
-          onDiffClick={(ids) => { setDiffIds(ids); setShowDiff(true); }}
           blindAliases={blindAliases}
         />
       </div>
@@ -544,7 +566,8 @@ export default function WorkflowPage({ onGoHome }) {
       )}
       {uploadOpen && (
         <UploadModal
-          onClose={() => setUploadOpen(false)}
+          onClose={() => { setUploadOpen(false); setDropFile(null); }}
+          initialFile={dropFile}
           onAdded={({ portfolio }) => {
             setApplicants(prev => [...prev, { ...portfolio, match_score: 0, skills_match: {} }]);
             setUploadOpen(false);

@@ -8,8 +8,12 @@ const STEPS = [
   { id: 'done',    label: '완료!',            icon: '✅' },
 ];
 
-export default function UploadModal({ onClose, onAdded }) {
-  const [file, setFile]         = useState(null);
+export default function UploadModal({ onClose, onAdded, initialFile = null }) {
+  const [file, setFile]         = useState(() => {
+    if (!initialFile) return null;
+    const ext = initialFile.name.split('.').pop().toLowerCase();
+    return ['pdf', 'md', 'txt'].includes(ext) ? initialFile : null;
+  });
   const [text, setText]         = useState('');
   const [name, setName]         = useState('');
   const [dragging, setDragging] = useState(false);

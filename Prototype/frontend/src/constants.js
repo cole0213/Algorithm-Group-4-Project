@@ -4,6 +4,9 @@ export const STORAGE_KEYS = {
   MARKS:     'portfolio-reviewer-marks',
   BOOKMARKS: 'portfolio-reviewer-bookmarks',
   NOTES:     'portfolio-reviewer-notes',
+  SETTINGS:  'portfolio-reviewer-settings',
+  SPECS:     'portfolio-reviewer-specs',
+  WEIGHTS:   'portfolio-reviewer-weights',
 };
 
 export const DEFAULT_SPECS = 'React, Python, Docker';

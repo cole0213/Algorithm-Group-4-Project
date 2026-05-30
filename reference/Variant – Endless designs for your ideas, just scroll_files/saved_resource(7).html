@@ -1,0 +1,780 @@
+
+<!-- saved from url=(0068)https://variant.com/design/b267ddfa-e08f-404d-87bb-3b4b25ddf3d6.html -->
+<html lang="en" vid="0"><head vid="1"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" vid="3">
+    <title vid="4">Metabolize - Precision Metabolic Protocol</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com/" vid="5">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" vid="6">
+    <link href="./css2(3)" rel="stylesheet" vid="7">
+    <script src="./three.min.js.다운로드" vid="8"></script>
+
+    <style vid="9">
+        :root {
+            --bg-base: #FFFFFF;
+            --bg-alt: #F7F8F9;
+            --text-main: #111418;
+            --text-muted: #71767C;
+            --accent-glow: rgba(52, 211, 153, 0.4);
+            --border-light: rgba(0, 0, 0, 0.06);
+            --border-white: rgba(255, 255, 255, 0.4);
+            
+            --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            
+            --radius-card: 28px;
+            --radius-pill: 999px;
+            
+            --shadow-soft: 0 24px 48px -12px rgba(0, 0, 0, 0.04);
+            --shadow-float: 0 32px 64px -16px rgba(0, 0, 0, 0.08);
+            
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            line-height: 1.5;
+        }
+
+        
+        h1 { font-size: 4.5rem; font-weight: 300; letter-spacing: -0.03em; line-height: 1.1; }
+        h2 { font-size: 2.5rem; font-weight: 400; letter-spacing: -0.02em; }
+        h3 { font-size: 1.25rem; font-weight: 500; letter-spacing: -0.01em; }
+        p { font-size: 1.05rem; font-weight: 400; color: var(--text-muted); line-height: 1.6; }
+        
+        .micro-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+        }
+
+        .bracket-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        section {
+            padding: 120px 0;
+        }
+
+        
+        nav {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 80px);
+            max-width: 1320px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: var(--radius-pill);
+            z-index: 100;
+            border: 1px solid var(--border-light);
+        }
+
+        .logo {
+            font-weight: 600;
+            font-size: 1.2rem;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-main);
+        }
+
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 28px;
+            border-radius: var(--radius-pill);
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s var(--ease-out);
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--text-main);
+            color: #FFFFFF;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+            color: var(--text-main);
+            border: 1px solid var(--border-white);
+        }
+
+        
+        .hero {
+            position: relative;
+            height: 100vh;
+            min-height: 800px;
+            display: flex;
+            align-items: center;
+            padding-top: 80px;
+            overflow: hidden;
+        }
+
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            
+            background: radial-gradient(circle at 50% 50%, #F0F4F8 0%, #FFFFFF 100%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            pointer-events: none; 
+        }
+
+        .hero-text {
+            pointer-events: auto;
+            max-width: 540px;
+        }
+
+        .hero-text h1 {
+            margin-bottom: 24px;
+        }
+
+        .hero-text p {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+        }
+
+        
+        .hero-floating-card {
+            pointer-events: auto;
+            justify-self: end;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border-white);
+            border-radius: var(--radius-card);
+            padding: 32px;
+            width: 320px;
+            box-shadow: var(--shadow-float);
+            transform: translateY(40px); 
+        }
+
+        .floating-badges {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 4px 12px;
+            border-radius: var(--radius-pill);
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            border: 1px solid var(--border-white);
+        }
+
+        .card-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .arrow-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--text-main);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        
+        .press-strip {
+            padding: 40px 0;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: center;
+            gap: 64px;
+            opacity: 0.4;
+            filter: grayscale(100%);
+        }
+
+        .press-strip span {
+            font-weight: 600;
+            font-size: 1.1rem;
+            letter-spacing: 0.05em;
+        }
+
+        
+        .section-header {
+            margin-bottom: 64px;
+            max-width: 600px;
+        }
+
+        
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+
+        .process-card {
+            background: #FFFFFF;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-card);
+            padding: 40px;
+            box-shadow: var(--shadow-soft);
+            position: relative;
+            transition: transform 0.4s var(--ease-out);
+        }
+
+        .process-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .process-card .arrow-top-right {
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            font-size: 1.2rem;
+            color: var(--text-muted);
+        }
+
+        
+        .icon-3d-wrapper {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 32px;
+            position: relative;
+            perspective: 1000px;
+        }
+
+        .icon-3d {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+            box-shadow: 
+                inset -10px -10px 20px rgba(0,0,0,0.05),
+                inset 10px 10px 20px rgba(255,255,255,0.8),
+                0 10px 20px rgba(0,0,0,0.05);
+            transform: rotateX(20deg) rotateY(10deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .icon-3d.pill {
+            border-radius: 40px;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            width: 40px;
+            height: 80px;
+            margin-left: 20px;
+        }
+
+        .icon-3d.wave {
+            border-radius: 20px;
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+        }
+
+        
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(2, 280px);
+            gap: 24px;
+        }
+
+        .bento-item {
+            background: var(--bg-alt);
+            border-radius: var(--radius-card);
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .bento-item.large { grid-column: span 2; grid-row: span 2; background: #FFFFFF; border: 1px solid var(--border-light); }
+        .bento-item.wide { grid-column: span 2; }
+
+        .metric-value {
+            font-size: 4rem;
+            font-weight: 300;
+            letter-spacing: -0.04em;
+            color: var(--text-main);
+            line-height: 1;
+            margin-bottom: 12px;
+        }
+
+        
+        footer {
+            padding: 80px 0 40px;
+            border-top: 1px solid var(--border-light);
+            background: var(--bg-base);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 80px;
+        }
+
+        .footer-col h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-col ul li a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+        
+        .footer-col ul li a:hover { color: var(--text-main); }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 32px;
+            border-top: 1px solid var(--border-light);
+        }
+
+    </style>
+</head>
+<body vid="10">
+
+    <nav vid="11">
+        <div class="logo" vid="12">Mtblz.</div>
+        <div class="nav-links" vid="13">
+            <a href="https://variant.com/design/b267ddfa-e08f-404d-87bb-3b4b25ddf3d6.html#protocol" vid="14">Protocol</a>
+            <a href="https://variant.com/design/b267ddfa-e08f-404d-87bb-3b4b25ddf3d6.html#science" vid="15">Clinical Science</a>
+            <a href="https://variant.com/design/b267ddfa-e08f-404d-87bb-3b4b25ddf3d6.html#results" vid="16">Efficacy</a>
+            <a href="https://variant.com/design/b267ddfa-e08f-404d-87bb-3b4b25ddf3d6.html#faq" vid="17">FAQ</a>
+        </div>
+        <a href="https://variant.com/design/b267ddfa-e08f-404d-87bb-3b4b25ddf3d6.html#shop" class="btn btn-primary" style="padding: 8px 20px; font-size: 0.85rem;" vid="18">Shop</a>
+    </nav>
+
+    <header class="hero" vid="19">
+        <div id="canvas-container" vid="20"><canvas width="1600" height="1200" style="display: block; width: 1280px; height: 960px;"></canvas></div>
+        <div class="container hero-content" vid="21">
+            <div class="hero-text" vid="22">
+                <h1 vid="23">Sustainable weight loss via metabolic signaling.</h1>
+                <p vid="24">A daily precision protocol of synthesized metabolites engineered to induce natural satiety, stabilize energy, and optimize metabolic health.</p>
+                <div class="hero-actions" vid="25">
+                    <a href="https://variant.com/design/b267ddfa-e08f-404d-87bb-3b4b25ddf3d6.html#shop" class="btn btn-primary" vid="26">Start your protocol</a>
+                    <a href="https://variant.com/design/b267ddfa-e08f-404d-87bb-3b4b25ddf3d6.html#science" class="btn btn-secondary" vid="27">See the science</a>
+                </div>
+            </div>
+
+            <div class="hero-floating-card" vid="28">
+                <div class="floating-badges" vid="29">
+                    <span class="badge" vid="30">Satiety</span>
+                    <span class="badge" vid="31">Energy</span>
+                    <span class="badge" vid="32">Metabolism</span>
+                </div>
+                <div class="card-header-flex" vid="33">
+                    <div vid="34">
+                        <div class="micro-label" style="margin-bottom: 4px;" vid="35">Formula — 01</div>
+                        <h3 style="font-size: 1.5rem;" vid="36">Daily Liquid<br vid="37">Metabolites</h3>
+                    </div>
+                    <div class="arrow-icon" vid="38">↗</div>
+                </div>
+                <p style="font-size: 0.9rem; margin-top: 16px;" vid="39">
+                    Bio-identical compounds that communicate directly with gut-brain pathways to naturally suppress cravings.
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <div class="press-strip" vid="40">
+        <span vid="41">NATURE</span>
+        <span vid="42">CELL METABOLISM</span>
+        <span vid="43">THE LANCET</span>
+        <span vid="44">SCIENCE DIRECT</span>
+    </div>
+
+    <section id="protocol" class="container" vid="45">
+        <span class="bracket-label" vid="46">[mechanism]</span>
+        <div class="section-header" vid="47">
+            <h2 vid="48">The signaling pathway.</h2>
+            <p vid="49">How daily metabolite ingestion shifts the body from a state of seeking energy to a state of sustained balance.</p>
+        </div>
+
+        <div class="grid-3" vid="50">
+            <div class="process-card" vid="51">
+                <span class="bracket-label" vid="52">[01_ingest]</span>
+                <div class="arrow-top-right" vid="53">↗</div>
+                <div class="icon-3d-wrapper" vid="54">
+                    <div class="icon-3d wave" vid="55"></div>
+                </div>
+                <h3 vid="56">Drink Daily</h3>
+                <p style="margin-top: 12px; font-size: 0.95rem;" vid="57">Consume the liquid protocol once every morning. The solution bypasses initial digestion, delivering compounds intact.</p>
+            </div>
+            
+            <div class="process-card" vid="58">
+                <span class="bracket-label" vid="59">[02_signal]</span>
+                <div class="arrow-top-right" vid="60">↗</div>
+                <div class="icon-3d-wrapper" vid="61">
+                    <div class="icon-3d pill" vid="62"></div>
+                </div>
+                <h3 vid="63">Metabolite Release</h3>
+                <p style="margin-top: 12px; font-size: 0.95rem;" vid="64">Short-chain fatty acids and bio-active molecules bind to receptors in the lower gut, initiating the signaling cascade.</p>
+            </div>
+
+            <div class="process-card" vid="65">
+                <span class="bracket-label" vid="66">[03_effect]</span>
+                <div class="arrow-top-right" vid="67">↗</div>
+                <div class="icon-3d-wrapper" vid="68">
+                    <div class="icon-3d" vid="69"></div>
+                </div>
+                <h3 vid="70">Induced Satiety</h3>
+                <p style="margin-top: 12px; font-size: 0.95rem;" vid="71">GLP-1 and PYY hormones are naturally stimulated. Cravings cease. Energy stabilizes without glycemic spikes.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="science" class="container" style="padding-top: 0;" vid="72">
+        <span class="bracket-label" vid="73">[clinical_data]</span>
+        <div class="section-header" vid="74">
+            <h2 vid="75">Backed by cellular biology.</h2>
+        </div>
+
+        <div class="bento-grid" vid="76">
+            <div class="bento-item large" vid="77">
+                <div vid="78">
+                    <span class="micro-label" vid="79">Core Science</span>
+                    <h3 style="font-size: 2rem; margin: 16px 0;" vid="80">Not a stimulant.<br vid="81">A messenger.</h3>
+                    <p style="margin-top: 16px;" vid="82">Traditional weight loss relies on central nervous system stimulants or physical gastric restriction. Metabolize works downstream. We deliver the exact post-biotic molecules your microbiome would produce if it were perfectly optimized, directly telling your brain you are nourished.</p>
+                </div>
+                <div style="margin-top: 40px; padding-top: 40px; border-top: 1px solid var(--border-light);" vid="83">
+                    <div class="micro-label" vid="84">Active Compounds</div>
+                    <div style="display: flex; gap: 12px; margin-top: 12px;" vid="85">
+                        <span class="badge" style="background: var(--bg-alt);" vid="86">Butyrate</span>
+                        <span class="badge" style="background: var(--bg-alt);" vid="87">Propionate</span>
+                        <span class="badge" style="background: var(--bg-alt);" vid="88">Acetate</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bento-item" vid="89">
+                <span class="micro-label" vid="90">Hormonal Response</span>
+                <div vid="91">
+                    <div class="metric-value" vid="92">+42%</div>
+                    <h3 vid="93">GLP-1 Natural Secretion</h3>
+                    <p style="font-size: 0.85rem; margin-top: 8px;" vid="94">Increase in endogenous satiety hormone production within 45 minutes of ingestion.</p>
+                </div>
+            </div>
+
+            <div class="bento-item" vid="95">
+                <span class="micro-label" vid="96">Metabolic Rate</span>
+                <div vid="97">
+                    <div class="metric-value" vid="98">Stable</div>
+                    <h3 vid="99">Glycemic Control</h3>
+                    <p style="font-size: 0.85rem; margin-top: 8px;" vid="100">Blunts glucose spikes by up to 30% when taken prior to first caloric intake.</p>
+                </div>
+            </div>
+
+            <div class="bento-item wide" vid="101">
+                <span class="micro-label" vid="102">Trial Phase II</span>
+                <div style="display: flex; align-items: center; gap: 40px; margin-top: auto;" vid="103">
+                    <div vid="104">
+                        <div class="metric-value" style="font-size: 3rem;" vid="105">-65%</div>
+                        <h3 style="font-size: 1rem;" vid="106">Sugar Cravings</h3>
+                    </div>
+                    <p style="font-size: 0.9rem; flex: 1;" vid="107">Participants reported a significant reduction in intrusive thoughts regarding high-glycemic foods over a 12-week controlled period.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="results" style="background: var(--bg-alt);" vid="108">
+        <div class="container" vid="109">
+            <span class="bracket-label" vid="110">[efficacy_metrics]</span>
+            <div class="section-header" vid="111">
+                <h2 vid="112">Observed outcomes.</h2>
+                <p vid="113">Data aggregated from 90-day protocol adherence.</p>
+            </div>
+
+            <div class="grid-3" style="gap: 24px;" vid="114">
+                <div class="process-card" style="background: transparent; box-shadow: none; border: none; padding: 0;" vid="115">
+                    <div class="metric-value" vid="116">12.4<span style="font-size: 2rem;" vid="117">lbs</span></div>
+                    <h3 vid="118">Average Mass Reduction</h3>
+                    <p style="font-size: 0.9rem;" vid="119">Sustained loss over 12 weeks without forced caloric restriction.</p>
+                </div>
+                <div class="process-card" style="background: transparent; box-shadow: none; border: none; padding: 0;" vid="120">
+                    <div class="metric-value" vid="121">2.8<span style="font-size: 2rem;" vid="122">in</span></div>
+                    <h3 vid="123">Visceral Adiposity</h3>
+                    <p style="font-size: 0.9rem;" vid="124">Reduction in waist circumference indicating loss of metabolically active belly fat.</p>
+                </div>
+                <div class="process-card" style="background: transparent; box-shadow: none; border: none; padding: 0;" vid="125">
+                    <div class="metric-value" vid="126">84<span style="font-size: 2rem;" vid="127">%</span></div>
+                    <h3 vid="128">Energy Stability</h3>
+                    <p style="font-size: 0.9rem;" vid="129">Users reporting elimination of afternoon fatigue slumps.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="container" vid="130">
+        <div class="footer-grid" vid="131">
+            <div class="footer-col" vid="132">
+                <div class="logo" style="margin-bottom: 24px;" vid="133">Mtblz.</div>
+                <p style="font-size: 0.9rem; max-width: 280px;" vid="134">Precision metabolomics for everyday human performance and structural health.</p>
+            </div>
+            <div class="footer-col" vid="135">
+                <h4 vid="136">Product</h4>
+                <ul vid="137">
+                    <li vid="138"><a href="https://variant.com/design/b267ddfa-e08f-404d-87bb-3b4b25ddf3d6.html#" vid="139">The Protocol</a></li>
+                    <li vid="140"><a href="https://variant.com/design/b267ddfa-e08f-404d-87bb-3b4b25ddf3d6.html#" vid="141">Ingredients</a></li>
+                    <li vid="142"><a href="https://variant.com/design/b267ddfa-e08f-404d-87bb-3b4b25ddf3d6.html#" vid="143">Clinical Trials</a></li>
+                    <li vid="144"><a href="https://variant.com/design/b267ddfa-e08f-404d-87bb-3b4b25ddf3d6.html#" vid="145">Pricing</a></li>
+                </ul>
+            </div>
+            <div class="footer-col" vid="146">
+                <h4 vid="147">Company</h4>
+                <ul vid="148">
+                    <li vid="149"><a href="https://variant.com/design/b267ddfa-e08f-404d-87bb-3b4b25ddf3d6.html#" vid="150">About Us</a></li>
+                    <li vid="151"><a href="https://variant.com/design/b267ddfa-e08f-404d-87bb-3b4b25ddf3d6.html#" vid="152">Scientific Advisory</a></li>
+                    <li vid="153"><a href="https://variant.com/design/b267ddfa-e08f-404d-87bb-3b4b25ddf3d6.html#" vid="154">Careers</a></li>
+                    <li vid="155"><a href="https://variant.com/design/b267ddfa-e08f-404d-87bb-3b4b25ddf3d6.html#" vid="156">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-col" vid="157">
+                <h4 vid="158">Legal</h4>
+                <ul vid="159">
+                    <li vid="160"><a href="https://variant.com/design/b267ddfa-e08f-404d-87bb-3b4b25ddf3d6.html#" vid="161">Privacy Policy</a></li>
+                    <li vid="162"><a href="https://variant.com/design/b267ddfa-e08f-404d-87bb-3b4b25ddf3d6.html#" vid="163">Terms of Service</a></li>
+                    <li vid="164"><a href="https://variant.com/design/b267ddfa-e08f-404d-87bb-3b4b25ddf3d6.html#" vid="165">FDA Disclaimer</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom" vid="166">
+            <div class="micro-label" vid="167">© 2024 Metabolize Bioscience</div>
+            <div class="micro-label" vid="168">Designed for optimal function.</div>
+        </div>
+    </footer>
+
+    
+    <script vid="169">
+        const init3D = () => {
+            const container = document.getElementById('canvas-container');
+            const scene = new THREE.Scene();
+            
+            
+            const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+            camera.position.set(0, 0, 12);
+
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.2;
+            container.appendChild(renderer.domElement);
+
+            
+            const bottleGroup = new THREE.Group();
+            
+            
+            if(window.innerWidth > 768) {
+                bottleGroup.position.x = 2.5; 
+            }
+
+            
+            
+            const glassGeometry = new THREE.CylinderGeometry(1.5, 1.5, 4.5, 64, 1, false);
+            
+            
+            const glassMaterial = new THREE.MeshPhysicalMaterial({
+                color: 0xffffff,
+                metalness: 0.1,
+                roughness: 0.15, 
+                transmission: 0.95, 
+                ior: 1.5,
+                thickness: 0.5,
+                specularIntensity: 1,
+                clearcoat: 1,
+                clearcoatRoughness: 0.1,
+                side: THREE.DoubleSide,
+                transparent: true
+            });
+            
+            const glassMesh = new THREE.Mesh(glassGeometry, glassMaterial);
+            
+            
+            const capGeometry = new THREE.CylinderGeometry(1.4, 1.4, 0.8, 64);
+            const capMaterial = new THREE.MeshStandardMaterial({
+                color: 0x1A1A1A,
+                roughness: 0.8,
+                metalness: 0.2
+            });
+            const capMesh = new THREE.Mesh(capGeometry, capMaterial);
+            capMesh.position.y = 2.65;
+
+            
+            const liquidGeometry = new THREE.CylinderGeometry(1.35, 1.35, 3.8, 64);
+            
+            
+            const liquidMaterial = new THREE.MeshPhysicalMaterial({
+                color: 0x34D399, 
+                emissive: 0x059669,
+                emissiveIntensity: 0.2,
+                metalness: 0.1,
+                roughness: 0.2,
+                transmission: 0.6, 
+                thickness: 2.0, 
+                ior: 1.33, 
+                transparent: true,
+                opacity: 0.95
+            });
+
+            const liquidMesh = new THREE.Mesh(liquidGeometry, liquidMaterial);
+            liquidMesh.position.y = -0.2; 
+
+            bottleGroup.add(glassMesh);
+            bottleGroup.add(capMesh);
+            bottleGroup.add(liquidMesh);
+            
+            
+            bottleGroup.rotation.z = -0.15;
+            bottleGroup.rotation.x = 0.1;
+
+            scene.add(bottleGroup);
+
+            
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(5, 5, 5);
+            scene.add(directionalLight);
+
+            
+            const backLight = new THREE.PointLight(0xa7f3d0, 2, 20);
+            backLight.position.set(-2, 0, -3);
+            scene.add(backLight);
+            
+            const fillLight = new THREE.PointLight(0xffffff, 0.5, 20);
+            fillLight.position.set(2, 0, 4);
+            scene.add(fillLight);
+
+            
+            let time = 0;
+            const animate = () => {
+                requestAnimationFrame(animate);
+                
+                time += 0.005;
+                
+                
+                bottleGroup.rotation.y = Math.sin(time) * 0.2;
+                
+                
+                liquidMesh.scale.y = 1 + Math.sin(time * 4) * 0.01;
+                liquidMesh.scale.x = 1 + Math.cos(time * 3) * 0.005;
+                liquidMesh.scale.z = 1 + Math.cos(time * 3) * 0.005;
+
+                renderer.render(scene, camera);
+            };
+
+            animate();
+
+            
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                
+                
+                if(window.innerWidth <= 768) {
+                    bottleGroup.position.x = 0;
+                } else {
+                    bottleGroup.position.x = 2.5;
+                }
+            });
+        };
+
+        
+        document.addEventListener('DOMContentLoaded', init3D);
+    </script>
+
+</body></html>

@@ -25,14 +25,15 @@ export const SIMILAR_PALETTES = [
 ];
 
 const TOGGLES = [
-  { key: 'highlight',    label: '스킬 하이라이트',          desc: '필요 스펙과 일치하는 기술을 주황색으로 표시합니다.' },
-  { key: 'similar',      label: '유사 문장 표시',            desc: '포트폴리오 간 유사한 문장을 색상으로 강조합니다.' },
-  { key: 'hideSimlar',   label: '유사 문장 흐리게',          desc: '유사 문장을 강조 대신 흐리게 처리하여 숨깁니다.' },
-  { key: 'syncScroll',   label: '동기화 스크롤',             desc: '열린 패널들을 같은 위치로 동시에 스크롤합니다.' },
-  { key: 'originalLink', label: '원본 보기 버튼',            desc: '패널 하단에 원본 파일 텍스트 확인 버튼을 표시합니다.' },
-  { key: 'aliasSearch',  label: '별칭 통합 검색',            desc: '"파이썬", "py" 등 동의어로도 검색 결과를 찾아줍니다.' },
-  { key: 'blind',        label: '블라인드 심사 모드',        desc: '지원자 이름을 가려 무의식적 편향을 방지합니다.' },
-  { key: 'dark',         label: '다크 모드',                desc: '어두운 테마로 전환합니다.' },
+  { key: 'highlight',      label: '스킬 하이라이트',          desc: '필요 스펙과 일치하는 기술을 주황색으로 표시합니다.' },
+  { key: 'similar',        label: '유사 문장 표시',            desc: '포트폴리오 간 유사한 문장을 색상으로 강조합니다.' },
+  { key: 'hideSimlar',     label: '유사 문장 흐리게',          desc: '유사 문장을 강조 대신 흐리게 처리하여 숨깁니다.' },
+  { key: 'syncScroll',     label: '동기화 스크롤',             desc: '열린 패널들을 같은 위치로 동시에 스크롤합니다.' },
+  { key: 'panelAnimation', label: '패널 추가 애니메이션',      desc: '새 패널 열릴 때 슬라이드 효과. 성능이 낮은 기기에서는 끄세요.' },
+  { key: 'originalLink',   label: '원본 보기 버튼',            desc: '패널 하단에 원본 파일 텍스트 확인 버튼을 표시합니다.' },
+  { key: 'aliasSearch',    label: '별칭 통합 검색',            desc: '"파이썬", "py" 등 동의어로도 검색 결과를 찾아줍니다.' },
+  { key: 'blind',          label: '블라인드 심사 모드',        desc: '지원자 이름을 가려 무의식적 편향을 방지합니다.' },
+  { key: 'dark',           label: '다크 모드',                desc: '어두운 테마로 전환합니다.' },
 ];
 
 // 색상 커스텀 팔레트 (9가지 프리셋)

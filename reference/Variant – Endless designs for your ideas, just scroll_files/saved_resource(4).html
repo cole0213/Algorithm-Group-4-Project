@@ -1,0 +1,402 @@
+
+<!-- saved from url=(0068)https://variant.com/design/089a295b-1493-4243-aae6-cd4b94fa3c69.html -->
+<html lang="en" vid="0"><head vid="1"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" vid="3">
+    <title vid="4">KINETIC — Growth Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com/" vid="5">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" vid="6">
+    <link href="./css2(1)" rel="stylesheet" vid="7">
+    <style vid="8">
+        
+
+        :root {
+            --bg: #ffffff;
+            --fg: #111111;
+            --mint: #d7f1e1;
+            --peach: #ffe8d6;
+            --sky: #e0f2fe;
+            --lilac: #f3e8ff;
+            --shadow: rgba(0, 0, 0, 0.05) 0px 20px 50px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--fg);
+            font-family: 'Inter', sans-serif;
+            overflow: hidden; 
+            height: 100vh;
+            width: 100vw;
+            cursor: default;
+        }
+
+        .canvas {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        
+        nav {
+            position: fixed;
+            top: 40px;
+            left: 40px;
+            right: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-family: 'Gaegu', cursive;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #888;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: inherit;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--fg);
+        }
+
+        
+        .hero {
+            text-align: center;
+            max-width: 500px;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .hero h1 {
+            font-family: 'Gaegu', cursive;
+            font-size: 64px;
+            line-height: 0.9;
+            margin-bottom: 24px;
+        }
+
+        .search-trigger {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 24px;
+            background: #f5f5f5;
+            border-radius: 100px;
+            gap: 12px;
+            color: #999;
+            font-size: 14px;
+            pointer-events: auto;
+            cursor: text;
+            transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .search-trigger:hover {
+            transform: scale(1.02);
+            background: #eee;
+        }
+
+        
+        .card {
+            position: absolute;
+            background: white;
+            padding: 24px;
+            border-radius: 32px;
+            box-shadow: var(--shadow);
+            width: 240px;
+            transition: transform 0.1s ease-out;
+            cursor: grab;
+            user-select: none;
+        }
+
+        .card:active { cursor: grabbing; }
+
+        .card-label {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 16px;
+        }
+
+        .card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            line-height: 1.3;
+            margin-bottom: 8px;
+        }
+
+        .card p {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .stat {
+            margin-top: 16px;
+            font-size: 24px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat span {
+            font-size: 12px;
+            color: #10b981;
+            background: #ecfdf5;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        
+        #card-1 { top: 15%; left: 10%; background: var(--sky); transform: rotate(-3deg); }
+        #card-2 { top: 20%; right: 12%; background: var(--peach); transform: rotate(2deg); }
+        #card-3 { bottom: 15%; left: 15%; background: var(--mint); transform: rotate(4deg); }
+        #card-4 { bottom: 20%; right: 10%; background: var(--lilac); transform: rotate(-2deg); }
+        #card-5 { top: 45%; left: 5%; width: 180px; }
+        #card-6 { bottom: 40%; right: 5%; width: 200px; }
+
+        
+        .growth-curve {
+            width: 100%;
+            height: 40px;
+            margin-top: 12px;
+        }
+
+        .dot {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #eee;
+            z-index: 1;
+        }
+
+        .annotation {
+            position: absolute;
+            font-family: 'Gaegu', cursive;
+            font-size: 18px;
+            color: #aaa;
+            pointer-events: none;
+        }
+
+        
+        .footer-cta {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+        }
+
+        .btn-primary {
+            background: var(--fg);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 100px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .arrow-circle {
+            width: 24px;
+            height: 24px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+    </style>
+</head>
+<body vid="9">
+
+    <nav vid="10">
+        <div class="logo" vid="11">Kinetic.</div>
+        <div class="nav-links" vid="12">
+            <a href="https://variant.com/design/089a295b-1493-4243-aae6-cd4b94fa3c69.html#" vid="13">Engine</a>
+            <a href="https://variant.com/design/089a295b-1493-4243-aae6-cd4b94fa3c69.html#" vid="14">Showcase</a>
+            <a href="https://variant.com/design/089a295b-1493-4243-aae6-cd4b94fa3c69.html#" vid="15">Growth OS</a>
+            <a href="https://variant.com/design/089a295b-1493-4243-aae6-cd4b94fa3c69.html#" vid="16">Pricing</a>
+        </div>
+        <div style="width: 80px;" vid="17"></div> 
+    </nav>
+
+    <div class="canvas" id="canvas" vid="18">
+        <div class="hero" vid="19">
+            <h1 vid="20">what's your<br vid="21">growth goal?</h1>
+            <div class="search-trigger" vid="22">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" vid="23"><circle cx="11" cy="11" r="8" vid="24"></circle><path d="m21 21-4.3-4.3" vid="25"></path></svg>
+                <span vid="26">Scale my personal brand to 1M...</span>
+            </div>
+        </div>
+
+        
+        <div class="card" id="card-1" style="z-index: 5;" vid="27">
+            <div class="card-label" style="background: #bae6fd;" vid="28">Strategy</div>
+            <h3 vid="29">Short-Form Mastery</h3>
+            <p vid="30">Retention-first editing for TikTok &amp; Reels.</p>
+            <div class="growth-curve" vid="31">
+                <svg width="100%" height="100%" viewBox="0 0 100 40" preserveAspectRatio="none" vid="32">
+                    <path d="M0 40 Q 25 35, 50 20 T 100 5" fill="none" stroke="#0ea5e9" stroke-width="3" stroke-linecap="round" vid="33"></path>
+                </svg>
+            </div>
+        </div>
+
+        <div class="card" id="card-2" style="z-index: 4;" vid="34">
+            <div class="card-label" style="background: #fed7aa;" vid="35">Live Stats</div>
+            <h3 vid="36">Performance</h3>
+            <div class="stat" vid="37">+412% <span vid="38">Viral</span></div>
+            <p vid="39">Average reach increase across 40+ active partners.</p>
+        </div>
+
+        <div class="card" id="card-3" style="z-index: 3;" vid="40">
+            <div class="card-label" style="background: #bbf7d0;" vid="41">Platform</div>
+            <h3 vid="42">Multi-Channel</h3>
+            <p vid="43">One video, four platforms. Zero friction.</p>
+            <div style="display: flex; gap: 8px; margin-top: 12px;" vid="44">
+                <div style="width: 32px; height: 32px; border-radius: 50%; background: #000; display: flex; align-items: center; justify-content: center;" vid="45">
+                    <svg width="14" height="14" fill="white" viewBox="0 0 24 24" vid="46"><path d="M12.525.023c1.29-.807 4.257-1.106 5.835-1.129v4.433c-1.314-.021-3.155-.021-3.155 1.542V7.48h3.332l-.44 4.394h-2.892V24h-4.667V11.874H7.662V7.48h2.873V6.155c0-3.328 1.944-6.132 2.02-6.132" vid="47"></path></svg>
+                </div>
+                <div style="width: 32px; height: 32px; border-radius: 50%; background: #ff0000; display: flex; align-items: center; justify-content: center;" vid="48">
+                    <svg width="14" height="14" fill="white" viewBox="0 0 24 24" vid="49"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" vid="50"></path></svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="card-4" style="z-index: 2;" vid="51">
+            <div class="card-label" style="background: #e9d5ff;" vid="52">System</div>
+            <h3 vid="53">Growth Studio</h3>
+            <p vid="54">End-to-end production for high-output creators.</p>
+        </div>
+
+        
+        <div class="annotation" style="top: 30%; left: 25%;" vid="55">← built for speed</div>
+        <div class="annotation" style="bottom: 30%; right: 25%;" vid="56">fully managed →</div>
+        <div class="annotation" style="top: 60%; left: 15%; transform: rotate(-10deg);" vid="57">your niche, amplified</div>
+
+        
+        <div class="dot" style="top: 10%; left: 40%; opacity: 0.135646;" vid="58"></div>
+        <div class="dot" style="bottom: 20%; left: 60%; opacity: 0.307097;" vid="59"></div>
+        <div class="dot" style="top: 80%; left: 5%; opacity: 0.472022;" vid="60"></div>
+        <div class="dot" style="top: 50%; right: 15%; opacity: 0.478792;" vid="61"></div>
+    </div>
+
+    <div class="footer-cta" vid="62">
+        <a href="https://variant.com/design/089a295b-1493-4243-aae6-cd4b94fa3c69.html#" class="btn-primary" vid="63">
+            Start Your Engine
+            <div class="arrow-circle" vid="64">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" vid="65"><path d="M5 12h14m-7-7 7 7-7 7" vid="66"></path></svg>
+            </div>
+        </a>
+    </div>
+
+    <script vid="67">
+        const cards = document.querySelectorAll('.card');
+        const dots = document.querySelectorAll('.dot');
+        const canvas = document.getElementById('canvas');
+
+        
+        let mouseX = 0;
+        let mouseY = 0;
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX / window.innerWidth) - 0.5;
+            mouseY = (e.clientY / window.innerHeight) - 0.5;
+
+            cards.forEach((card, index) => {
+                const speed = (index + 1) * 20;
+                const x = mouseX * speed;
+                const y = mouseY * speed;
+                const rotation = card.id === 'card-1' || card.id === 'card-4' ? -3 : 3;
+                card.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg)`;
+            });
+
+            dots.forEach((dot, index) => {
+                const speed = (index + 1) * 40;
+                const x = mouseX * speed;
+                const y = mouseY * speed;
+                dot.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        });
+
+        
+        cards.forEach(card => {
+            let isDragging = false;
+            let startX, startY, initialX, initialY;
+
+            card.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                card.style.zIndex = 100;
+                startX = e.clientX;
+                startY = e.clientY;
+                const rect = card.getBoundingClientRect();
+                initialX = rect.left;
+                initialY = rect.top;
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                card.style.left = `${initialX + dx}px`;
+                card.style.top = `${initialY + dy}px`;
+                card.style.transform = `rotate(0deg) scale(1.05)`;
+            });
+
+            window.addEventListener('mouseup', () => {
+                isDragging = false;
+                card.style.transform = `scale(1)`;
+            });
+        });
+
+        
+        function animate() {
+            const time = Date.now() * 0.001;
+            dots.forEach((dot, i) => {
+                const offset = Math.sin(time + i) * 10;
+                dot.style.opacity = 0.3 + Math.sin(time + i) * 0.2;
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+
+</body></html>

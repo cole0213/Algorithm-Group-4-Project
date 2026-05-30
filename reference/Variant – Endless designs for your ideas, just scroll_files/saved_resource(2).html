@@ -1,0 +1,622 @@
+
+<!-- saved from url=(0068)https://variant.com/design/32ed0ef3-9dc3-4489-a54c-e3ee4b891e4e.html -->
+<html lang="en" vid="0"><head vid="1"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" vid="3">
+    <title vid="4">HR Portfolio Review</title>
+    <style vid="5">
+        :root {
+            
+            --bg-pure: #ffffff;
+            --bg-subtle: #f8f9fa;
+            --accent-blue: #5b80c2; 
+            --accent-black: #111111;
+            --text-main: #222222;
+            --text-muted: #888888;
+            --text-light: #b0b0b0;
+            --border-faint: #eaeaea;
+            
+            
+            --font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            
+            
+            --radius-none: 0px;
+            --radius-subtle: 2px;
+            --shadow-float: 0 20px 40px rgba(0,0,0,0.04);
+            --shadow-badge: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-stack);
+            background-color: var(--bg-pure);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        
+
+        
+        .sidebar {
+            width: 320px;
+            background-color: var(--bg-pure);
+            border-right: 1px solid var(--border-faint);
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border-faint);
+        }
+
+        .brand {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .brand::before {
+            content: '';
+            display: block;
+            width: 12px;
+            height: 12px;
+            background-color: var(--accent-blue);
+        }
+
+        
+        .list-tabs {
+            display: flex;
+            gap: 20px;
+            font-size: 0.75rem;
+            text-transform: lowercase; 
+            font-weight: 500;
+            color: var(--text-light);
+            margin-bottom: 16px;
+        }
+
+        .tab {
+            cursor: pointer;
+            padding-bottom: 4px;
+            position: relative;
+        }
+
+        .tab.active {
+            color: var(--text-main);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: var(--accent-black);
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 10px 0;
+            border: none;
+            border-bottom: 1px solid var(--border-faint);
+            font-size: 0.85rem;
+            outline: none;
+            color: var(--text-main);
+        }
+        
+        .search-box::placeholder { color: var(--text-light); }
+
+        .candidate-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .candidate-item {
+            padding: 16px 24px;
+            display: flex;
+            gap: 16px;
+            border-bottom: 1px solid var(--border-faint);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .candidate-item:hover {
+            background-color: var(--bg-subtle);
+        }
+
+        .candidate-item.active {
+            background-color: var(--bg-subtle);
+            border-left: 3px solid var(--accent-blue);
+            padding-left: 21px; 
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background-color: var(--border-faint);
+            border-radius: var(--radius-none); 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .candidate-info {
+            flex: 1;
+        }
+
+        .candidate-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .candidate-role {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-pure);
+            overflow: hidden;
+        }
+
+        .review-header {
+            padding: 24px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 1px solid var(--border-faint);
+        }
+
+        .header-title-group h1 {
+            font-size: 2.2rem;
+            font-weight: 400; 
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .header-meta {
+            display: flex;
+            gap: 24px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .action-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        
+        .btn {
+            padding: 12px 24px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            border-radius: var(--radius-none); 
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover { opacity: 0.9; }
+
+        .btn-primary {
+            background-color: var(--accent-blue);
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: var(--accent-black);
+            color: white;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border-faint);
+        }
+
+        
+        .workspace {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            background-color: var(--bg-subtle);
+        }
+
+        
+        .document-area {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            display: flex;
+            justify-content: center;
+        }
+
+        .document-canvas {
+            width: 100%;
+            max-width: 800px;
+            background-color: var(--bg-pure);
+            min-height: 1000px;
+            box-shadow: var(--shadow-float); 
+            padding: 60px;
+            position: relative;
+        }
+
+        
+        .doc-header { margin-bottom: 40px; border-bottom: 2px solid var(--accent-black); padding-bottom: 20px;}
+        .doc-name { font-size: 2rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;}
+        .doc-section { margin-bottom: 30px; }
+        .doc-h2 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent-blue); margin-bottom: 16px; font-weight: 600;}
+        .doc-text { font-size: 0.9rem; line-height: 1.6; color: #444; margin-bottom: 12px;}
+
+        
+        .ai-panel {
+            width: 380px;
+            background-color: var(--bg-pure);
+            border-left: 1px solid var(--border-faint);
+            padding: 32px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        
+        .ai-panel::before {
+            content: '';
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            width: 60px;
+            height: 60px;
+            background-image: radial-gradient(var(--text-light) 1px, transparent 1px);
+            background-size: 10px 10px;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        
+        .deco-plus {
+            position: absolute;
+            color: var(--accent-blue);
+            font-size: 1.2rem;
+            font-weight: 300;
+            line-height: 1;
+        }
+        .deco-plus.p1 { top: 120px; right: 20px; }
+        .deco-plus.p2 { bottom: 100px; left: 30px; opacity: 0.5; }
+
+        .panel-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .panel-label::before {
+            content: '';
+            width: 20px;
+            height: 1px;
+            background-color: var(--border-faint);
+        }
+
+        .score-hero {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        
+        .big-number {
+            font-size: 4rem;
+            line-height: 0.8;
+            font-weight: 300;
+            color: var(--border-faint);
+            letter-spacing: -0.05em;
+        }
+
+        .score-details {
+            padding-top: 8px;
+        }
+
+        .score-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .score-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        
+        .badge-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .stat-badge {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 16px;
+            border: 1px solid var(--border-faint);
+            position: relative;
+        }
+
+        
+        .circle-indicator {
+            width: 48px;
+            height: 48px;
+            background-color: var(--accent-black);
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow-badge);
+        }
+
+        .circle-indicator.blue {
+            background-color: var(--accent-blue);
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-main);
+            text-align: center;
+        }
+
+        .insight-section {
+            margin-bottom: 32px;
+        }
+
+        .insight-section h3 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-faint);
+        }
+
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag {
+            font-size: 0.75rem;
+            padding: 6px 12px;
+            background-color: var(--bg-subtle);
+            color: var(--text-main);
+            border-radius: var(--radius-none);
+        }
+
+        .tag.match {
+            background-color: rgba(91, 128, 194, 0.1);
+            color: var(--accent-blue);
+            font-weight: 500;
+        }
+
+        .insight-text {
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+            position: relative;
+            padding-left: 16px;
+        }
+
+        .insight-text::before {
+            content: '“';
+            position: absolute;
+            left: 0;
+            top: -4px;
+            font-size: 1.2rem;
+            color: var(--accent-blue);
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body vid="6">
+
+    
+    <aside class="sidebar" vid="7">
+        <div class="sidebar-header" vid="8">
+            <div class="brand" vid="9">Reviewer</div>
+            <div class="list-tabs" vid="10">
+                <span class="tab active" vid="11">inbox</span>
+                <span class="tab" vid="12">reviewed</span>
+                <span class="tab" vid="13">archived</span>
+            </div>
+            <input type="text" class="search-box" placeholder="Search candidates..." vid="14">
+        </div>
+        
+        <div class="candidate-list" vid="15">
+            <div class="candidate-item active" vid="16">
+                <div class="avatar" vid="17">SJ</div>
+                <div class="candidate-info" vid="18">
+                    <div class="candidate-name" vid="19">Sarah Jenkins</div>
+                    <div class="candidate-role" vid="20">Senior Product Designer</div>
+                </div>
+            </div>
+            <div class="candidate-item" vid="21">
+                <div class="avatar" vid="22">MK</div>
+                <div class="candidate-info" vid="23">
+                    <div class="candidate-name" vid="24">Marcus Kinsley</div>
+                    <div class="candidate-role" vid="25">UX Researcher</div>
+                </div>
+            </div>
+            <div class="candidate-item" vid="26">
+                <div class="avatar" vid="27">AL</div>
+                <div class="candidate-info" vid="28">
+                    <div class="candidate-name" vid="29">Aisha Lin</div>
+                    <div class="candidate-role" vid="30">Visual Designer</div>
+                </div>
+            </div>
+             <div class="candidate-item" vid="31">
+                <div class="avatar" vid="32">DP</div>
+                <div class="candidate-info" vid="33">
+                    <div class="candidate-name" vid="34">David Park</div>
+                    <div class="candidate-role" vid="35">Product Designer</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    
+    <main class="main-content" vid="36">
+        
+        <header class="review-header" vid="37">
+            <div class="header-title-group" vid="38">
+                <h1 vid="39">Sarah Jenkins</h1>
+                <div class="header-meta" vid="40">
+                    <span class="meta-item" vid="41">Applied: Oct 24</span>
+                    <span class="meta-item" vid="42">Source: Direct</span>
+                    <span class="meta-item" vid="43">Req: UXD-092</span>
+                </div>
+            </div>
+            <div class="action-group" vid="44">
+                <button class="btn btn-outline" vid="45">Pass</button>
+                <button class="btn btn-secondary" vid="46">Request Info</button>
+                <button class="btn btn-primary" vid="47">Advance</button>
+            </div>
+        </header>
+
+        <div class="workspace" vid="48">
+            
+            
+            <div class="document-area" vid="49">
+                <div class="document-canvas" vid="50">
+                    <div class="doc-header" vid="51">
+                        <div class="doc-name" vid="52">Sarah Jenkins</div>
+                        <div class="doc-text" vid="53">Senior Product Designer • San Francisco, CA</div>
+                    </div>
+                    
+                    <div class="doc-section" vid="54">
+                        <div class="doc-h2" vid="55">Selected Experience</div>
+                        <div style="margin-bottom: 24px;" vid="56">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;" vid="57">
+                                <strong vid="58">Acme Corp</strong>
+                                <span style="font-size: 0.85rem; color: #888;" vid="59">2020 - Present</span>
+                            </div>
+                            <div class="doc-text" style="font-style: italic; margin-bottom: 8px;" vid="60">Lead Product Designer</div>
+                            <div class="doc-text" vid="61">Led the redesign of the core enterprise dashboard, improving user task completion rates by 34%. Established a new design system utilized by 4 cross-functional teams.</div>
+                        </div>
+                        <div vid="62">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;" vid="63">
+                                <strong vid="64">Global Tech</strong>
+                                <span style="font-size: 0.85rem; color: #888;" vid="65">2017 - 2020</span>
+                            </div>
+                            <div class="doc-text" style="font-style: italic; margin-bottom: 8px;" vid="66">UX Designer</div>
+                            <div class="doc-text" vid="67">Conducted generative research for consumer mobile application. Wireframed and prototyped features that led to a 15% increase in daily active users.</div>
+                        </div>
+                    </div>
+
+                    <div class="doc-section" vid="68">
+                        <div class="doc-h2" vid="69">Case Study: Enterprise Scaling</div>
+                        <div class="doc-text" vid="70">
+                            The challenge was to take a monolithic data table and transform it into a modular, widget-based layout without losing data density. By implementing a strict 8pt grid and standardizing interactive states, we were able to...
+                        </div>
+                        
+                        <div style="width: 100%; height: 200px; background-color: #f5f5f5; margin-top: 16px; border: 1px solid #eee;" vid="71"></div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <aside class="ai-panel" vid="72">
+                <div class="deco-plus p1" vid="73">+</div>
+                <div class="deco-plus p2" vid="74">+</div>
+                
+                <div class="panel-label" vid="75">AI Analysis</div>
+
+                <div class="score-hero" vid="76">
+                    <div class="big-number" vid="77">92</div>
+                    <div class="score-details" vid="78">
+                        <div class="score-title" vid="79">Strong Match</div>
+                        <div class="score-subtitle" vid="80">Portfolio demonstrates high proficiency in required skills and systems thinking.</div>
+                    </div>
+                </div>
+
+                <div class="badge-grid" vid="81">
+                    <div class="stat-badge" vid="82">
+                        <div class="circle-indicator blue" vid="83">95%</div>
+                        <div class="stat-label" vid="84">System Design</div>
+                    </div>
+                    <div class="stat-badge" vid="85">
+                        <div class="circle-indicator" vid="86">88%</div>
+                        <div class="stat-label" vid="87">Visual Craft</div>
+                    </div>
+                </div>
+
+                <div class="insight-section" vid="88">
+                    <h3 vid="89">Key Capabilities</h3>
+                    <div class="tag-list" vid="90">
+                        <span class="tag match" vid="91">Design Systems</span>
+                        <span class="tag match" vid="92">Figma</span>
+                        <span class="tag" vid="93">Prototyping</span>
+                        <span class="tag match" vid="94">Enterprise UX</span>
+                        <span class="tag" vid="95">User Testing</span>
+                    </div>
+                </div>
+
+                <div class="insight-section" vid="96">
+                    <h3 vid="97">AI Summary</h3>
+                    <div class="insight-text" vid="98">
+                        Candidate shows a clear trajectory toward leadership. The provided case studies strongly align with our current challenges in scaling the B2B platform. Attention to detail in typography and spatial organization is notable.
+                    </div>
+                </div>
+
+            </aside>
+        </div>
+    </main>
+
+
+</body></html>

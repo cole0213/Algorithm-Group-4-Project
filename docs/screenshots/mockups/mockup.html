@@ -1,0 +1,1278 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio Reviewer — Mockup v4</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ══════════════════════════════════════
+       v4 — LEFT CONTROL DESK + DOCUMENT STAGE
+       모든 컨트롤을 좌측으로 통합, 우측은 문서 전용
+       Editorial 스타일 · 세리프 본문 · 종이 질감
+    ══════════════════════════════════════ */
+    :root {
+      /* 코어 화이트 */
+      --white:        #ffffff;
+      --paper:        #fbfaf7;   /* 종이 느낌 — 거의 흰색이지만 따뜻함 */
+      --desk:         #f3f0ea;   /* 데스크 — 책상 같은 베이지 */
+      --desk-deep:    #ebe6dc;
+      --rail:         #f8f7f3;
+
+      /* 보더 / 디바이더 */
+      --line:         #e7e3d8;   /* desk와 어울리는 따뜻한 회색 */
+      --line-faint:   #f0ecde;
+      --line-strong:  #d4cebe;
+      --rule:         #1a1a1a;   /* 굵은 룰 (문서 헤더용) */
+
+      /* 텍스트 */
+      --ink:          #1a1612;   /* 본문 잉크 */
+      --ink-soft:     #4a4438;
+      --muted:        #8a8478;
+      --light:        #b8b2a4;
+
+      /* 브랜드 (style.md 유지) */
+      --primary:      #4361EE;
+      --hl:           #FFD43B;
+      --hl-text:      #5C4400;
+      --green:        #2DC653;
+      --orange:       #F76707;
+      --red:          #E63946;
+
+      /* 패널 accent */
+      --a1: #4361EE;
+      --a2: #F76707;
+      --a3: #2DC653;
+      --a4: #E63946;
+
+      /* 유사문장 */
+      --sim:          rgba(247,103,7,.14);
+      --sim-strong:   rgba(247,103,7,.28);
+
+      /* 그림자 — 종이 두 장 겹친 느낌 */
+      --shadow-paper:
+        0 1px 0 rgba(0,0,0,.04),
+        0 12px 24px -8px rgba(60,50,30,.10),
+        0 32px 56px -12px rgba(60,50,30,.08);
+
+      /* 폰트 */
+      --f-sans:  'Inter', -apple-system, 'Apple SD Gothic Neo', sans-serif;
+      --f-serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+      --f-mono:  'JetBrains Mono', ui-monospace, monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--f-sans);
+      background: var(--desk);
+      color: var(--ink);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      font-size: 13px;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* ══════════════════════════════════════
+       LEFT CONTROL DESK  (360px)
+       — 모든 컨트롤 통합 (디자인3 영감)
+    ══════════════════════════════════════ */
+    .desk {
+      width: 360px;
+      flex-shrink: 0;
+      background: var(--white);
+      border-right: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* — 브랜드 헤더 — */
+    .desk-brand {
+      padding: 24px 28px 18px;
+      border-bottom: 1px solid var(--line-faint);
+    }
+    .brand-row {
+      display: flex; align-items: baseline; gap: 10px;
+      margin-bottom: 8px;
+    }
+    .brand-mark {
+      font-family: var(--f-mono);
+      font-size: 9.5px; font-weight: 600;
+      letter-spacing: .22em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .brand-mark::before {
+      content: '◆ ';
+      color: var(--primary);
+      letter-spacing: normal;
+    }
+    .brand-job {
+      font-family: var(--f-serif);
+      font-size: 22px; font-weight: 600;
+      letter-spacing: -.02em;
+      line-height: 1.15;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+    .brand-job-meta {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: .02em;
+    }
+
+    /* — 필수 스펙 (구 spec-bar) — */
+    .desk-spec {
+      padding: 14px 28px;
+      border-bottom: 1px solid var(--line-faint);
+    }
+    .desk-label {
+      font-family: var(--f-mono);
+      font-size: 9px; font-weight: 600;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--light);
+      margin-bottom: 8px;
+      display: block;
+    }
+    .spec-chips {
+      display: flex; flex-wrap: wrap; gap: 5px;
+    }
+    .schip {
+      font-size: 11px; font-weight: 500;
+      padding: 2px 8px 3px;
+      background: transparent;
+      border: 1px solid var(--line);
+      color: var(--ink-soft);
+      display: inline-flex; align-items: center; gap: 5px;
+      cursor: pointer;
+    }
+    .schip .x { font-size: 9px; color: var(--light); }
+    .schip.p { border-color: rgba(67,97,238,.3); color: var(--primary); background: rgba(67,97,238,.04); }
+    .schip.g { border-color: rgba(45,198,83,.3); color: var(--green); background: rgba(45,198,83,.04); }
+    .schip-add {
+      font-size: 11px; color: var(--light);
+      padding: 2px 7px 3px;
+      border: 1px dashed var(--line-strong);
+      cursor: pointer;
+    }
+    .schip-add:hover { color: var(--primary); border-color: var(--primary); }
+
+    /* — 검색 — */
+    .desk-search {
+      padding: 14px 28px 10px;
+      border-bottom: 1px solid var(--line-faint);
+    }
+    .desk-search input {
+      width: 100%;
+      border: none;
+      border-bottom: 1px solid var(--line);
+      padding: 8px 24px 8px 0;
+      font-size: 13px; font-family: inherit;
+      background: transparent; color: var(--ink);
+      outline: none;
+      transition: border-color .15s;
+    }
+    .desk-search input:focus { border-color: var(--ink); }
+    .desk-search input::placeholder { color: var(--light); font-style: italic; }
+
+    /* — 탭 + 카운트 — */
+    .desk-tabs {
+      padding: 12px 28px 0;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px;
+    }
+    .tab-row {
+      display: flex; gap: 16px;
+    }
+    .tab {
+      font-size: 11px; font-weight: 600;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: var(--light);
+      cursor: pointer;
+      padding: 8px 0;
+      position: relative;
+    }
+    .tab.on { color: var(--ink); }
+    .tab.on::after {
+      content: '';
+      position: absolute; left: 0; right: 0; bottom: 0;
+      height: 2px;
+      background: var(--ink);
+    }
+    .tab-count {
+      font-family: var(--f-mono);
+      font-size: 10px; font-weight: 600;
+      color: var(--muted);
+    }
+
+    /* — 지원자 목록 — */
+    .desk-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 4px 0 0;
+    }
+
+    .row {
+      padding: 14px 28px;
+      border-bottom: 1px solid var(--line-faint);
+      cursor: pointer;
+      display: flex; gap: 14px;
+      position: relative;
+      transition: background .12s;
+    }
+    .row:hover { background: var(--paper); }
+    .row.active {
+      background: var(--paper);
+    }
+    .row.active::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--primary);
+    }
+    .row.open::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 16px; bottom: 16px;
+      width: 2px;
+      background: var(--line-strong);
+    }
+
+    /* 좌측 인덱스 번호 — 에디토리얼 */
+    .row-num {
+      font-family: var(--f-mono);
+      font-size: 10px; font-weight: 600;
+      color: var(--light);
+      letter-spacing: .05em;
+      width: 22px;
+      flex-shrink: 0;
+      padding-top: 1px;
+    }
+
+    .row-body { flex: 1; min-width: 0; }
+    .row-name {
+      font-family: var(--f-serif);
+      font-size: 17px; font-weight: 600;
+      letter-spacing: -.015em;
+      color: var(--ink);
+      margin-bottom: 2px;
+      line-height: 1.15;
+    }
+    .row-meta {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      letter-spacing: .01em;
+    }
+    .row-meta .sep { color: var(--light); margin: 0 4px; }
+
+    .row-tags {
+      display: flex; flex-wrap: wrap; gap: 4px;
+    }
+    .rt {
+      font-size: 10.5px; font-weight: 500;
+      padding: 1px 6px 2px;
+      border-radius: 2px;
+      background: var(--rail);
+      color: var(--ink-soft);
+      border: 1px solid var(--line-faint);
+    }
+    .rt.m {
+      background: var(--hl); color: var(--hl-text);
+      border-color: transparent;
+      font-weight: 600;
+    }
+
+    .row-side {
+      flex-shrink: 0;
+      display: flex; flex-direction: column;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+    .row-score {
+      font-family: var(--f-mono);
+      font-size: 16px; font-weight: 600;
+      letter-spacing: -.02em;
+      line-height: 1;
+    }
+    .row-score.hi  { color: var(--green); }
+    .row-score.mid { color: var(--orange); }
+    .row-score.lo  { color: var(--red); }
+    .row-score.no  { color: var(--light); }
+
+    .row-status {
+      font-family: var(--f-mono);
+      font-size: 9px; font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      padding: 2px 5px;
+      margin-top: 8px;
+    }
+    .row-status.pass { color: var(--green); background: rgba(45,198,83,.07); }
+    .row-status.hold { color: var(--orange); background: rgba(247,103,7,.07); }
+    .row-status.fail { color: var(--red); background: rgba(230,57,70,.07); }
+    .row-status.wait { color: var(--muted); background: var(--rail); }
+
+    /* — 하단 액션 바 — */
+    .desk-actions {
+      border-top: 1px solid var(--line);
+      padding: 12px 28px;
+      display: flex; align-items: center; gap: 8px;
+      background: var(--white);
+      flex-shrink: 0;
+    }
+    .da-select {
+      flex: 1;
+      height: 32px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      padding: 0 10px;
+      font-size: 11.5px; font-family: inherit;
+      color: var(--ink); outline: none;
+      cursor: pointer;
+    }
+    .da-icon {
+      width: 32px; height: 32px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; color: var(--ink-soft);
+      cursor: pointer;
+    }
+    .da-icon:hover { border-color: var(--primary); color: var(--primary); }
+    .da-primary {
+      height: 32px;
+      background: var(--ink);
+      color: var(--white);
+      border: none;
+      padding: 0 14px;
+      font-size: 11px; font-weight: 600;
+      font-family: var(--f-mono);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .da-primary:hover { background: var(--primary); }
+
+    /* ══════════════════════════════════════
+       DOCUMENT STAGE  (우측 전체)
+    ══════════════════════════════════════ */
+    .stage {
+      flex: 1;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      background: var(--desk);
+      background-image:
+        linear-gradient(180deg, rgba(0,0,0,.025) 0%, transparent 4%, transparent 100%);
+    }
+
+    /* — 상단 작업 표시줄 — */
+    .stage-top {
+      height: 52px;
+      padding: 0 24px 0 32px;
+      display: flex; align-items: stretch;
+      flex-shrink: 0;
+      border-bottom: 1px solid var(--line);
+      background: var(--desk);
+    }
+
+    .stage-tabs {
+      flex: 1;
+      display: flex;
+      align-items: flex-end;
+      gap: 0;
+      overflow-x: auto;
+    }
+    .doc-tab {
+      height: 100%;
+      min-width: 180px;
+      padding: 12px 14px 10px;
+      display: flex; align-items: center; gap: 10px;
+      cursor: pointer;
+      position: relative;
+      background: transparent;
+      border-right: 1px solid var(--line-faint);
+    }
+    .doc-tab.on {
+      background: var(--paper);
+    }
+    .doc-tab.on::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+    }
+    .doc-tab.t1.on::after { background: var(--a1); }
+    .doc-tab.t2.on::after { background: var(--a2); }
+    .doc-tab.t3.on::after { background: var(--a3); }
+    .dt-idx {
+      font-family: var(--f-mono);
+      font-size: 9.5px; font-weight: 600;
+      color: var(--light);
+      letter-spacing: .1em;
+    }
+    .dt-name {
+      font-size: 12.5px; font-weight: 600;
+      color: var(--ink);
+      flex: 1;
+    }
+    .dt-score {
+      font-family: var(--f-mono);
+      font-size: 11px; font-weight: 600;
+    }
+    .doc-tab.t1 .dt-score { color: var(--a1); }
+    .doc-tab.t2 .dt-score { color: var(--a2); }
+    .doc-tab.t3 .dt-score { color: var(--a3); }
+    .dt-close {
+      width: 16px; height: 16px;
+      background: none; border: none;
+      color: var(--light);
+      cursor: pointer;
+      font-size: 12px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .dt-close:hover { color: var(--red); }
+
+    .stage-tools {
+      display: flex; align-items: center; gap: 8px;
+      padding-left: 16px;
+      border-left: 1px solid var(--line-faint);
+      margin-left: 8px;
+    }
+    .st-btn {
+      height: 28px;
+      padding: 0 10px;
+      background: transparent; border: none;
+      font-family: var(--f-mono);
+      font-size: 10px; font-weight: 600;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .st-btn:hover { color: var(--ink); }
+    .st-btn.on { color: var(--ink); background: var(--paper); }
+
+    /* — 문서 작업 영역 — */
+    .stage-area {
+      flex: 1;
+      overflow-x: auto;
+      overflow-y: hidden;
+      display: flex;
+      padding: 20px 16px;
+      gap: 8px;
+      scroll-snap-type: x mandatory;
+    }
+
+    /* 문서 카드 */
+    .doc {
+      flex: 1;
+      min-width: 380px;
+      max-width: 560px;
+      background: var(--paper);
+      box-shadow: var(--shadow-paper);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      scroll-snap-align: start;
+    }
+
+    /* 문서 좌측 컬러 띠 */
+    .doc::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+    }
+    .doc.a1::before { background: var(--a1); }
+    .doc.a2::before { background: var(--a2); }
+    .doc.a3::before { background: var(--a3); }
+
+    /* 문서 상단 헤더 (인덱스 + 점수 + 닫기) */
+    .doc-head {
+      padding: 18px 28px 0 32px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .doc-idx {
+      font-family: var(--f-mono);
+      font-size: 9.5px; font-weight: 600;
+      color: var(--muted);
+      letter-spacing: .14em;
+    }
+    .doc-idx.a1 { color: var(--a1); }
+    .doc-idx.a2 { color: var(--a2); }
+    .doc-idx.a3 { color: var(--a3); }
+    .doc-status-text {
+      font-family: var(--f-mono);
+      font-size: 9px; font-weight: 600;
+      letter-spacing: .14em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .doc-head-actions {
+      margin-left: auto;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .doc-act {
+      width: 24px; height: 24px;
+      background: none; border: none;
+      color: var(--light);
+      cursor: pointer;
+      font-size: 13px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .doc-act:hover { color: var(--ink); }
+
+    /* 문서 본문 (스크롤) */
+    .doc-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 32px 40px;
+    }
+
+    /* 큰 이름 헤더 — 에디토리얼 */
+    .doc-name {
+      font-family: var(--f-serif);
+      font-size: 38px; font-weight: 600;
+      letter-spacing: -.035em;
+      line-height: .95;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+    .doc-tagline {
+      font-family: var(--f-serif);
+      font-size: 14px; font-style: italic;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .doc-meta {
+      font-family: var(--f-mono);
+      font-size: 10px; font-weight: 500;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--ink-soft);
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--rule);
+      margin-bottom: 22px;
+    }
+    .doc-meta .dot {
+      display: inline-block;
+      margin: 0 6px;
+      color: var(--light);
+    }
+
+    /* 점수 박스 — 본문 첫 시각요소 */
+    .doc-score {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px 16px;
+      padding: 14px 16px;
+      background: var(--white);
+      border: 1px solid var(--line-faint);
+      margin-bottom: 24px;
+    }
+    .doc-score-val {
+      font-family: var(--f-mono);
+      font-size: 32px; font-weight: 600;
+      letter-spacing: -.04em;
+      line-height: 1;
+      grid-row: 1 / 3;
+      align-self: center;
+    }
+    .doc.a1 .doc-score-val { color: var(--a1); }
+    .doc.a2 .doc-score-val { color: var(--a2); }
+    .doc.a3 .doc-score-val { color: var(--a3); }
+    .doc-score-label {
+      font-family: var(--f-mono);
+      font-size: 9px; font-weight: 600;
+      letter-spacing: .14em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .doc-score-detail {
+      font-size: 11.5px; color: var(--ink-soft);
+      line-height: 1.45;
+    }
+
+    /* 유사문장 알림 */
+    .sim-banner {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 10px 14px;
+      background: var(--sim);
+      border-left: 2px solid var(--orange);
+      margin-bottom: 22px;
+    }
+    .sim-banner-mark {
+      font-family: var(--f-mono);
+      font-size: 9px; font-weight: 700;
+      letter-spacing: .12em;
+      color: var(--orange);
+      padding-top: 1px;
+    }
+    .sim-banner-txt {
+      font-size: 12px;
+      color: var(--ink-soft);
+      line-height: 1.45;
+    }
+    .sim-banner-txt strong { color: var(--orange); }
+
+    /* 섹션 헤더 */
+    .sec {
+      margin-bottom: 22px;
+    }
+    .sec-label {
+      font-family: var(--f-mono);
+      font-size: 9.5px; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--line);
+      display: flex; align-items: baseline; justify-content: space-between;
+    }
+    .sec-num {
+      font-family: var(--f-mono);
+      font-size: 9px; font-weight: 500;
+      color: var(--light);
+      letter-spacing: .1em;
+    }
+
+    /* 본문 텍스트 — 세리프 */
+    .sec-p {
+      font-family: var(--f-serif);
+      font-size: 14.5px;
+      line-height: 1.62;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+
+    /* 하이라이트 / 유사문장 */
+    .hl {
+      background: var(--hl);
+      color: var(--hl-text);
+      padding: 0 3px;
+      font-weight: 600;
+      font-family: var(--f-sans);
+      font-size: 13px;
+      border-radius: 1px;
+    }
+    .sr {
+      background: var(--sim);
+      padding: 0 2px;
+      box-shadow: inset 0 -1px 0 var(--sim-strong);
+    }
+
+    /* 기술스택 칩 (대담한 스타일) */
+    .stack {
+      display: flex; flex-wrap: wrap; gap: 5px;
+    }
+    .stk {
+      font-family: var(--f-mono);
+      font-size: 10.5px; font-weight: 500;
+      padding: 3px 8px;
+      border: 1px solid var(--line);
+      background: var(--white);
+      color: var(--ink-soft);
+      letter-spacing: .02em;
+    }
+    .stk.m {
+      background: var(--hl);
+      color: var(--hl-text);
+      border-color: transparent;
+      font-weight: 600;
+    }
+
+    /* 경력 항목 */
+    .exp {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line-faint);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 4px 12px;
+    }
+    .exp:last-child { border-bottom: none; padding-bottom: 0; }
+    .exp-co {
+      font-family: var(--f-serif);
+      font-size: 14.5px; font-weight: 600;
+      color: var(--ink);
+      letter-spacing: -.005em;
+    }
+    .exp-period {
+      font-family: var(--f-mono);
+      font-size: 10.5px;
+      color: var(--muted);
+      letter-spacing: .05em;
+      text-align: right;
+      white-space: nowrap;
+    }
+    .exp-role {
+      font-size: 12.5px; color: var(--ink-soft);
+      grid-column: 1 / -1;
+      line-height: 1.45;
+    }
+
+    /* 프로젝트 카드 */
+    .proj {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line-faint);
+    }
+    .proj:last-child { border-bottom: none; padding-bottom: 0; }
+    .proj-name {
+      font-family: var(--f-serif);
+      font-size: 15px; font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+    .proj-desc {
+      font-family: var(--f-serif);
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      line-height: 1.55;
+    }
+
+    /* 빈 패널 추가 슬롯 */
+    .doc-add {
+      flex: 0 0 44px;
+      align-self: stretch;
+      border: 1.5px dashed var(--line-strong);
+      background: transparent;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: all .15s;
+      color: var(--light);
+      font-family: var(--f-mono);
+      font-size: 9px; font-weight: 600;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      padding: 20px 0;
+      user-select: none;
+    }
+    .doc-add:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: rgba(67,97,238,.03);
+    }
+    .doc-add.drag-over {
+      border-style: solid;
+      border-color: var(--primary);
+      background: rgba(67,97,238,.07);
+      color: var(--primary);
+    }
+    .doc-add.dropped {
+      border-style: solid;
+      border-color: var(--green);
+      background: rgba(45,198,83,.08);
+      color: var(--green);
+    }
+    .doc-add.drop-err {
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    /* ══════════════════════════════════════
+       스크롤바 — 세련된 얇은 스타일
+    ══════════════════════════════════════ */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb {
+      background: var(--line-strong);
+      border-radius: 0;
+    }
+    ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+  </style>
+</head>
+<body>
+
+  <!-- ══════ LEFT CONTROL DESK ══════ -->
+  <aside class="desk">
+
+    <!-- 브랜드 -->
+    <div class="desk-brand">
+      <div class="brand-row">
+        <span class="brand-mark">Reviewer / v0.4</span>
+      </div>
+      <div class="brand-job">프론트엔드 개발자</div>
+      <div class="brand-job-meta">2025 정기 채용 · 지원자 24명 · 검토중 7명</div>
+    </div>
+
+    <!-- 필수 스펙 -->
+    <div class="desk-spec">
+      <span class="desk-label">Required</span>
+      <div class="spec-chips">
+        <div class="schip p">React <span class="x">✕</span></div>
+        <div class="schip p">TypeScript <span class="x">✕</span></div>
+        <div class="schip g">Python <span class="x">✕</span></div>
+        <div class="schip-add">＋ 추가</div>
+      </div>
+    </div>
+
+    <!-- 검색 -->
+    <div class="desk-search">
+      <input type="text" placeholder="이름·키워드 검색 (별칭 자동 처리)">
+    </div>
+
+    <!-- 탭 -->
+    <div class="desk-tabs">
+      <div class="tab-row">
+        <div class="tab on">전체</div>
+        <div class="tab">통과</div>
+        <div class="tab">보류</div>
+        <div class="tab">탈락</div>
+      </div>
+      <span class="tab-count">12 / 24</span>
+    </div>
+
+    <!-- 지원자 목록 -->
+    <div class="desk-list">
+
+      <div class="row active">
+        <div class="row-num">01</div>
+        <div class="row-body">
+          <div class="row-name">김철수</div>
+          <div class="row-meta">프론트엔드<span class="sep">·</span>4년<span class="sep">·</span>Seoul</div>
+          <div class="row-tags">
+            <span class="rt m">React</span>
+            <span class="rt m">TypeScript</span>
+            <span class="rt">Python</span>
+          </div>
+        </div>
+        <div class="row-side">
+          <span class="row-score mid">56</span>
+          <span class="row-status pass">PASS</span>
+        </div>
+      </div>
+
+      <div class="row open">
+        <div class="row-num">02</div>
+        <div class="row-body">
+          <div class="row-name">박지훈</div>
+          <div class="row-meta">풀스택<span class="sep">·</span>2년<span class="sep">·</span>Busan</div>
+          <div class="row-tags">
+            <span class="rt m">React</span>
+            <span class="rt m">Python</span>
+            <span class="rt">Docker</span>
+          </div>
+        </div>
+        <div class="row-side">
+          <span class="row-score lo">34</span>
+          <span class="row-status hold">HOLD</span>
+        </div>
+      </div>
+
+      <div class="row open">
+        <div class="row-num">03</div>
+        <div class="row-body">
+          <div class="row-name">이민준</div>
+          <div class="row-meta">백엔드<span class="sep">·</span>3년<span class="sep">·</span>Seoul</div>
+          <div class="row-tags">
+            <span class="rt m">Python</span>
+            <span class="rt">Java</span>
+            <span class="rt">Kubernetes</span>
+          </div>
+        </div>
+        <div class="row-side">
+          <span class="row-score lo">28</span>
+          <span class="row-status wait">REVIEW</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="row-num">04</div>
+        <div class="row-body">
+          <div class="row-name">박도현</div>
+          <div class="row-meta">풀스택<span class="sep">·</span>6년<span class="sep">·</span>Seoul</div>
+          <div class="row-tags">
+            <span class="rt m">React</span>
+            <span class="rt m">TypeScript</span>
+            <span class="rt m">Python</span>
+          </div>
+        </div>
+        <div class="row-side">
+          <span class="row-score hi">72</span>
+          <span class="row-status pass">PASS</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="row-num">05</div>
+        <div class="row-body">
+          <div class="row-name">한소희</div>
+          <div class="row-meta">UI/UX<span class="sep">·</span>3년<span class="sep">·</span>Seoul</div>
+          <div class="row-tags">
+            <span class="rt m">React</span>
+            <span class="rt">Figma</span>
+            <span class="rt">CSS</span>
+          </div>
+        </div>
+        <div class="row-side">
+          <span class="row-score mid">41</span>
+          <span class="row-status pass">PASS</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="row-num">06</div>
+        <div class="row-body">
+          <div class="row-name">최유진</div>
+          <div class="row-meta">프론트엔드<span class="sep">·</span>1년<span class="sep">·</span>Incheon</div>
+          <div class="row-tags">
+            <span class="rt">Vue</span>
+            <span class="rt">CSS</span>
+          </div>
+        </div>
+        <div class="row-side">
+          <span class="row-score lo">14</span>
+          <span class="row-status fail">FAIL</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="row-num">07</div>
+        <div class="row-body">
+          <div class="row-name">정우성</div>
+          <div class="row-meta">iOS<span class="sep">·</span>5년<span class="sep">·</span>Seoul</div>
+          <div class="row-tags">
+            <span class="rt">Swift</span>
+            <span class="rt">Xcode</span>
+          </div>
+        </div>
+        <div class="row-side">
+          <span class="row-score no">10</span>
+          <span class="row-status wait">REVIEW</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 하단 액션 바 -->
+    <div class="desk-actions">
+      <select class="da-select">
+        <option>매칭률 순</option>
+        <option>이름 순</option>
+        <option>경력 순</option>
+      </select>
+      <div class="da-icon" title="유사 문장 검출">⇌</div>
+      <button class="da-primary">＋ 업로드</button>
+    </div>
+
+  </aside>
+
+  <!-- ══════ DOCUMENT STAGE ══════ -->
+  <main class="stage">
+
+    <!-- 상단 작업 표시줄 -->
+    <div class="stage-top">
+      <div class="stage-tabs">
+        <div class="doc-tab t1 on">
+          <span class="dt-idx">01 /</span>
+          <span class="dt-name">김철수</span>
+          <span class="dt-score">56</span>
+          <button class="dt-close">✕</button>
+        </div>
+        <div class="doc-tab t2 on">
+          <span class="dt-idx">02 /</span>
+          <span class="dt-name">박지훈</span>
+          <span class="dt-score">34</span>
+          <button class="dt-close">✕</button>
+        </div>
+        <div class="doc-tab t3 on">
+          <span class="dt-idx">03 /</span>
+          <span class="dt-name">이민준</span>
+          <span class="dt-score">28</span>
+          <button class="dt-close">✕</button>
+        </div>
+      </div>
+
+      <div class="stage-tools">
+        <button class="st-btn on">Compare</button>
+        <button class="st-btn">Stack</button>
+        <button class="st-btn">⌕ Find</button>
+      </div>
+    </div>
+
+    <!-- 문서 영역 -->
+    <div class="stage-area">
+
+      <!-- 문서 01 — 김철수 -->
+      <article class="doc a1">
+        <div class="doc-head">
+          <span class="doc-idx a1">CANDIDATE 01</span>
+          <span class="doc-status-text">· FRONTEND · 4Y</span>
+          <div class="doc-head-actions">
+            <button class="doc-act" title="북마크">☆</button>
+            <button class="doc-act" title="닫기">✕</button>
+          </div>
+        </div>
+
+        <div class="doc-body">
+          <h1 class="doc-name">김철수</h1>
+          <p class="doc-tagline">Frontend Engineer — Component thinker.</p>
+          <div class="doc-meta">Seoul<span class="dot">●</span>4 Years<span class="dot">●</span>Kakao</div>
+
+          <!-- 점수 -->
+          <div class="doc-score">
+            <div class="doc-score-val">56<span style="font-size:14px;opacity:.5">%</span></div>
+            <span class="doc-score-label">Match Score</span>
+            <span class="doc-score-detail">React + TS 강점, Python 미흡. 자기소개 일부 유사구간 감지.</span>
+          </div>
+
+          <!-- 유사문장 알림 -->
+          <div class="sim-banner">
+            <span class="sim-banner-mark">⚠ ALERT</span>
+            <span class="sim-banner-txt"><strong>박지훈</strong>과 자기소개 1문장 유사 (Rabin-Karp · 87% match)</span>
+          </div>
+
+          <!-- 자기소개 -->
+          <div class="sec">
+            <div class="sec-label">자기소개 <span class="sec-num">§ 01</span></div>
+            <p class="sec-p">
+              <span class="sr">안녕하세요. 사용자 경험을 최우선으로 생각하는</span>
+              <span class="hl">React</span> 개발자입니다.
+              <span class="hl">TypeScript</span>와 <span class="hl">Next.js</span>를 주력으로,
+              <span class="sr">컴포넌트 기반 설계와 성능 최적화에 깊은 관심</span>이 있습니다.
+            </p>
+          </div>
+
+          <!-- 기술 스택 -->
+          <div class="sec">
+            <div class="sec-label">기술 스택 <span class="sec-num">§ 02</span></div>
+            <div class="stack">
+              <span class="stk m">React</span>
+              <span class="stk m">TypeScript</span>
+              <span class="stk m">Next.js</span>
+              <span class="stk">Python</span>
+              <span class="stk">GraphQL</span>
+              <span class="stk">AWS</span>
+              <span class="stk">Figma</span>
+            </div>
+          </div>
+
+          <!-- 경력 -->
+          <div class="sec">
+            <div class="sec-label">경력 <span class="sec-num">§ 03</span></div>
+            <div class="exp">
+              <div class="exp-co">Kakao · Frontend Engineer</div>
+              <div class="exp-period">2022 — 현재</div>
+              <div class="exp-role">웹 서비스 개발 · 성능 최적화 · A/B 테스트 인프라 구축</div>
+            </div>
+            <div class="exp">
+              <div class="exp-co">스타트업 ABC · 웹 개발자</div>
+              <div class="exp-period">2021 — 2022</div>
+              <div class="exp-role">React SPA 개발 · REST API 연동 · 결제 모듈 통합</div>
+            </div>
+          </div>
+
+          <!-- 프로젝트 -->
+          <div class="sec">
+            <div class="sec-label">주요 프로젝트 <span class="sec-num">§ 04</span></div>
+            <div class="proj">
+              <div class="proj-name">실시간 협업 대시보드</div>
+              <div class="proj-desc">WebSocket 기반 데이터 시각화. DAU 3만. React Query + Zustand 도입으로 렌더링 40% 개선.</div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- 문서 02 — 박지훈 -->
+      <article class="doc a2">
+        <div class="doc-head">
+          <span class="doc-idx a2">CANDIDATE 02</span>
+          <span class="doc-status-text">· FULLSTACK · 2Y</span>
+          <div class="doc-head-actions">
+            <button class="doc-act" title="북마크">☆</button>
+            <button class="doc-act" title="닫기">✕</button>
+          </div>
+        </div>
+
+        <div class="doc-body">
+          <h1 class="doc-name">박지훈</h1>
+          <p class="doc-tagline">Fullstack — Frontend × Backend balanced.</p>
+          <div class="doc-meta">Busan<span class="dot">●</span>2 Years<span class="dot">●</span>Naver</div>
+
+          <div class="doc-score">
+            <div class="doc-score-val">34<span style="font-size:14px;opacity:.5">%</span></div>
+            <span class="doc-score-label">Match Score</span>
+            <span class="doc-score-detail">React+Python 보유, TS 미보유. 경력 짧음. 유사 구간 감지.</span>
+          </div>
+
+          <div class="sim-banner">
+            <span class="sim-banner-mark">⚠ ALERT</span>
+            <span class="sim-banner-txt"><strong>김철수</strong>와 자기소개 1문장 유사 (Rabin-Karp · 87% match)</span>
+          </div>
+
+          <div class="sec">
+            <div class="sec-label">자기소개 <span class="sec-num">§ 01</span></div>
+            <p class="sec-p">
+              <span class="sr">안녕하세요. 사용자 경험을 최우선으로 생각하는</span>
+              <span class="hl">React</span> 및 <span class="hl">Python</span> 개발자입니다.
+              <span class="sr">컴포넌트 기반 설계와 성능 최적화에 깊은 관심</span>이 있습니다.
+              백엔드는 FastAPI와 Django를 주로 사용합니다.
+            </p>
+          </div>
+
+          <div class="sec">
+            <div class="sec-label">기술 스택 <span class="sec-num">§ 02</span></div>
+            <div class="stack">
+              <span class="stk m">React</span>
+              <span class="stk">JavaScript</span>
+              <span class="stk m">Python</span>
+              <span class="stk">Django</span>
+              <span class="stk">FastAPI</span>
+              <span class="stk">Docker</span>
+            </div>
+          </div>
+
+          <div class="sec">
+            <div class="sec-label">경력 <span class="sec-num">§ 03</span></div>
+            <div class="exp">
+              <div class="exp-co">Naver · Fullstack Developer</div>
+              <div class="exp-period">2023 — 현재</div>
+              <div class="exp-role">검색 서비스 프론트 유지보수 · 백엔드 API 신규 개발</div>
+            </div>
+            <div class="exp">
+              <div class="exp-co">XYZ Corp · Intern</div>
+              <div class="exp-period">2022</div>
+              <div class="exp-role">Django 기반 사내 어드민 페이지 구축</div>
+            </div>
+          </div>
+
+          <div class="sec">
+            <div class="sec-label">주요 프로젝트 <span class="sec-num">§ 04</span></div>
+            <div class="proj">
+              <div class="proj-name">Mealog</div>
+              <div class="proj-desc">React Native + FastAPI 풀스택 식단 관리 앱. Google Play 배포, 다운로드 1,200.</div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- 문서 03 — 이민준 -->
+      <article class="doc a3">
+        <div class="doc-head">
+          <span class="doc-idx a3">CANDIDATE 03</span>
+          <span class="doc-status-text">· BACKEND · 3Y</span>
+          <div class="doc-head-actions">
+            <button class="doc-act" title="북마크">☆</button>
+            <button class="doc-act" title="닫기">✕</button>
+          </div>
+        </div>
+
+        <div class="doc-body">
+          <h1 class="doc-name">이민준</h1>
+          <p class="doc-tagline">Backend Engineer — Distributed systems.</p>
+          <div class="doc-meta">Seoul<span class="dot">●</span>3 Years<span class="dot">●</span>LINE</div>
+
+          <div class="doc-score">
+            <div class="doc-score-val">28<span style="font-size:14px;opacity:.5">%</span></div>
+            <span class="doc-score-label">Match Score</span>
+            <span class="doc-score-detail">Python 강점, React 미보유. 프론트엔드 직무와 미스매치.</span>
+          </div>
+
+          <div class="sec">
+            <div class="sec-label">자기소개 <span class="sec-num">§ 01</span></div>
+            <p class="sec-p">
+              Java Spring Boot와 <span class="hl">Python</span>을 중심으로 대용량 트래픽 처리 경험.
+              MSA 아키텍처 설계 및 운영 3년차. <span class="hl">TypeScript</span> 기초 보유.
+            </p>
+          </div>
+
+          <div class="sec">
+            <div class="sec-label">기술 스택 <span class="sec-num">§ 02</span></div>
+            <div class="stack">
+              <span class="stk m">Python</span>
+              <span class="stk">Java</span>
+              <span class="stk">Spring Boot</span>
+              <span class="stk">TypeScript</span>
+              <span class="stk">Kubernetes</span>
+              <span class="stk">MySQL</span>
+              <span class="stk">Redis</span>
+            </div>
+          </div>
+
+          <div class="sec">
+            <div class="sec-label">경력 <span class="sec-num">§ 03</span></div>
+            <div class="exp">
+              <div class="exp-co">LINE · Backend Engineer</div>
+              <div class="exp-period">2021 — 현재</div>
+              <div class="exp-role">결제 서비스 MSA 전환 · TPS 1만 안정화</div>
+            </div>
+          </div>
+
+          <div class="sec">
+            <div class="sec-label">주요 프로젝트 <span class="sec-num">§ 04</span></div>
+            <div class="proj">
+              <div class="proj-name">분산 메시징 파이프라인</div>
+              <div class="proj-desc">Kafka + Python, 일 1억 이벤트 처리. 장애 시 MTTR 60% 단축.</div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- + 추가 슬롯 (drag & drop: .md / .pdf) -->
+      <div class="doc-add" id="dropZone">＋ Add Document</div>
+
+    </div>
+
+  </main>
+
+  <script>
+    const dropZone = document.getElementById('dropZone');
+    const ACCEPTED = ['.md', '.pdf'];
+    const isValid = f => ACCEPTED.some(ext => f.name.toLowerCase().endsWith(ext));
+
+    let leaveTimer = null;
+
+    dropZone.addEventListener('dragenter', e => {
+      e.preventDefault();
+      clearTimeout(leaveTimer);
+      dropZone.classList.add('drag-over');
+    });
+
+    dropZone.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'copy';
+      clearTimeout(leaveTimer);
+      dropZone.classList.add('drag-over');
+    });
+
+    dropZone.addEventListener('dragleave', e => {
+      leaveTimer = setTimeout(() => dropZone.classList.remove('drag-over'), 80);
+    });
+
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.classList.remove('drag-over');
+
+      const files = Array.from(e.dataTransfer.files).filter(isValid);
+
+      if (files.length === 0) {
+        dropZone.classList.add('drop-err');
+        const prev = dropZone.textContent;
+        dropZone.textContent = '.md / .pdf only';
+        setTimeout(() => {
+          dropZone.classList.remove('drop-err');
+          dropZone.textContent = prev;
+        }, 1600);
+        return;
+      }
+
+      const name = files[0].name.length > 14
+        ? files[0].name.slice(0, 12) + '…'
+        : files[0].name;
+      dropZone.textContent = '✓ ' + name;
+      dropZone.classList.add('dropped');
+      setTimeout(() => {
+        dropZone.classList.remove('dropped');
+        dropZone.textContent = '＋ Add Document';
+      }, 2200);
+    });
+  </script>
+</body>
+</html>
+

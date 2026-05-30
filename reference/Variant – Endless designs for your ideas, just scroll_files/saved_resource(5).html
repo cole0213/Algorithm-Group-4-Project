@@ -1,0 +1,481 @@
+
+<!-- saved from url=(0068)https://variant.com/design/9a049bf3-b45b-45fe-8f91-010e4d6b380f.html -->
+<html lang="ko" vid="0"><head vid="1"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" vid="3">
+    <title vid="4">장 건강 30일 챌린지 — Gut Health Challenge</title>
+    
+    <script src="./three.min.js.다운로드" vid="5"></script>
+    <link rel="stylesheet" as="style" crossorigin="" href="./pretendard.min.css" vid="6">
+    <style vid="7">
+        :root {
+            --bg: #f8f9fa;
+            --text-main: #121212;
+            --text-sub: #636366;
+            --accent-navy: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+            --glass: rgba(255, 255, 255, 0.7);
+            --fringe: linear-gradient(90deg, #ff9a9e 0%, #fad0c4 10%, #fbc2eb 20%, #a18cd1 30%, #fbc2eb 40%, #84fab0 50%, #8fd3f4 60%, #a6c1ee 70%, #fccb90 80%, #d4fc79 90%, #96e6a1 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        nav {
+            padding: 32px 64px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: absolute;
+            width: 100%;
+            z-index: 10;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 20px;
+            letter-spacing: -0.05em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--accent-navy);
+            border-radius: 50%;
+        }
+
+        main {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 100vh;
+            align-items: center;
+            padding: 0 10%;
+            gap: 60px;
+        }
+
+        .content-left {
+            max-width: 580px;
+        }
+
+        h1 {
+            font-size: 56px;
+            font-weight: 800;
+            line-height: 1.25;
+            letter-spacing: -0.03em;
+            margin-bottom: 24px;
+            word-break: keep-all;
+        }
+
+        p.subtext {
+            font-size: 20px;
+            color: var(--text-sub);
+            line-height: 1.6;
+            margin-bottom: 48px;
+            word-break: keep-all;
+            letter-spacing: -0.01em;
+        }
+
+        
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px; 
+            border-radius: 100px;
+            text-decoration: none;
+            position: relative;
+            background: var(--fringe);
+            box-shadow: 0 20px 40px rgba(13, 71, 161, 0.15);
+            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.03) translateY(-4px);
+            box-shadow: 0 30px 60px rgba(13, 71, 161, 0.25);
+        }
+
+        .cta-inner {
+            background: var(--accent-navy);
+            color: white;
+            padding: 20px 48px;
+            border-radius: 100px;
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .cta-inner::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .cta-icon {
+            width: 24px;
+            height: 24px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        
+        .card-container {
+            perspective: 1000px;
+        }
+
+        .habit-card {
+            background: var(--glass);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 32px;
+            padding: 40px;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.05), inset 0 0 0 1px rgba(255,255,255,0.5);
+            transform: rotateY(-5deg) rotateX(2deg);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-badge {
+            background: #e3f2fd;
+            color: #1565c0;
+            padding: 6px 12px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+        }
+
+        .day-cell {
+            aspect-ratio: 1;
+            background: rgba(255,255,255,0.4);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .day-cell:hover {
+            background: white;
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.05);
+            border-color: rgba(255, 154, 158, 0.3);
+        }
+
+        .day-num {
+            font-size: 12px;
+            color: var(--text-sub);
+            position: absolute;
+            top: 6px;
+            left: 8px;
+            font-weight: 500;
+        }
+
+        .day-cell.completed {
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        .check-icon {
+            width: 20px;
+            height: 20px;
+            color: #1a237e;
+        }
+
+        .day-cell.active {
+            border: 2px solid #1a237e;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(26, 35, 126, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(26, 35, 126, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(26, 35, 126, 0); }
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 3px;
+            margin-top: 32px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 46%;
+            background: var(--accent-navy);
+            border-radius: 3px;
+        }
+
+        .meta-stats {
+            margin-top: 16px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-sub);
+        }
+
+        @media (max-width: 1024px) {
+            main {
+                grid-template-columns: 1fr;
+                padding: 120px 5%;
+                text-align: center;
+            }
+            .content-left {
+                max-width: 100%;
+            }
+            .card-container {
+                margin: 0 auto;
+            }
+        }
+    </style>
+</head>
+<body vid="8">
+
+    <div id="canvas-container" vid="9"><canvas width="1600" height="1200" style="display: block; width: 1280px; height: 960px;"></canvas></div>
+
+    <nav vid="10">
+        <div class="logo" vid="11">
+            <div class="logo-icon" vid="12"></div>
+            장 건강 챌린지 30
+        </div>
+        <div style="display: flex; gap: 32px; font-weight: 600; font-size: 15px; color: var(--text-sub);" vid="13">
+            <span vid="14">챌린지 소개</span>
+            <span vid="15">성공 후기</span>
+            <span style="color: var(--text-main)" vid="16">마이페이지</span>
+        </div>
+    </nav>
+
+    <main vid="17">
+        <section class="content-left" vid="18">
+            <h1 vid="19">여기까지 온 거,<br vid="20">이미 절반은 하신 거예요</h1>
+            <p class="subtext" vid="21">
+                어려운 결정은 끝났습니다. 이제 남은 건 하나.<br vid="22">
+                30일 동안 꾸준히 몸에 좋은 습관을 채워주는 것뿐입니다.
+            </p>
+            
+            <a href="https://variant.com/design/9a049bf3-b45b-45fe-8f91-010e4d6b380f.html#" class="cta-button" vid="23">
+                <div class="cta-inner" vid="24">
+                    카카오로 바로 시작하기
+                    <div class="cta-icon" vid="25">→</div>
+                </div>
+            </a>
+
+            <div style="margin-top: 32px; display: flex; align-items: center; gap: 12px;" vid="26">
+                <div style="display: flex; margin-right: 8px;" vid="27">
+                    <img src="./photo-1534528741775-53994a69daeb" style="width:32px; height:32px; border-radius:50%; border:2px solid white;" vid="28">
+                    <img src="./photo-1507003211169-0a1dd7228f2d" style="width:32px; height:32px; border-radius:50%; border:2px solid white; margin-left:-12px;" vid="29">
+                    <img src="./photo-1494790108377-be9c29b29330" style="width:32px; height:32px; border-radius:50%; border:2px solid white; margin-left:-12px;" vid="30">
+                </div>
+                <span style="font-size: 14px; font-weight: 500; color: var(--text-sub);" vid="31">지금 1,248명이 함께하고 있어요</span>
+            </div>
+        </section>
+
+        <section class="card-container" vid="32">
+            <div class="habit-card" vid="33">
+                <div class="card-header" vid="34">
+                    <div class="card-title" vid="35">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" vid="36"><path d="M22 12h-4l-3 9L9 3l-3 9H2" vid="37"></path></svg>
+                        나의 데일리 기록
+                    </div>
+                    <div class="status-badge" vid="38">Day 14 진행 중</div>
+                </div>
+                
+                <div class="calendar-grid" id="calendar" vid="39">
+                    
+                <div class="day-cell completed"><span class="day-num">1</span><svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="day-cell completed"><span class="day-num">2</span><svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="day-cell completed"><span class="day-num">3</span><svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="day-cell completed"><span class="day-num">4</span><svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="day-cell completed"><span class="day-num">5</span><svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="day-cell completed"><span class="day-num">6</span><svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="day-cell completed"><span class="day-num">7</span><svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="day-cell completed"><span class="day-num">8</span><svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="day-cell completed"><span class="day-num">9</span><svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="day-cell completed"><span class="day-num">10</span><svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="day-cell completed"><span class="day-num">11</span><svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="day-cell completed"><span class="day-num">12</span><svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="day-cell completed"><span class="day-num">13</span><svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><div class="day-cell active"><span class="day-num">14</span><div style="width:8px; height:8px; background:#1a237e; border-radius:50%;"></div></div><div class="day-cell"><span class="day-num">15</span></div><div class="day-cell"><span class="day-num">16</span></div><div class="day-cell"><span class="day-num">17</span></div><div class="day-cell"><span class="day-num">18</span></div><div class="day-cell"><span class="day-num">19</span></div><div class="day-cell"><span class="day-num">20</span></div><div class="day-cell"><span class="day-num">21</span></div><div class="day-cell"><span class="day-num">22</span></div><div class="day-cell"><span class="day-num">23</span></div><div class="day-cell"><span class="day-num">24</span></div><div class="day-cell"><span class="day-num">25</span></div><div class="day-cell"><span class="day-num">26</span></div><div class="day-cell"><span class="day-num">27</span></div><div class="day-cell"><span class="day-num">28</span></div><div class="day-cell"><span class="day-num">29</span></div><div class="day-cell"><span class="day-num">30</span></div></div>
+
+                <div class="progress-bar" vid="40">
+                    <div class="progress-fill" vid="41"></div>
+                </div>
+                <div class="meta-stats" vid="42">
+                    <span vid="43">전체 진행률 46%</span>
+                    <span vid="44">남은 기간 16일</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script vid="45">
+        
+        const calendar = document.getElementById('calendar');
+        for (let i = 1; i <= 30; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'day-cell';
+            if (i < 14) cell.classList.add('completed');
+            if (i === 14) cell.classList.add('active');
+            
+            const num = document.createElement('span');
+            num.className = 'day-num';
+            num.innerText = i;
+            cell.appendChild(num);
+
+            if (i < 14) {
+                cell.innerHTML += `<svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+            } else if (i === 14) {
+                cell.innerHTML += `<div style="width:8px; height:8px; background:#1a237e; border-radius:50%;"></div>`;
+            }
+
+            calendar.appendChild(cell);
+        }
+
+        
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        
+        const bubbleMaterial = new THREE.ShaderMaterial({
+            uniforms: {
+                time: { value: 0 },
+                colorA: { value: new THREE.Color(0xffffff) },
+            },
+            vertexShader: `
+                varying vec3 vNormal;
+                varying vec3 vViewPosition;
+                void main() {
+                    vNormal = normalize(normalMatrix * normal);
+                    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                    vViewPosition = -mvPosition.xyz;
+                    gl_Position = projectionMatrix * mvPosition;
+                }
+            `,
+            fragmentShader: `
+                varying vec3 vNormal;
+                varying vec3 vViewPosition;
+                uniform float time;
+                void main() {
+                    vec3 normal = normalize(vNormal);
+                    vec3 viewDir = normalize(vViewPosition);
+                    float fresnel = pow(1.0 - dot(normal, viewDir), 3.0);
+                    
+                    // Iridescent fringe effect
+                    float r = pow(1.0 - dot(normal, viewDir), 2.0 + sin(time * 0.5) * 0.5);
+                    float g = pow(1.0 - dot(normal, viewDir), 2.5 + cos(time * 0.5) * 0.5);
+                    float b = pow(1.0 - dot(normal, viewDir), 3.0 + sin(time * 0.8) * 0.5);
+                    
+                    vec3 rainbow = vec3(r, g, b) * 0.5;
+                    vec3 finalColor = mix(vec3(1.0), rainbow, fresnel);
+                    
+                    gl_FragColor = vec4(finalColor, fresnel * 0.6);
+                }
+            `,
+            transparent: true,
+            side: THREE.DoubleSide
+        });
+
+        const bubbles = [];
+        const bubbleCount = 8;
+        const geometry = new THREE.IcosahedronGeometry(1, 15);
+
+        for (let i = 0; i < bubbleCount; i++) {
+            const bubble = new THREE.Mesh(geometry, bubbleMaterial.clone());
+            bubble.position.set(
+                (Math.random() - 0.5) * 15,
+                (Math.random() - 0.5) * 10,
+                (Math.random() - 0.5) * 5
+            );
+            const scale = Math.random() * 2 + 0.5;
+            bubble.scale.set(scale, scale, scale);
+            bubble.userData = {
+                speed: Math.random() * 0.005 + 0.002,
+                offset: Math.random() * Math.PI * 2
+            };
+            scene.add(bubble);
+            bubbles.push(bubble);
+        }
+
+        camera.position.z = 8;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const time = performance.now() * 0.001;
+            
+            bubbles.forEach(b => {
+                b.position.y += Math.sin(time + b.userData.offset) * 0.005;
+                b.position.x += Math.cos(time + b.userData.offset) * 0.002;
+                b.rotation.x += 0.001;
+                b.rotation.y += 0.001;
+                b.material.uniforms.time.value = time;
+            });
+
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate();
+    </script>
+
+</body></html>

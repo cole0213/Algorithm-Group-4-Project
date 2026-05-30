@@ -1,0 +1,354 @@
+
+<!-- saved from url=(0068)https://variant.com/design/a05ae609-252a-48f1-b429-de6c893d48d1.html -->
+<html lang="en" vid="0"><head vid="1"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" vid="3">
+    <title vid="4">Portfolio Review - HR Dashboard</title>
+    <style vid="5">
+        :root {
+            --bg: #ffffff;
+            --surface: #f9f9f9;
+            --primary: #000000;
+            --accent: #ff5f5f; 
+            --border: #e2e2e2; 
+            --text-secondary: #757575;
+            --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--primary);
+            font-family: var(--font-main);
+            -webkit-font-smoothing: antialiased;
+            overflow: hidden;
+        }
+
+        
+        nav {
+            height: 64px;
+            border-bottom: 1px solid var(--border);
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            padding: 0 40px;
+            background: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            text-transform: lowercase;
+        }
+
+        .nav-right {
+            justify-self: end;
+        }
+
+        
+        main {
+            display: grid;
+            grid-template-columns: 320px 1fr 380px;
+            height: calc(100vh - 64px);
+        }
+
+        
+        .sidebar-list {
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            background: var(--bg);
+        }
+
+        .list-header {
+            padding: 24px 20px 12px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
+        }
+
+        .candidate-item {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .candidate-item:hover {
+            background: var(--surface);
+        }
+
+        .candidate-item.active {
+            background: #f0f0f0;
+        }
+
+        .candidate-name {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .candidate-meta {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        
+        .document-preview {
+            background: var(--surface);
+            padding: 40px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .canvas-page {
+            width: 100%;
+            max-width: 800px;
+            background: #fff;
+            aspect-ratio: 1 / 1.41;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+            padding: 60px;
+            position: relative;
+        }
+
+        .canvas-header {
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+        }
+
+        .canvas-header h1 {
+            font-size: 28px;
+            font-weight: 800;
+            text-transform: capitalize;
+        }
+
+        
+        .analysis-panel {
+            border-left: 1px solid var(--border);
+            padding: 32px;
+            overflow-y: auto;
+        }
+
+        .section-tag {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .ai-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .ai-subtitle {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 24px;
+            display: block;
+        }
+
+        
+        .btn-primary {
+            width: 100%;
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: none;
+            margin-bottom: 32px;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .ai-summary-text {
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--primary);
+            margin-bottom: 32px;
+        }
+
+        
+        .accordion-item {
+            border-top: 1px solid var(--border);
+            padding: 16px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .accordion-item:last-child {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .accordion-label {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .accordion-icon {
+            font-size: 16px;
+            font-weight: 300;
+        }
+
+        
+        .score-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .star-rating {
+            color: var(--primary);
+            font-size: 12px;
+            letter-spacing: 2px;
+        }
+
+        .score-val {
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .score-count {
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+    </style>
+</head>
+<body vid="6">
+
+    <nav vid="7">
+        <div class="nav-label" vid="8">Menu</div>
+        <div class="logo" vid="9">reframe</div>
+        <div class="nav-right nav-label" vid="10">User Profile (JD)</div>
+    </nav>
+
+    <main vid="11">
+        
+        <section class="sidebar-list" vid="12">
+            <div class="list-header" vid="13">Active Applications / 24</div>
+            
+            <div class="candidate-item active" vid="14">
+                <div class="candidate-name" vid="15">Sarah Jenkins</div>
+                <div class="candidate-meta" vid="16">Senior Product Designer / 2d ago</div>
+            </div>
+
+            <div class="candidate-item" vid="17">
+                <div class="candidate-name" vid="18">Marcus Aurelius</div>
+                <div class="candidate-meta" vid="19">UX Engineer / 3d ago</div>
+            </div>
+
+            <div class="candidate-item" vid="20">
+                <div class="candidate-name" vid="21">Elena Rodriguez</div>
+                <div class="candidate-meta" vid="22">Visual Identity Lead / 4d ago</div>
+            </div>
+
+            <div class="candidate-item" vid="23">
+                <div class="candidate-name" vid="24">Thomas Mueller</div>
+                <div class="candidate-meta" vid="25">Product Designer / 4d ago</div>
+            </div>
+
+            <div class="candidate-item" vid="26">
+                <div class="candidate-name" vid="27">Hana Kim</div>
+                <div class="candidate-meta" vid="28">Design Systems / 5d ago</div>
+            </div>
+        </section>
+
+        
+        <section class="document-preview" vid="29">
+            <div class="canvas-page" vid="30">
+                <header class="canvas-header" vid="31">
+                    <h1 vid="32">Sarah Jenkins</h1>
+                    <p style="margin-top:8px; font-size: 14px; color: var(--text-secondary);" vid="33">Portfolio Case Study: Re-imagining Commerce</p>
+                </header>
+                <div style="height: 300px; background: #f5f5f5; margin-bottom: 30px;" vid="34"></div>
+                <div style="height: 20px; width: 60%; background: #f5f5f5; margin-bottom: 12px;" vid="35"></div>
+                <div style="height: 20px; width: 90%; background: #f5f5f5; margin-bottom: 12px;" vid="36"></div>
+                <div style="height: 20px; width: 40%; background: #f5f5f5; margin-bottom: 12px;" vid="37"></div>
+            </div>
+        </section>
+
+        
+        <section class="analysis-panel" vid="38">
+            <span class="section-tag" vid="39">AI Analysis Report</span>
+            <h2 class="ai-title" vid="40">Sarah Jenkins</h2>
+            <span class="ai-subtitle" vid="41">Senior Product Designer / 8 yrs exp</span>
+
+            <div class="score-pill" vid="42">
+                <span class="star-rating" vid="43">★★★★★</span>
+                <span class="score-val" vid="44">4.9</span>
+                <span class="score-count" vid="45">(AI confidence 94%)</span>
+            </div>
+
+            <button class="btn-primary" vid="46">Shortlist for Interview</button>
+
+            <p class="ai-summary-text" vid="47">
+                Candidate demonstrates high proficiency in design systems and large-scale architectural thinking. Portfolio exhibits a 'smart' approach to complex data visualization. Key strength identified in accessibility and responsive logic.
+            </p>
+
+            
+            <div class="accordion-item" vid="48">
+                <span class="accordion-label" vid="49">Skill Assessment</span>
+                <span class="accordion-icon" vid="50">+</span>
+            </div>
+            <div class="accordion-item" vid="51">
+                <span class="accordion-label" vid="52">Education &amp; Awards</span>
+                <span class="accordion-icon" vid="53">+</span>
+            </div>
+            <div class="accordion-item" vid="54">
+                <span class="accordion-label" vid="55">Document Integrity</span>
+                <span class="accordion-icon" vid="56">+</span>
+            </div>
+            <div class="accordion-item" vid="57">
+                <span class="accordion-label" vid="58">Portfolio Red Flags</span>
+                <span class="accordion-icon" vid="59">+</span>
+            </div>
+        </section>
+    </main>
+
+    <script vid="60">
+        
+        document.querySelectorAll('.candidate-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelector('.candidate-item.active').classList.remove('active');
+                item.classList.add('active');
+            });
+        });
+    </script>
+
+</body></html>

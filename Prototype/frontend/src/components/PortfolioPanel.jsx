@@ -6,6 +6,7 @@ import { fetchRaw, searchPortfolios } from '../api';
 import { ACCENT_COLORS, STORAGE_KEYS } from '../constants';
 import { matchClass } from '../utils';
 import Timeline from './Timeline';
+import { IcMaximize2, IcMinimize2, IcEye, IcEyeOff, IcNotebookPen, IcArrowRight } from '../icons';
 
 function escapeRegex(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -291,7 +292,7 @@ const PortfolioPanel = forwardRef(function PortfolioPanel(
       setTimeout(() => setSummaryState(null), 2500);
     } catch (e) {
       setSummaryState('error');
-      alert(`요약 실패: ${e.message}`);
+      alert(e.message);
       setTimeout(() => setSummaryState(null), 2000);
     }
   }
@@ -351,7 +352,7 @@ const PortfolioPanel = forwardRef(function PortfolioPanel(
   }
 
   return (
-    <div className={`portfolio-panel ${fullscreen ? 'panel-fullscreen' : ''}`} style={{ '--accent': accent }}>
+    <div className={`portfolio-panel${fullscreen ? ' panel-fullscreen' : ''}${settings.panelAnimation ? ' panel-anim' : ''}`} style={{ '--accent': accent }}>
       {/* 절단 경고 */}
       {a._truncated && (
         <div className="panel-truncated-warn">
@@ -361,41 +362,44 @@ const PortfolioPanel = forwardRef(function PortfolioPanel(
       {/* 탭 */}
       <div className="panel-tab">
         <div className="panel-tab-name">
-          {blind ? (blindAliases?.[a.id] || `지원자 #${accentIdx + 1}`) : a.name}
-          <span className={`match-badge ${matchClass(a.match_score)}`}>
-            {a.match_score}%
-          </span>
+          <span className="panel-tab-idx">{String(accentIdx + 1).padStart(2, '0')} /</span>
+          <span className="panel-tab-candidate">{blind ? (blindAliases?.[a.id] || `지원자 #${accentIdx + 1}`) : a.name}</span>
+          <span className={`match-badge ${matchClass(a.match_score)}`}>{a.match_score}%</span>
+        </div>
+        <div className="panel-tab-badges">
           {a._solar_used && (
-            <span className="panel-ai-label" title="Solar LLM으로 파싱된 포트폴리오입니다. 원본 보기에서 전체 내용을 확인할 수 있습니다.">
-              Solar
-            </span>
+            <span className="panel-ai-label" title="Solar LLM으로 파싱된 포트폴리오입니다.">Solar</span>
           )}
           {a._is_legacy && (
-            <span className="legacy-badge" title="이 포트폴리오 요약은 현재 채용 설정 이전 버전으로 분석되었습니다">
-              레거시 요약
-            </span>
+            <span className="legacy-badge" title="이 포트폴리오 요약은 현재 채용 설정 이전 버전으로 분석되었습니다">레거시</span>
           )}
         </div>
         <div className="panel-tab-actions">
-          {/* 전체화면 버튼 */}
+          <button className="panel-close" onClick={onClose}>✕</button>
+        </div>
+      </div>
+
+      {/* 문서 헤더 — CANDIDATE N + 경력 + 액션 */}
+      <div className="panel-doc-head">
+        <span className="panel-doc-idx">CANDIDATE {String(accentIdx + 1).padStart(2, '0')}</span>
+        {a.career_years > 0 && <span className="panel-doc-status">· {a.career_years}Y</span>}
+        <div className="panel-doc-actions">
           <button
             className={`panel-action-btn ${fullscreen ? 'active' : ''}`}
             title={fullscreen ? '전체화면 해제' : '전체화면 보기'}
             onClick={() => setFullscreen(v => !v)}
           >
-            {fullscreen ? '⊡' : '⊞'}
+            {fullscreen ? <IcMinimize2 size={13} /> : <IcMaximize2 size={13} />}
           </button>
-          {/* 패널별 유사 문장 숨기기 버튼 */}
           {hasSimilar && (
             <button
               className={`panel-action-btn ${effectiveHide ? 'active' : ''}`}
               title={effectiveHide ? '유사 문장 표시' : '유사 문장 숨기기'}
               onClick={() => setLocalHide(h => h === null ? !settings.hideSimlar : !h)}
             >
-              {effectiveHide ? '👁' : '🙈'}
+              {effectiveHide ? <IcEye size={13} /> : <IcEyeOff size={13} />}
             </button>
           )}
-          <button className="panel-close" onClick={onClose}>✕</button>
         </div>
       </div>
 
@@ -444,6 +448,29 @@ const PortfolioPanel = forwardRef(function PortfolioPanel(
       {/* 본문 */}
       <div className="panel-body" ref={setBodyRef} onScroll={handleBodyScroll}>
 
+        {/* 패널 히어로: 이름(주) + 기본 정보 + 매칭 점수(부) */}
+        <div className="panel-hero">
+          <div className="md-h1">{blind ? `지원자 #${accentIdx + 1}` : a.name}</div>
+          {(a.career_years > 0 || a.education) && (
+            <div className="panel-hero-info">
+              {a.career_years > 0 && <span>경력 {a.career_years}년</span>}
+              {a.career_years > 0 && a.education && <span className="panel-hero-dot">·</span>}
+              {a.education && <span>{a.education}</span>}
+            </div>
+          )}
+          <div className="panel-hero-score-row">
+            <span className="panel-hero-score">{a.match_score ?? '–'}<span className="panel-hero-pct">%</span></span>
+            <div className="panel-hero-score-right">
+              <span className="panel-hero-score-label">MATCH SCORE</span>
+              <div className="panel-hero-matched">
+                {Object.entries(skillsMatch).filter(([, v]) => v).slice(0, 6).map(([s]) => (
+                  <span key={s} className="panel-hero-spec">{s}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* 상단 액션 버튼 그룹 */}
         <div className="panel-top-actions">
           {settings.originalLink && (
@@ -475,12 +502,10 @@ const PortfolioPanel = forwardRef(function PortfolioPanel(
               {summaryState === 'loading' ? '요약 중...'
                 : summaryState === 'done' ? '요약 완료'
                 : summaryState === 'error' ? '실패'
-                : a._summary ? `채용 요약${isSummaryLegacy ? ' ⚠' : ' →'}` : '채용 기준 요약'}
+                : a._summary ? <>{`채용 요약`}{isSummaryLegacy ? ' ⚠' : <IcArrowRight size={11} style={{verticalAlign:'middle',marginLeft:3}}/>}</> : '채용 기준 요약'}
             </button>
           )}
         </div>
-
-        <div className="md-h1">{blind ? `지원자 #${accentIdx + 1}` : a.name} 포트폴리오</div>
 
         {/* 중요 링크 버튼 */}
         {showSection('links') && (() => {
@@ -561,7 +586,10 @@ const PortfolioPanel = forwardRef(function PortfolioPanel(
             <SectionHeader sKey="skills" label="기술 스택" />
             {!collapsed['skills'] && (
               <div className="skill-badges section-body">
-                {(showAllSkills ? (a.skills || []) : (a.skills || []).slice(0, SKILL_LIMIT)).map(s => (
+                {(showAllSkills
+                  ? [...(a.skills || [])].sort((x, y) => (skillsMatch[y] ? 1 : 0) - (skillsMatch[x] ? 1 : 0))
+                  : [...(a.skills || [])].sort((x, y) => (skillsMatch[y] ? 1 : 0) - (skillsMatch[x] ? 1 : 0)).slice(0, SKILL_LIMIT)
+                ).map(s => (
                   <span
                     key={s}
                     className={`skill-badge ${settings.highlight && skillsMatch[s] ? 'matched' : ''}`}
@@ -614,7 +642,7 @@ const PortfolioPanel = forwardRef(function PortfolioPanel(
             {!collapsed['projects'] && (
               <div className="section-body">
                 {(a.projects || []).map((p, i) => (
-                  <div key={i}>
+                  <div key={i} className="project-card">
                     <p className="md-h3">{p.name}</p>
                     <ul className="md-ul">
                       <li className="md-li">
@@ -674,7 +702,7 @@ const PortfolioPanel = forwardRef(function PortfolioPanel(
 
         {/* 메모 */}
         <div className="panel-note-section">
-          <div className="panel-note-label">📝 메모</div>
+          <div className="panel-note-label"><IcNotebookPen size={13} /> 메모</div>
           <textarea
             className="panel-note-textarea"
             placeholder="이 지원자에 대한 메모를 입력하세요..."

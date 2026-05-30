@@ -152,7 +152,7 @@ export default function Timeline({ projects = [], careerYears = 0, education = '
   return (
     <div className="timeline-container">
       <div className="timeline-scroll">
-        <div className="timeline-track-area" style={{ height: trackCount * 36 + 28 }}>
+        <div className="timeline-track-area" style={{ height: trackCount * 36 + 44 }}>
           {/* 연도 눈금 */}
           {yearTicks.map(year => {
             const left = ((year - minFloat) / range) * 100;
@@ -180,7 +180,7 @@ export default function Timeline({ projects = [], careerYears = 0, education = '
                 style={{
                   left:   `${leftPct}%`,
                   width:  `${widthPct}%`,
-                  top:    e.track * 36 + 4,
+                  top:    e.track * 36 + 24,
                   background: bg,
                   borderLeft: `3px ${e.imprecise ? 'dashed' : 'solid'} ${color}`,
                 }}

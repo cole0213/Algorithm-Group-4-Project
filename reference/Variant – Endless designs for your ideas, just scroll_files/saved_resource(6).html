@@ -1,0 +1,354 @@
+
+<!-- saved from url=(0068)https://variant.com/design/cee9ecc7-3da0-46ca-a2b5-828be79301e2.html -->
+<html lang="en" vid="0"><head vid="1"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" vid="3">
+    <title vid="4">MANIFESTO // KERNEL_PANIC</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com/" vid="5">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" vid="6">
+    <link href="./css2(2)" rel="stylesheet" vid="7">
+    <style vid="8">
+        :root {
+            --canvas-white: #ffffff;
+            --card-light: #F7F7F7;
+            --ink-black: #111111;
+            --ink-gray: #666666;
+            --ink-light: #999999;
+            --accent-border: #E5E5E5;
+            --font-sans: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--canvas-white);
+            font-family: var(--font-sans);
+            color: var(--ink-black);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        .layout-wrapper {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 100;
+        }
+
+        .brand {
+            font-weight: 500;
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .brand span {
+            color: var(--ink-light);
+            font-size: 10px;
+            margin-top: 4px;
+        }
+
+        .menu-list {
+            display: flex;
+            gap: 24px;
+            list-style: none;
+        }
+
+        .menu-list a {
+            text-decoration: none;
+            color: var(--ink-black);
+            font-size: 11px;
+            border: 1px solid var(--accent-border);
+            padding: 8px 16px;
+            border-radius: 100px;
+            transition: all 0.2s ease;
+        }
+
+        .menu-list a:hover {
+            border-color: var(--ink-black);
+        }
+
+        .nav-pill {
+            background-color: var(--ink-black);
+            color: var(--canvas-white);
+            padding: 10px 24px;
+            border-radius: 100px; 
+            font-size: 11px;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        
+        .manifesto-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            margin-top: 40px;
+        }
+
+        
+        .philosophy-scroll {
+            padding-bottom: 200px;
+        }
+
+        .section-label {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--ink-light);
+            display: block;
+            margin-bottom: 32px;
+        }
+
+        .philosophy-text {
+            font-size: 42px;
+            font-weight: 200;
+            line-height: 1.15;
+            letter-spacing: -0.03em;
+            color: var(--ink-black);
+        }
+
+        .philosophy-text p {
+            margin-bottom: 64px;
+        }
+
+        .philosophy-text span.dim {
+            color: var(--ink-light);
+        }
+
+        
+        .sticky-wrapper {
+            position: sticky;
+            top: 120px;
+            height: calc(100vh - 160px);
+        }
+
+        .terminal-window {
+            background-color: var(--ink-black);
+            border-radius: 8px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.12);
+        }
+
+        .terminal-header {
+            background: #1a1a1a;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #222;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        .dot.red { background: #ff5f56; }
+        .dot.yellow { background: #ffbd2e; }
+        .dot.green { background: #27c93f; }
+
+        .terminal-title {
+            margin-left: 8px;
+            color: #666;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            text-transform: lowercase;
+        }
+
+        .terminal-body {
+            padding: 24px;
+            font-family: var(--font-mono);
+            font-size: 13px;
+            line-height: 1.6;
+            color: #d1d1d1;
+            overflow-y: auto;
+        }
+
+        .command { color: #fff; font-weight: 400; }
+        .command::before { content: "➜ "; color: #555; }
+        
+        .output-block { margin-bottom: 24px; }
+        .key { color: #888; }
+        .val { color: #fff; }
+
+        .ascii-art {
+            color: #444;
+            line-height: 1;
+            margin-bottom: 24px;
+            white-space: pre;
+            font-size: 10px;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 7px;
+            height: 15px;
+            background: #fff;
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+            margin-left: 4px;
+        }
+
+        @keyframes blink { 50% { opacity: 0; } }
+
+        footer {
+            margin-top: 80px;
+            padding: 60px 0;
+            border-top: 1px solid var(--accent-border);
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .footer-col h4 {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 20px;
+            color: var(--ink-light);
+        }
+
+        .footer-link {
+            display: block;
+            font-size: 12px;
+            color: var(--ink-black);
+            text-decoration: none;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body vid="9">
+    <div class="layout-wrapper" vid="10">
+        <header vid="11">
+            <a href="https://variant.com/" class="brand" vid="12">
+                KERNEL_PANIC
+                <span vid="13">ARCHITECTURE &amp; SYSTEMS</span>
+            </a>
+            
+            <ul class="menu-list" vid="14">
+                <li vid="15"><a href="https://variant.com/design/cee9ecc7-3da0-46ca-a2b5-828be79301e2.html#" vid="16">Articles</a></li>
+                <li vid="17"><a href="https://variant.com/design/cee9ecc7-3da0-46ca-a2b5-828be79301e2.html#" vid="18">Setups</a></li>
+                <li vid="19"><a href="https://variant.com/design/cee9ecc7-3da0-46ca-a2b5-828be79301e2.html#" vid="20">Repo</a></li>
+            </ul>
+
+            <a href="https://variant.com/design/cee9ecc7-3da0-46ca-a2b5-828be79301e2.html#" class="nav-pill" vid="21">SUBSCRIBE</a>
+        </header>
+
+        <main class="manifesto-container" vid="22">
+            
+            <section class="philosophy-scroll" vid="23">
+                <span class="section-label" vid="24">01 // The Philosophy</span>
+                <div class="philosophy-text" vid="25">
+                    <p vid="26">In an age of abstraction, we have forgotten the <span class="dim" vid="27">texture</span> of the machine.</p>
+                    <p vid="28">Complexity is often mistaken for progress. We layer frameworks upon frameworks until the original intent is buried under megabytes of <span class="dim" vid="29">runtime overhead.</span></p>
+                    <p vid="30">I believe in <span vid="31">Computing as Craft.</span> The meticulous arrangement of bits, the surgical precision of memory management, and the brutalist beauty of the terminal.</p>
+                    <p vid="32">Software should not just be "functional." It should be <span class="dim" vid="33">intentional.</span> Every line of code is a weight we ask the processor to carry.</p>
+                    <p vid="34">The goal is not to automate thought, but to <span vid="35">clarify it.</span> To build environments that reduce friction between the mind and the silicon.</p>
+                    <p vid="36">Efficiency is an aesthetic. <span class="dim" vid="37">Simplicity is the ultimate sophistication.</span></p>
+                </div>
+            </section>
+
+            
+            <aside class="sticky-wrapper" vid="38">
+                <div class="terminal-window" vid="39">
+                    <div class="terminal-header" vid="40">
+                        <div class="dot red" vid="41"></div>
+                        <div class="dot yellow" vid="42"></div>
+                        <div class="dot green" vid="43"></div>
+                        <div class="terminal-title" vid="44">guest@kernel-panic: ~</div>
+                    </div>
+                    <div class="terminal-body" vid="45">
+                        <div class="ascii-art" vid="46">
+    __ __                     __   ___              _     
+   / //_/__  ________  ___   / /  / _ \___ ____  _(_)____
+  / ,&lt; / _ \/ __/ _ \/ _ \ / /__/ ___/ _ `/ _ \| / / __/
+ /_/|_|\___/_/ /_//_/\___/ /____/_/   \_,_/_//_/_/_/\__/ 
+                        </div>
+
+                        <div class="output-block" vid="47">
+                            <span class="command" vid="48">neofetch</span><br vid="49">
+                            <span class="key" vid="50">OS:</span> <span class="val" vid="51">Arch Linux x86_64</span><br vid="52">
+                            <span class="key" vid="53">Kernel:</span> <span class="val" vid="54">6.6.10-arch1-1</span><br vid="55">
+                            <span class="key" vid="56">WM:</span> <span class="val" vid="57">bspwm</span><br vid="58">
+                            <span class="key" vid="59">Shell:</span> <span class="val" vid="60">zsh 5.9</span><br vid="61">
+                            <span class="key" vid="62">Terminal:</span> <span class="val" vid="63">Alacritty</span><br vid="64">
+                            <span class="key" vid="65">Editor:</span> <span class="val" vid="66">Neovim (NvChad)</span>
+                        </div>
+
+                        <div class="output-block" vid="67">
+                            <span class="command" vid="68">cat ~/.stack</span><br vid="69">
+                            <span class="key" vid="70">Primary:</span> <span class="val" vid="71">Rust, C++, Python</span><br vid="72">
+                            <span class="key" vid="73">Frontend:</span> <span class="val" vid="74">TypeScript, Tailwind, Wasm</span><br vid="75">
+                            <span class="key" vid="76">Infra:</span> <span class="val" vid="77">Docker, Nix, AWS</span>
+                        </div>
+
+                        <div class="output-block" vid="78">
+                            <span class="command" vid="79">ls -R ~/dotfiles</span><br vid="80">
+                            drwxr-xr-x  nvim/<br vid="81">
+                            drwxr-xr-x  tmux/<br vid="82">
+                            drwxr-xr-x  polybar/<br vid="83">
+                            -rw-r--r--  .zshrc<br vid="84">
+                            -rw-r--r--  .xinitrc
+                        </div>
+
+                        <div vid="85">
+                            <span class="command" vid="86">tail -f /var/log/thought.log</span><br vid="87">
+                            [INFO] Searching for signal in the noise...<br vid="88">
+                            [WARN] Excessive abstraction detected in scope.<br vid="89">
+                            [EXEC] Optimizing core philosophy...<br vid="90">
+                            <span class="cursor" vid="91"></span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </main>
+
+        <footer vid="92">
+            <div class="footer-col" vid="93">
+                <h4 vid="94">Sitemap</h4>
+                <a href="https://variant.com/" class="footer-link" vid="95">Home</a>
+                <a href="https://variant.com/design/cee9ecc7-3da0-46ca-a2b5-828be79301e2.html#" class="footer-link" vid="96">Articles</a>
+                <a href="https://variant.com/design/cee9ecc7-3da0-46ca-a2b5-828be79301e2.html#" class="footer-link" vid="97">Manifesto</a>
+            </div>
+            <div class="footer-col" vid="98">
+                <h4 vid="99">Topics</h4>
+                <a href="https://variant.com/design/cee9ecc7-3da0-46ca-a2b5-828be79301e2.html#" class="footer-link" vid="100">Low-level Systems</a>
+                <a href="https://variant.com/design/cee9ecc7-3da0-46ca-a2b5-828be79301e2.html#" class="footer-link" vid="101">Minimalist UI</a>
+                <a href="https://variant.com/design/cee9ecc7-3da0-46ca-a2b5-828be79301e2.html#" class="footer-link" vid="102">Hardware Ops</a>
+            </div>
+            <div class="footer-col" vid="103">
+                <h4 vid="104">Social</h4>
+                <a href="https://variant.com/design/cee9ecc7-3da0-46ca-a2b5-828be79301e2.html#" class="footer-link" vid="105">GitHub</a>
+                <a href="https://variant.com/design/cee9ecc7-3da0-46ca-a2b5-828be79301e2.html#" class="footer-link" vid="106">Twitter</a>
+            </div>
+            <div class="footer-col" vid="107">
+                <h4 vid="108">Legal</h4>
+                <span style="font-size: 10px; color: #999;" vid="109">© 2024 KERNEL_PANIC</span>
+            </div>
+        </footer>
+    </div>
+</body></html>
