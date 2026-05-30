@@ -17,7 +17,6 @@
    ════════════════════════════════════════════════════════ */
 
 :root {
-  /* —— PALETTE —— */
   --desk:        #f3f0ea;
   --desk-deep:   #ebe6dc;
   --paper:       #fbfaf7;
@@ -35,7 +34,6 @@
   --rule:        #1a1a1a;
 
   --primary:     #4361EE;
-  --primary-dim: rgba(67,97,238,.08);
   --hl:          #FFD43B;
   --hl-text:     #5C4400;
   --green:       #2DC653;
@@ -45,11 +43,9 @@
   --teal:        #06B6A4;
   --gold:        #B68923;
 
-  /* —— ALGORITHM ACCENT COLORS —— */
   --a1: #4361EE;  --a2: #F76707;  --a3: #2DC653;  --a4: #E63946;
   --a5: #9B5DE5;  --a6: #06B6A4;  --a7: #B68923;  --a8: #1a1612;
 
-  /* —— SHADOWS —— */
   --shadow-paper:
     0 1px 0 rgba(0,0,0,.04),
     0 12px 24px -8px rgba(60,50,30,.10),
@@ -59,7 +55,6 @@
     0 24px 48px -12px rgba(60,50,30,.18),
     0 48px 96px -16px rgba(60,50,30,.14);
 
-  /* —— FONTS —— */
   --f-serif: 'Source Serif 4', 'Pretendard', 'Apple SD Gothic Neo', serif;
   --f-sans:  'Inter', 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
   --f-mono:  'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
@@ -84,7 +79,7 @@ img { display: block; max-width: 100%; }
 button { font: inherit; cursor: pointer; }
 
 /* ════════════════════════════════════════════════════════
-   PAPER GRAIN OVERLAY
+   PAPER GRAIN
    ════════════════════════════════════════════════════════ */
 .grain {
   position: fixed; inset: 0;
@@ -96,8 +91,7 @@ button { font: inherit; cursor: pointer; }
 }
 
 /* ════════════════════════════════════════════════════════
-   DECK & STAGE
-   16:9 stage, centered, scales to viewport
+   DECK & STAGE  (16:9 fitted)
    ════════════════════════════════════════════════════════ */
 .deck {
   position: fixed; inset: 0;
@@ -117,13 +111,12 @@ button { font: inherit; cursor: pointer; }
   container-name: stage;
 }
 
-/* All slides occupy the stage; only the active one is visible. */
 .slide {
   position: absolute;
   inset: 0;
   display: flex;
   flex-direction: column;
-  padding: 4.5cqw 5cqw 4cqw;
+  padding: 3.6cqw 4.6cqw 3.2cqw;
   background: var(--paper);
   opacity: 0;
   visibility: hidden;
@@ -136,19 +129,19 @@ button { font: inherit; cursor: pointer; }
 }
 
 /* ════════════════════════════════════════════════════════
-   RUNNING HEAD (top of every interior slide)
+   RUNNING HEAD
    ════════════════════════════════════════════════════════ */
 .run {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   font-family: var(--f-mono);
-  font-size: .95cqw;
+  font-size: .92cqw;
   font-weight: 600;
   letter-spacing: .22em;
   text-transform: uppercase;
   color: var(--muted);
-  padding-bottom: .9cqw;
+  padding-bottom: .8cqw;
 }
 .run .lhs { display: flex; align-items: baseline; gap: 1.2cqw; }
 .run .rhs { display: flex; align-items: baseline; gap: 1.2cqw; }
@@ -164,20 +157,15 @@ button { font: inherit; cursor: pointer; }
   height: 2px;
   background: var(--rule);
   border: 0;
-  margin-bottom: 2.6cqw;
-}
-.rule-minor {
-  height: 1px;
-  background: var(--line);
-  border: 0;
+  margin-bottom: 1.8cqw;
 }
 
 /* ════════════════════════════════════════════════════════
-   TYPOGRAPHY UTILITIES
+   TYPOGRAPHY
    ════════════════════════════════════════════════════════ */
 .eyebrow {
   font-family: var(--f-mono);
-  font-size: .95cqw;
+  font-size: .9cqw;
   font-weight: 700;
   letter-spacing: .22em;
   text-transform: uppercase;
@@ -188,47 +176,26 @@ button { font: inherit; cursor: pointer; }
 
 .display {
   font-family: var(--f-serif);
-  font-size: 6.4cqw;
+  font-size: 4.8cqw;
   font-weight: 600;
-  line-height: .98;
-  letter-spacing: -.035em;
+  line-height: 1.0;
+  letter-spacing: -.032em;
   color: var(--ink);
 }
 .display-sm {
   font-family: var(--f-serif);
-  font-size: 4.2cqw;
+  font-size: 3.6cqw;
   font-weight: 600;
   line-height: 1.02;
   letter-spacing: -.03em;
   color: var(--ink);
 }
-.display-xs {
-  font-family: var(--f-serif);
-  font-size: 2.4cqw;
-  font-weight: 600;
-  line-height: 1.08;
-  letter-spacing: -.022em;
-  color: var(--ink);
-}
 
 .lede {
   font-family: var(--f-serif);
-  font-size: 1.45cqw;
-  line-height: 1.55;
-  letter-spacing: -.005em;
-  color: var(--ink-soft);
-}
-.body-text {
-  font-family: var(--f-sans);
-  font-size: 1.15cqw;
+  font-size: 1.35cqw;
   line-height: 1.55;
   color: var(--ink-soft);
-}
-.mono {
-  font-family: var(--f-mono);
-  font-size: 1cqw;
-  letter-spacing: .04em;
-  color: var(--ink);
 }
 
 /* ════════════════════════════════════════════════════════
@@ -237,49 +204,45 @@ button { font: inherit; cursor: pointer; }
 .cover {
   position: absolute;
   inset: 0;
-  padding: 4.5cqw 5cqw;
+  padding: 3.6cqw 4.6cqw;
   display: flex;
   flex-direction: column;
 }
-
 .cover-top {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   font-family: var(--f-mono);
-  font-size: .95cqw;
+  font-size: .92cqw;
   font-weight: 600;
   letter-spacing: .22em;
   text-transform: uppercase;
   color: var(--muted);
 }
 .cover-top .mark { color: var(--ink); }
-.cover-top .mark::before {
-  content: '◆ ';
-  color: var(--primary);
-}
+.cover-top .mark::before { content: '◆ '; color: var(--primary); }
 
 .cover-eyebrow {
-  margin-top: 6.5cqw;
+  margin-top: 4.5cqw;
   font-family: var(--f-mono);
-  font-size: 1.05cqw;
+  font-size: 1cqw;
   font-weight: 600;
   letter-spacing: .22em;
   text-transform: uppercase;
   color: var(--muted);
-  padding-bottom: 1.5cqw;
+  padding-bottom: 1.2cqw;
   border-bottom: 2px solid var(--rule);
   width: 36cqw;
 }
 
 .cover-title {
   font-family: var(--f-serif);
-  font-size: 14cqw;
+  font-size: 13cqw;
   font-weight: 700;
   line-height: .88;
   letter-spacing: -.05em;
   color: var(--ink);
-  margin-top: 2.4cqw;
+  margin-top: 2cqw;
 }
 .cover-title em {
   font-style: italic;
@@ -288,9 +251,9 @@ button { font: inherit; cursor: pointer; }
 }
 
 .cover-subtitle {
-  margin-top: 2.8cqw;
+  margin-top: 2.4cqw;
   font-family: var(--f-serif);
-  font-size: 2.4cqw;
+  font-size: 2.2cqw;
   font-weight: 400;
   font-style: italic;
   letter-spacing: -.015em;
@@ -304,12 +267,12 @@ button { font: inherit; cursor: pointer; }
   align-items: flex-end;
   justify-content: space-between;
   font-family: var(--f-mono);
-  font-size: 1cqw;
+  font-size: .95cqw;
   font-weight: 600;
   letter-spacing: .22em;
   text-transform: uppercase;
   color: var(--muted);
-  padding-top: 2cqw;
+  padding-top: 1.6cqw;
   border-top: 1px solid var(--line);
 }
 .cover-bottom .lhs { color: var(--ink); }
@@ -318,7 +281,7 @@ button { font: inherit; cursor: pointer; }
 
 .cover-decor {
   position: absolute;
-  top: 18cqw; right: 5cqw;
+  top: 16cqw; right: 4.6cqw;
   font-family: var(--f-mono);
   font-size: .9cqw;
   font-weight: 500;
@@ -333,24 +296,27 @@ button { font: inherit; cursor: pointer; }
   display: block;
   width: 4cqw; height: 1px;
   background: var(--line-strong);
-  margin: 0 0 1cqw auto;
+  margin: 0 0 .8cqw auto;
 }
 
 /* ════════════════════════════════════════════════════════
-   SLIDE 02 — TABLE OF CONTENTS
+   SLIDE 02 — TABLE OF CONTENTS  (simplified)
    ════════════════════════════════════════════════════════ */
 .toc-wrap {
   flex: 1;
   display: grid;
-  grid-template-columns: 32cqw 1fr;
+  grid-template-columns: 22cqw 1fr;
   gap: 5cqw;
 }
 .toc-aside {
   border-right: 1px solid var(--line);
-  padding-right: 4cqw;
+  padding-right: 3cqw;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
-.toc-aside .display-sm { margin-top: 1.6cqw; }
-.toc-aside .lede { margin-top: 2cqw; }
+.toc-aside .eyebrow { margin-bottom: 1.2cqw; }
+.toc-aside .display-sm { font-size: 4.4cqw; line-height: .98; }
 
 .toc-list {
   list-style: none;
@@ -359,23 +325,26 @@ button { font: inherit; cursor: pointer; }
 }
 .toc-row {
   display: grid;
-  grid-template-columns: 4cqw 1fr auto;
+  grid-template-columns: 3cqw 1fr auto;
   align-items: baseline;
-  gap: 1.4cqw;
-  padding: 1.4cqw 0;
+  gap: 1.2cqw;
+  padding: 1.1cqw 0;
   border-bottom: 1px solid var(--line-faint);
+  cursor: pointer;
+  transition: background .15s;
 }
 .toc-row:first-child { border-top: 1px solid var(--line); }
+.toc-row:hover { background: rgba(67,97,238,.04); }
 .toc-row .num {
   font-family: var(--f-mono);
-  font-size: 1.05cqw;
+  font-size: 1cqw;
   font-weight: 600;
   letter-spacing: .12em;
   color: var(--muted);
 }
 .toc-row .label {
   font-family: var(--f-serif);
-  font-size: 2.2cqw;
+  font-size: 1.9cqw;
   font-weight: 500;
   letter-spacing: -.018em;
   color: var(--ink);
@@ -383,29 +352,26 @@ button { font: inherit; cursor: pointer; }
 }
 .toc-row .pg {
   font-family: var(--f-mono);
-  font-size: 1cqw;
+  font-size: .92cqw;
   font-weight: 600;
   letter-spacing: .12em;
   color: var(--ink-soft);
 }
 
 /* ════════════════════════════════════════════════════════
-   SLIDE 03 — PROJECT INTRODUCTION
+   SLIDE 03 — INTRODUCTION
    ════════════════════════════════════════════════════════ */
 .intro-wrap {
   flex: 1;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 3.4cqw;
+  gap: 3cqw;
 }
-.intro-col-l {
-  display: flex;
-  flex-direction: column;
-}
-.intro-eyebrow { margin-bottom: 1.6cqw; }
+.intro-col-l { display: flex; flex-direction: column; }
+.intro-eyebrow { margin-bottom: 1.2cqw; }
 .intro-display {
   font-family: var(--f-serif);
-  font-size: 3.6cqw;
+  font-size: 3.2cqw;
   font-weight: 600;
   line-height: 1.04;
   letter-spacing: -.028em;
@@ -422,14 +388,14 @@ button { font: inherit; cursor: pointer; }
   height: 1px;
   background: var(--line);
   border: 0;
-  margin: 2.4cqw 0 1.8cqw;
+  margin: 1.8cqw 0 1.4cqw;
 }
 .intro-body {
   font-family: var(--f-serif);
-  font-size: 1.35cqw;
-  line-height: 1.62;
+  font-size: 1.25cqw;
+  line-height: 1.6;
   color: var(--ink-soft);
-  max-width: 90%;
+  max-width: 92%;
 }
 .intro-body strong {
   color: var(--ink);
@@ -441,17 +407,17 @@ button { font: inherit; cursor: pointer; }
 .intro-chips {
   margin-top: auto;
   display: flex;
-  gap: .8cqw;
+  gap: .7cqw;
   flex-wrap: wrap;
-  padding-top: 2cqw;
+  padding-top: 1.8cqw;
 }
 .intro-chip {
   font-family: var(--f-mono);
-  font-size: .95cqw;
+  font-size: .9cqw;
   font-weight: 600;
   letter-spacing: .12em;
   text-transform: uppercase;
-  padding: .55cqw 1cqw .65cqw;
+  padding: .5cqw .95cqw .6cqw;
   background: var(--white);
   border: 1px solid var(--line);
   color: var(--ink-soft);
@@ -475,7 +441,7 @@ button { font: inherit; cursor: pointer; }
 .intro-figure {
   background: var(--white);
   border: 1px solid var(--line);
-  padding: 1.6cqw;
+  padding: 1.2cqw;
   box-shadow: var(--shadow-paper);
   flex: 1;
   display: flex;
@@ -499,39 +465,42 @@ button { font: inherit; cursor: pointer; }
 }
 .intro-figure-cap {
   font-family: var(--f-mono);
-  font-size: .85cqw;
+  font-size: .82cqw;
   font-weight: 600;
   letter-spacing: .18em;
   text-transform: uppercase;
   color: var(--muted);
-  padding-top: 1cqw;
-  margin-top: 1.2cqw;
+  padding-top: .8cqw;
+  margin-top: 1cqw;
   border-top: 1px solid var(--line);
   display: flex;
   justify-content: space-between;
 }
 
 /* ════════════════════════════════════════════════════════
-   SLIDE 04 — MOTIVATION TABLE
+   SLIDE 04 — MOTIVATION
    ════════════════════════════════════════════════════════ */
-.mot-head {
+.compact-head {
   display: flex;
-  align-items: flex-end;
+  align-items: baseline;
   justify-content: space-between;
-  margin-bottom: 2.6cqw;
+  gap: 2cqw;
+  margin-bottom: 1.6cqw;
 }
-.mot-head .display { max-width: 60cqw; }
-.mot-head .mot-meta {
+.compact-head .left { display: flex; flex-direction: column; gap: .5cqw; }
+.compact-head .display { font-size: 4.4cqw; }
+.compact-head .right {
   font-family: var(--f-mono);
-  font-size: 1cqw;
+  font-size: .85cqw;
   font-weight: 600;
-  letter-spacing: .14em;
+  letter-spacing: .15em;
   text-transform: uppercase;
   color: var(--muted);
   text-align: right;
   line-height: 1.7;
+  align-self: flex-end;
 }
-.mot-head .mot-meta strong { color: var(--ink); font-weight: 700; }
+.compact-head .right strong { color: var(--ink); }
 
 .mot-table {
   width: 100%;
@@ -539,13 +508,13 @@ button { font: inherit; cursor: pointer; }
 }
 .mot-table th {
   font-family: var(--f-mono);
-  font-size: .95cqw;
+  font-size: .9cqw;
   font-weight: 700;
   letter-spacing: .2em;
   text-transform: uppercase;
   color: var(--ink);
   text-align: left;
-  padding: 1cqw 0;
+  padding: .8cqw 0;
   border-bottom: 2px solid var(--rule);
 }
 .mot-table th:last-child { text-align: right; }
@@ -554,17 +523,15 @@ button { font: inherit; cursor: pointer; }
 .mot-table th:nth-child(3) { width: 8%; }
 
 .mot-table td {
-  padding: 1.7cqw 1.2cqw 1.7cqw 0;
+  padding: 1.35cqw 1.2cqw 1.35cqw 0;
   border-bottom: 1px solid var(--line);
   vertical-align: top;
   font-family: var(--f-serif);
 }
 .mot-table .problem {
   color: var(--muted);
-  font-size: 1.35cqw;
-  line-height: 1.42;
-  padding-left: 0;
-  letter-spacing: -.005em;
+  font-size: 1.2cqw;
+  line-height: 1.4;
 }
 .mot-table .problem::before {
   content: '—';
@@ -573,9 +540,9 @@ button { font: inherit; cursor: pointer; }
 }
 .mot-table .solution {
   color: var(--ink);
-  font-size: 1.5cqw;
+  font-size: 1.35cqw;
   font-weight: 500;
-  line-height: 1.4;
+  line-height: 1.38;
   letter-spacing: -.015em;
 }
 .mot-table .solution em {
@@ -584,40 +551,213 @@ button { font: inherit; cursor: pointer; }
   padding: 0 .15em;
   font-weight: 600;
 }
-
 .mot-badges {
   display: flex;
-  gap: .35cqw;
+  gap: .3cqw;
   justify-content: flex-end;
-  padding-top: .25cqw;
+  padding-top: .15cqw;
 }
 .algo-pill {
   font-family: var(--f-mono);
-  font-size: .85cqw;
+  font-size: .78cqw;
   font-weight: 700;
   letter-spacing: .08em;
-  padding: .35cqw .6cqw .4cqw;
+  padding: .3cqw .55cqw .35cqw;
   background: var(--ink);
   color: var(--paper);
   line-height: 1;
 }
 
 /* ════════════════════════════════════════════════════════
-   SLIDE 05 — TECH STACK
+   SLIDE 05 — WORKFLOW (moved earlier)
+   ════════════════════════════════════════════════════════ */
+.wf-cycle {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 1.1cqw 1.6cqw;
+  margin-bottom: 1.4cqw;
+  display: flex;
+  align-items: center;
+  gap: 1.4cqw;
+  font-family: var(--f-mono);
+  font-size: .98cqw;
+  font-weight: 500;
+  letter-spacing: .04em;
+  flex-wrap: wrap;
+}
+.wf-cycle .step { display: inline-flex; align-items: center; gap: .7cqw; }
+.wf-cycle .step .k {
+  font-size: .65cqw;
+  letter-spacing: .18em;
+  color: rgba(251,250,247,.5);
+  text-transform: uppercase;
+}
+.wf-cycle .step .v { color: var(--paper); }
+.wf-cycle .step .v code {
+  font-family: var(--f-mono);
+  background: rgba(251,250,247,.08);
+  padding: .1cqw .45cqw;
+}
+.wf-cycle .arr {
+  color: var(--orange);
+  font-size: 1.1cqw;
+}
+
+.wf-phases {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: .6cqw;
+  margin-bottom: 1.3cqw;
+}
+.wf-phase {
+  background: var(--white);
+  border: 1px solid var(--line);
+  padding: .9cqw 1cqw;
+  border-left: 3px solid;
+  display: flex;
+  flex-direction: column;
+  gap: .15cqw;
+}
+.wf-phase.p0 { border-left-color: var(--a1); }
+.wf-phase.p1 { border-left-color: var(--a2); }
+.wf-phase.p2 { border-left-color: var(--a3); }
+.wf-phase.p3 { border-left-color: var(--a4); }
+.wf-phase.p4 { border-left-color: var(--a5); }
+.wf-phase.p5 { border-left-color: var(--a6); }
+.wf-phase.p6 { border-left-color: var(--a7); }
+.wf-phase .ph {
+  font-family: var(--f-mono);
+  font-size: .72cqw;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.wf-phase .pd {
+  font-family: var(--f-mono);
+  font-size: .78cqw;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: .04em;
+}
+.wf-phase .pt {
+  font-family: var(--f-serif);
+  font-size: .92cqw;
+  font-weight: 500;
+  color: var(--ink-soft);
+  line-height: 1.3;
+  letter-spacing: -.008em;
+  margin-top: .25cqw;
+}
+
+.wf-bottom {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 20cqw;
+  gap: 2cqw;
+}
+.wf-retro {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--ink);
+  padding: 1.2cqw 1.6cqw;
+  display: flex;
+  flex-direction: column;
+}
+.wf-retro .h {
+  font-family: var(--f-mono);
+  font-size: .82cqw;
+  font-weight: 700;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-bottom: .8cqw;
+  padding-bottom: .5cqw;
+  border-bottom: 1px solid var(--line);
+}
+.wf-retro ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: .4cqw;
+}
+.wf-retro li {
+  font-family: var(--f-serif);
+  font-size: 1cqw;
+  line-height: 1.48;
+  color: var(--ink);
+  padding-left: 1.2cqw;
+  position: relative;
+}
+.wf-retro li::before {
+  content: '—';
+  position: absolute;
+  left: 0; top: 0;
+  color: var(--orange);
+  font-weight: 700;
+}
+.wf-retro li code {
+  font-family: var(--f-mono);
+  font-size: .88em;
+  color: var(--primary);
+  background: var(--white);
+  padding: 1px 4px;
+  border: 1px solid var(--line-faint);
+}
+
+.wf-stats {
+  display: flex;
+  flex-direction: column;
+  gap: .6cqw;
+}
+.wf-stat {
+  background: var(--white);
+  border: 1px solid var(--line);
+  padding: .9cqw 1.1cqw;
+  display: flex;
+  flex-direction: column;
+  gap: .15cqw;
+}
+.wf-stat .k {
+  font-family: var(--f-mono);
+  font-size: .7cqw;
+  font-weight: 700;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.wf-stat .v {
+  font-family: var(--f-mono);
+  font-size: 1.7cqw;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  color: var(--ink);
+  line-height: 1;
+}
+.wf-stat .u {
+  font-family: var(--f-mono);
+  font-size: .72cqw;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: .1em;
+}
+
+/* ════════════════════════════════════════════════════════
+   SLIDE 06 — TECH STACK
    ════════════════════════════════════════════════════════ */
 .stack-wrap {
   flex: 1;
   display: grid;
-  grid-template-columns: 22cqw 1fr;
+  grid-template-columns: 20cqw 1fr;
   grid-template-rows: auto 1fr auto;
-  gap: 2.4cqw 3.6cqw;
+  gap: 1.6cqw 3cqw;
 }
 .stack-thumb {
   grid-column: 1;
   grid-row: 1 / 3;
   background: var(--white);
   border: 1px solid var(--line);
-  padding: 1cqw;
+  padding: .9cqw;
   box-shadow: var(--shadow-paper);
   display: flex;
   flex-direction: column;
@@ -636,13 +776,13 @@ button { font: inherit; cursor: pointer; }
 }
 .stack-thumb-cap {
   font-family: var(--f-mono);
-  font-size: .75cqw;
+  font-size: .7cqw;
   font-weight: 600;
   letter-spacing: .18em;
   text-transform: uppercase;
   color: var(--muted);
-  padding-top: .7cqw;
-  margin-top: .8cqw;
+  padding-top: .6cqw;
+  margin-top: .7cqw;
   border-top: 1px solid var(--line);
   display: flex;
   justify-content: space-between;
@@ -655,18 +795,18 @@ button { font: inherit; cursor: pointer; }
   align-items: flex-end;
   justify-content: space-between;
   gap: 2cqw;
-  padding-top: .4cqw;
+  padding-top: .2cqw;
 }
-.stack-title .display { font-size: 5.4cqw; }
+.stack-title .display { font-size: 4.4cqw; }
 .stack-title-meta {
   font-family: var(--f-mono);
-  font-size: .9cqw;
+  font-size: .82cqw;
   font-weight: 600;
   letter-spacing: .18em;
   text-transform: uppercase;
   color: var(--muted);
   text-align: right;
-  line-height: 1.6;
+  line-height: 1.5;
 }
 
 .stack-grid {
@@ -675,17 +815,16 @@ button { font: inherit; cursor: pointer; }
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-  gap: 1.4cqw;
+  gap: 1.2cqw;
 }
 .stack-card {
   background: var(--white);
   border: 1px solid var(--line);
-  padding: 1.6cqw 1.8cqw;
+  padding: 1.3cqw 1.5cqw;
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: .5cqw;
-  box-shadow: 0 1px 0 rgba(0,0,0,.03);
+  gap: .4cqw;
 }
 .stack-card::before {
   content: '';
@@ -697,10 +836,9 @@ button { font: inherit; cursor: pointer; }
 .stack-card.b::before { background: var(--a2); }
 .stack-card.l::before { background: var(--a3); }
 .stack-card.d::before { background: var(--a4); }
-
 .stack-card .label {
   font-family: var(--f-mono);
-  font-size: .8cqw;
+  font-size: .75cqw;
   font-weight: 700;
   letter-spacing: .22em;
   text-transform: uppercase;
@@ -708,7 +846,7 @@ button { font: inherit; cursor: pointer; }
 }
 .stack-card .name {
   font-family: var(--f-serif);
-  font-size: 1.85cqw;
+  font-size: 1.65cqw;
   font-weight: 600;
   letter-spacing: -.018em;
   color: var(--ink);
@@ -716,7 +854,7 @@ button { font: inherit; cursor: pointer; }
 }
 .stack-card .desc {
   font-family: var(--f-sans);
-  font-size: 1cqw;
+  font-size: .95cqw;
   line-height: 1.5;
   color: var(--ink-soft);
   margin-top: auto;
@@ -733,11 +871,11 @@ button { font: inherit; cursor: pointer; }
   grid-column: 1 / -1;
   grid-row: 3;
   border-top: 2px solid var(--rule);
-  padding-top: 1.2cqw;
+  padding-top: 1cqw;
   display: flex;
-  gap: 2.4cqw;
+  gap: 2cqw;
   font-family: var(--f-mono);
-  font-size: .9cqw;
+  font-size: .85cqw;
   font-weight: 600;
   letter-spacing: .15em;
   text-transform: uppercase;
@@ -748,47 +886,27 @@ button { font: inherit; cursor: pointer; }
 .env-bar .sep { color: var(--light); }
 
 /* ════════════════════════════════════════════════════════
-   SLIDE 06 — SYSTEM ARCHITECTURE
+   SLIDE 07 — ARCHITECTURE
    ════════════════════════════════════════════════════════ */
-.arch-head {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  margin-bottom: 3cqw;
-}
-.arch-head .display { font-size: 5.4cqw; }
-.arch-head-meta {
-  font-family: var(--f-mono);
-  font-size: 1cqw;
-  font-weight: 600;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: var(--muted);
-  text-align: right;
-  line-height: 1.7;
-}
-
 .arch-diagram {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 1.6cqw;
+  gap: 1.2cqw;
 }
-
 .arch-row {
   display: flex;
   align-items: center;
-  gap: 1.8cqw;
+  gap: 1.6cqw;
 }
-
 .arch-node {
   background: var(--white);
   border: 1px solid var(--line);
-  padding: 1.2cqw 1.6cqw;
+  padding: 1cqw 1.4cqw;
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: .35cqw;
+  gap: .25cqw;
 }
 .arch-node::before {
   content: '';
@@ -798,7 +916,7 @@ button { font: inherit; cursor: pointer; }
 }
 .arch-node .nlabel {
   font-family: var(--f-mono);
-  font-size: .85cqw;
+  font-size: .78cqw;
   font-weight: 700;
   letter-spacing: .2em;
   text-transform: uppercase;
@@ -806,28 +924,27 @@ button { font: inherit; cursor: pointer; }
 }
 .arch-node .nname {
   font-family: var(--f-serif);
-  font-size: 1.65cqw;
+  font-size: 1.5cqw;
   font-weight: 600;
   letter-spacing: -.015em;
   color: var(--ink);
 }
 .arch-node .nport {
   font-family: var(--f-mono);
-  font-size: .9cqw;
+  font-size: .85cqw;
   color: var(--muted);
 }
-
 .arch-node.browser { flex: 0 0 22cqw; }
 .arch-node.browser::before { background: var(--a3); }
 .arch-node.server { flex: 1; }
 .arch-node.server::before { background: var(--a1); }
 
 .arch-arrow {
-  flex: 0 0 8cqw;
+  flex: 0 0 7cqw;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: .4cqw;
+  gap: .3cqw;
 }
 .arch-arrow .a-line {
   width: 100%;
@@ -847,7 +964,7 @@ button { font: inherit; cursor: pointer; }
 }
 .arch-arrow .a-label {
   font-family: var(--f-mono);
-  font-size: .85cqw;
+  font-size: .78cqw;
   font-weight: 600;
   letter-spacing: .14em;
   text-transform: uppercase;
@@ -855,46 +972,44 @@ button { font: inherit; cursor: pointer; }
 }
 
 .arch-modules {
-  margin-top: 1cqw;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.2cqw;
+  gap: 1cqw;
 }
 .arch-mod {
   background: var(--paper);
   border: 1px solid var(--line);
-  padding: 1cqw 1.2cqw;
+  padding: .9cqw 1.1cqw;
   border-left: 3px solid var(--ink);
 }
 .arch-mod .path {
   font-family: var(--f-mono);
-  font-size: 1cqw;
+  font-size: .92cqw;
   font-weight: 600;
   color: var(--ink);
-  margin-bottom: .25cqw;
+  margin-bottom: .2cqw;
 }
 .arch-mod .desc {
   font-family: var(--f-sans);
-  font-size: .9cqw;
+  font-size: .82cqw;
   color: var(--ink-soft);
 }
 .arch-mod.services { grid-column: 1 / -1; }
 .arch-mod.services .desc {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: .6cqw;
-  margin-top: .5cqw;
+  gap: .5cqw;
+  margin-top: .4cqw;
 }
 .arch-mod.services .desc .svc {
   font-family: var(--f-mono);
-  font-size: .9cqw;
-  padding: .35cqw .6cqw;
+  font-size: .82cqw;
+  padding: .3cqw .55cqw;
   background: var(--white);
   border: 1px solid var(--line);
   color: var(--ink-soft);
 }
 .arch-mod.services .desc .svc.algo {
-  color: var(--ink);
   border-color: var(--ink);
   background: var(--ink);
   color: var(--paper);
@@ -905,14 +1020,14 @@ button { font: inherit; cursor: pointer; }
   margin-top: auto;
   background: rgba(247,103,7,.07);
   border-left: 3px solid var(--orange);
-  padding: 1cqw 1.4cqw;
+  padding: .9cqw 1.2cqw;
   display: flex;
   align-items: center;
   gap: 1cqw;
 }
 .arch-warn .w-label {
   font-family: var(--f-mono);
-  font-size: .85cqw;
+  font-size: .78cqw;
   font-weight: 700;
   letter-spacing: .2em;
   text-transform: uppercase;
@@ -920,9 +1035,9 @@ button { font: inherit; cursor: pointer; }
 }
 .arch-warn .w-body {
   font-family: var(--f-serif);
-  font-size: 1.15cqw;
+  font-size: 1.05cqw;
   color: var(--ink);
-  line-height: 1.5;
+  line-height: 1.45;
 }
 .arch-warn .w-body code {
   font-family: var(--f-mono);
@@ -933,40 +1048,23 @@ button { font: inherit; cursor: pointer; }
 }
 
 /* ════════════════════════════════════════════════════════
-   SLIDE 07 — ALGORITHMS GRID
+   SLIDE 08 — ALGORITHMS GRID
    ════════════════════════════════════════════════════════ */
-.alg-head {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  margin-bottom: 2.4cqw;
-}
-.alg-head-meta {
-  font-family: var(--f-mono);
-  font-size: 1cqw;
-  font-weight: 600;
-  letter-spacing: .15em;
-  text-transform: uppercase;
-  color: var(--muted);
-  text-align: right;
-  line-height: 1.7;
-}
-
 .alg-grid {
   flex: 1;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: 1fr 1fr;
-  gap: 1.1cqw;
+  gap: 1cqw;
 }
 .alg-card {
   background: var(--white);
   border: 1px solid var(--line);
-  padding: 1.4cqw 1.5cqw;
+  padding: 1.2cqw 1.3cqw;
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: .35cqw;
+  gap: .3cqw;
   overflow: hidden;
 }
 .alg-card::before {
@@ -983,10 +1081,9 @@ button { font: inherit; cursor: pointer; }
 .alg-card.c6::before { background: var(--a6); }
 .alg-card.c7::before { background: var(--a7); }
 .alg-card.c8::before { background: var(--a8); }
-
 .alg-card .num {
   font-family: var(--f-mono);
-  font-size: 1cqw;
+  font-size: .92cqw;
   font-weight: 700;
   letter-spacing: .14em;
   color: var(--muted);
@@ -999,31 +1096,30 @@ button { font: inherit; cursor: pointer; }
 .alg-card.c6 .num { color: var(--a6); }
 .alg-card.c7 .num { color: var(--a7); }
 .alg-card.c8 .num { color: var(--a8); }
-
 .alg-card .name {
   font-family: var(--f-serif);
-  font-size: 1.7cqw;
+  font-size: 1.55cqw;
   font-weight: 600;
   letter-spacing: -.018em;
   color: var(--ink);
   line-height: 1.04;
-  margin: .25cqw 0 .3cqw;
+  margin: .2cqw 0 .25cqw;
 }
 .alg-card .role {
   font-family: var(--f-sans);
-  font-size: .92cqw;
+  font-size: .85cqw;
   color: var(--ink-soft);
   line-height: 1.4;
   margin-bottom: auto;
 }
 .alg-card .big-o {
   font-family: var(--f-mono);
-  font-size: .95cqw;
+  font-size: .88cqw;
   font-weight: 700;
   letter-spacing: .04em;
   color: var(--ink);
-  padding-top: .8cqw;
-  margin-top: .8cqw;
+  padding-top: .7cqw;
+  margin-top: .7cqw;
   border-top: 1px solid var(--line-faint);
 }
 .alg-card .big-o .k {
@@ -1033,13 +1129,13 @@ button { font: inherit; cursor: pointer; }
 }
 
 .alg-foot {
-  margin-top: 1.4cqw;
-  padding-top: 1cqw;
+  margin-top: 1cqw;
+  padding-top: .8cqw;
   border-top: 2px solid var(--rule);
   display: flex;
   justify-content: space-between;
   font-family: var(--f-mono);
-  font-size: .95cqw;
+  font-size: .88cqw;
   font-weight: 600;
   letter-spacing: .15em;
   text-transform: uppercase;
@@ -1049,33 +1145,36 @@ button { font: inherit; cursor: pointer; }
 .alg-foot .v { color: var(--ink); }
 
 /* ════════════════════════════════════════════════════════
-   SLIDES 08-11 — FEATURE SPREADS
+   SLIDES 09-12 — FEATURE SPREADS (compact)
    ════════════════════════════════════════════════════════ */
 .feat-wrap {
   flex: 1;
   display: grid;
-  grid-template-columns: 38cqw 1fr;
-  gap: 2.6cqw;
+  grid-template-columns: 36cqw 1fr;
+  gap: 2.2cqw;
+  min-height: 0;
 }
-
 .feat-panel {
   display: flex;
   flex-direction: column;
-  gap: 1.4cqw;
+  gap: .85cqw;
+  min-height: 0;
+  overflow: hidden;
 }
 .feat-panel-head {
   border-bottom: 2px solid var(--rule);
-  padding-bottom: 1.2cqw;
+  padding-bottom: .8cqw;
 }
 .feat-panel-head .eyebrow {
   color: var(--ink);
-  margin-bottom: .8cqw;
+  margin-bottom: .55cqw;
   display: block;
+  font-size: .82cqw;
 }
 .feat-panel-head .eyebrow .of { color: var(--muted); font-weight: 500; }
 .feat-panel-head .name {
   font-family: var(--f-serif);
-  font-size: 3.4cqw;
+  font-size: 2.8cqw;
   font-weight: 600;
   letter-spacing: -.028em;
   color: var(--ink);
@@ -1085,14 +1184,14 @@ button { font: inherit; cursor: pointer; }
 .feat-algo-line {
   display: flex;
   flex-wrap: wrap;
-  gap: .4cqw;
+  gap: .35cqw;
 }
 .feat-algo-line .algo-tag {
   font-family: var(--f-mono);
-  font-size: .9cqw;
+  font-size: .78cqw;
   font-weight: 700;
   letter-spacing: .08em;
-  padding: .35cqw .7cqw .4cqw;
+  padding: .3cqw .55cqw .35cqw;
   background: var(--ink);
   color: var(--paper);
   line-height: 1;
@@ -1100,33 +1199,29 @@ button { font: inherit; cursor: pointer; }
 
 .feat-summary {
   font-family: var(--f-serif);
-  font-size: 1.3cqw;
-  line-height: 1.5;
+  font-size: 1.05cqw;
+  line-height: 1.42;
   color: var(--ink-soft);
-  padding: 1cqw 0 .4cqw;
+  padding: .25cqw 0 .35cqw;
   border-bottom: 1px solid var(--line);
-  margin-bottom: .6cqw;
 }
-.feat-summary strong {
-  color: var(--ink);
-  font-weight: 600;
-}
+.feat-summary strong { color: var(--ink); font-weight: 600; }
 
 .feat-sec {
   display: flex;
   flex-direction: column;
-  gap: .5cqw;
+  gap: .35cqw;
 }
 .feat-sec .h {
   font-family: var(--f-mono);
-  font-size: .85cqw;
+  font-size: .75cqw;
   font-weight: 700;
   letter-spacing: .2em;
   text-transform: uppercase;
   color: var(--ink);
   display: flex;
   align-items: baseline;
-  gap: .8cqw;
+  gap: .6cqw;
 }
 .feat-sec .h::after {
   content: '';
@@ -1134,16 +1229,16 @@ button { font: inherit; cursor: pointer; }
   height: 1px;
   background: var(--line);
   position: relative;
-  top: -.2cqw;
+  top: -.15cqw;
 }
 
 .feat-code {
   font-family: var(--f-mono);
-  font-size: .95cqw;
-  line-height: 1.55;
+  font-size: .8cqw;
+  line-height: 1.45;
   background: var(--ink);
   color: var(--paper);
-  padding: 1cqw 1.2cqw;
+  padding: .7cqw .9cqw;
   white-space: pre;
   overflow: hidden;
 }
@@ -1157,26 +1252,26 @@ button { font: inherit; cursor: pointer; }
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: .25cqw;
+  gap: .15cqw;
 }
 .feat-bullets li {
   font-family: var(--f-sans);
-  font-size: 1cqw;
-  line-height: 1.55;
+  font-size: .88cqw;
+  line-height: 1.45;
   color: var(--ink-soft);
-  padding-left: 1.2cqw;
+  padding-left: 1cqw;
   position: relative;
 }
 .feat-bullets li::before {
   content: '·';
   position: absolute;
-  left: .3cqw; top: 0;
+  left: .25cqw; top: 0;
   color: var(--muted);
   font-weight: 700;
 }
 .feat-bullets li code {
   font-family: var(--f-mono);
-  font-size: .92em;
+  font-size: .9em;
   background: var(--rail);
   padding: 1px 5px;
   color: var(--ink);
@@ -1184,35 +1279,38 @@ button { font: inherit; cursor: pointer; }
 
 .feat-formula {
   font-family: var(--f-mono);
-  font-size: .92cqw;
-  line-height: 1.5;
+  font-size: .82cqw;
+  line-height: 1.45;
   background: var(--paper);
   border: 1px solid var(--line);
   border-left: 3px solid var(--primary);
-  padding: 1cqw 1.2cqw;
+  padding: .75cqw 1cqw;
   color: var(--ink);
 }
 
 .feat-stage {
   display: flex;
   flex-direction: column;
-  gap: 1cqw;
+  gap: .8cqw;
+  min-height: 0;
 }
 .feat-shot {
   flex: 1;
   background: var(--white);
   border: 1px solid var(--line);
-  padding: 1.2cqw;
+  padding: 1cqw;
   box-shadow: var(--shadow-paper);
   display: flex;
   flex-direction: column;
   position: relative;
+  min-height: 0;
 }
 .feat-shot-img {
   flex: 1;
   background: var(--rail);
   overflow: hidden;
   position: relative;
+  min-height: 0;
 }
 .feat-shot-img img {
   width: 100%; height: 100%;
@@ -1221,33 +1319,33 @@ button { font: inherit; cursor: pointer; }
 }
 .feat-shot-cap {
   font-family: var(--f-mono);
-  font-size: .85cqw;
+  font-size: .78cqw;
   font-weight: 600;
   letter-spacing: .18em;
   text-transform: uppercase;
   color: var(--muted);
-  padding-top: 1cqw;
-  margin-top: 1cqw;
+  padding-top: .7cqw;
+  margin-top: .7cqw;
   border-top: 1px solid var(--line);
   display: flex;
   justify-content: space-between;
 }
 
-/* Card strip — bottom row showing all 4 features */
 .feat-strip {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: .6cqw;
-  height: 6.5cqw;
+  gap: .5cqw;
+  height: 5.2cqw;
+  flex-shrink: 0;
 }
 .feat-strip-card {
   background: var(--white);
   border: 1px solid var(--line);
-  padding: .8cqw .9cqw;
+  padding: .65cqw .8cqw;
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: .15cqw;
+  gap: .1cqw;
   cursor: pointer;
   transition: background .2s, border-color .2s;
 }
@@ -1263,17 +1361,16 @@ button { font: inherit; cursor: pointer; }
 .feat-strip-card.s2::before { background: var(--a2); }
 .feat-strip-card.s3::before { background: var(--a3); }
 .feat-strip-card.s4::before { background: var(--a4); }
-
 .feat-strip-card .sn {
   font-family: var(--f-mono);
-  font-size: .75cqw;
+  font-size: .68cqw;
   font-weight: 700;
   letter-spacing: .18em;
   color: var(--muted);
 }
 .feat-strip-card .st {
   font-family: var(--f-serif);
-  font-size: 1.05cqw;
+  font-size: .95cqw;
   font-weight: 600;
   color: var(--ink);
   line-height: 1.08;
@@ -1281,399 +1378,252 @@ button { font: inherit; cursor: pointer; }
 }
 .feat-strip-card .sd {
   font-family: var(--f-mono);
-  font-size: .7cqw;
+  font-size: .62cqw;
   letter-spacing: .12em;
   text-transform: uppercase;
   color: var(--muted);
   margin-top: auto;
 }
-
-.feat-strip-card.active {
-  background: var(--ink);
-}
+.feat-strip-card.active { background: var(--ink); }
 .feat-strip-card.active .sn,
 .feat-strip-card.active .sd { color: rgba(251,250,247,.7); }
 .feat-strip-card.active .st { color: var(--paper); }
 .feat-strip-card.active::before { width: 100%; opacity: .15; }
 
 /* ════════════════════════════════════════════════════════
-   SLIDE 12 — WORKFLOW & RETROSPECTIVE
+   SLIDE 13 — LEARNINGS  (NEW)
    ════════════════════════════════════════════════════════ */
-.wf-head {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  margin-bottom: 2cqw;
-}
-.wf-head .display { font-size: 5cqw; }
-.wf-head-meta {
-  font-family: var(--f-mono);
-  font-size: 1cqw;
-  font-weight: 600;
-  letter-spacing: .15em;
-  text-transform: uppercase;
-  color: var(--muted);
-  text-align: right;
-  line-height: 1.7;
-}
-
-.wf-cycle {
-  background: var(--ink);
-  color: var(--paper);
-  padding: 1.4cqw 2cqw;
-  margin-bottom: 1.8cqw;
-  display: flex;
-  align-items: center;
-  gap: 1.6cqw;
-  font-family: var(--f-mono);
-  font-size: 1.05cqw;
-  font-weight: 500;
-  letter-spacing: .04em;
-  flex-wrap: wrap;
-}
-.wf-cycle .step { display: inline-flex; align-items: center; gap: .8cqw; }
-.wf-cycle .step .k {
-  font-size: .7cqw;
-  letter-spacing: .18em;
-  color: rgba(251,250,247,.5);
-  text-transform: uppercase;
-}
-.wf-cycle .step .v { color: var(--paper); }
-.wf-cycle .step .v code {
-  font-family: var(--f-mono);
-  background: rgba(251,250,247,.08);
-  padding: .15cqw .5cqw;
-}
-.wf-cycle .arr {
-  color: var(--orange);
-  font-size: 1.2cqw;
-}
-
-.wf-phases {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: .7cqw;
-  margin-bottom: 1.8cqw;
-}
-.wf-phase {
-  background: var(--white);
-  border: 1px solid var(--line);
-  padding: 1cqw 1.1cqw;
-  border-left: 3px solid;
-  display: flex;
-  flex-direction: column;
-  gap: .25cqw;
-}
-.wf-phase.p0 { border-left-color: var(--a1); }
-.wf-phase.p1 { border-left-color: var(--a2); }
-.wf-phase.p2 { border-left-color: var(--a3); }
-.wf-phase.p3 { border-left-color: var(--a4); }
-.wf-phase.p4 { border-left-color: var(--a5); }
-.wf-phase.p5 { border-left-color: var(--a6); }
-.wf-phase.p6 { border-left-color: var(--a7); }
-
-.wf-phase .ph {
-  font-family: var(--f-mono);
-  font-size: .8cqw;
-  font-weight: 700;
-  letter-spacing: .15em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.wf-phase .pd {
-  font-family: var(--f-mono);
-  font-size: .85cqw;
-  font-weight: 700;
-  color: var(--ink);
-  letter-spacing: .04em;
-}
-.wf-phase .pt {
-  font-family: var(--f-serif);
-  font-size: 1cqw;
-  font-weight: 500;
-  color: var(--ink-soft);
-  line-height: 1.32;
-  letter-spacing: -.008em;
-  margin-top: .35cqw;
-}
-
-.wf-bottom {
+.learn-wrap {
   flex: 1;
   display: grid;
-  grid-template-columns: 1fr 22cqw;
-  gap: 2.4cqw;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.6cqw;
 }
-.wf-retro {
-  background: var(--paper);
-  border: 1px solid var(--line);
-  border-left: 3px solid var(--ink);
-  padding: 1.4cqw 1.8cqw;
+.learn-intro {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-right: 2cqw;
+  border-right: 1px solid var(--line);
 }
-.wf-retro .h {
+.learn-intro .lede {
+  font-family: var(--f-serif);
+  font-size: 1.3cqw;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.learn-intro .note {
   font-family: var(--f-mono);
-  font-size: .9cqw;
-  font-weight: 700;
-  letter-spacing: .2em;
+  font-size: .85cqw;
+  font-weight: 600;
+  letter-spacing: .18em;
   text-transform: uppercase;
-  color: var(--ink);
-  margin-bottom: 1cqw;
-  padding-bottom: .6cqw;
-  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+  padding-top: 1.2cqw;
+  margin-top: 1.6cqw;
 }
-.wf-retro ul {
-  list-style: none;
+.learn-intro .note::before {
+  content: '※ ';
+  color: var(--orange);
+}
+
+.learn-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 1.2cqw;
+}
+.learn-card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  padding: 1.4cqw 1.6cqw;
   display: flex;
   flex-direction: column;
   gap: .5cqw;
-}
-.wf-retro li {
-  font-family: var(--f-serif);
-  font-size: 1.1cqw;
-  line-height: 1.5;
-  color: var(--ink);
-  padding-left: 1.4cqw;
   position: relative;
+  overflow: hidden;
 }
-.wf-retro li::before {
-  content: '—';
+.learn-card::before {
+  content: '';
   position: absolute;
-  left: 0; top: 0;
-  color: var(--orange);
-  font-weight: 700;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
 }
-.wf-retro li code {
-  font-family: var(--f-mono);
-  font-size: .9em;
-  color: var(--primary);
-  background: var(--white);
-  padding: 1px 5px;
-  border: 1px solid var(--line-faint);
-}
-
-.wf-stats {
-  display: flex;
-  flex-direction: column;
-  gap: .8cqw;
-}
-.wf-stat {
-  background: var(--white);
-  border: 1px solid var(--line);
-  padding: 1cqw 1.2cqw;
-  display: flex;
-  flex-direction: column;
-  gap: .2cqw;
-}
-.wf-stat .k {
-  font-family: var(--f-mono);
-  font-size: .75cqw;
-  font-weight: 700;
-  letter-spacing: .2em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.wf-stat .v {
-  font-family: var(--f-mono);
-  font-size: 2cqw;
-  font-weight: 700;
-  letter-spacing: -.02em;
-  color: var(--ink);
-  line-height: 1;
-}
-.wf-stat .u {
-  font-family: var(--f-mono);
-  font-size: .8cqw;
-  font-weight: 500;
-  color: var(--muted);
-  letter-spacing: .1em;
-}
-
-/* ════════════════════════════════════════════════════════
-   SLIDE 13 — APPENDIX / CODE MAP
-   ════════════════════════════════════════════════════════ */
-.app-head {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  margin-bottom: 2.2cqw;
-}
-.app-head .display { font-size: 4.6cqw; }
-
-.app-cols {
-  flex: 1;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 2cqw;
-}
-.app-col {
-  display: flex;
-  flex-direction: column;
-}
-.app-col-head {
-  font-family: var(--f-mono);
-  font-size: .9cqw;
-  font-weight: 700;
-  letter-spacing: .2em;
-  text-transform: uppercase;
-  color: var(--ink);
-  padding-bottom: .7cqw;
-  border-bottom: 2px solid var(--rule);
-  margin-bottom: 1cqw;
-}
-.app-col-head .path {
-  display: block;
-  font-size: .8cqw;
-  letter-spacing: .12em;
-  color: var(--muted);
-  margin-top: .3cqw;
-  font-weight: 500;
-}
-
-.app-list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-}
-.app-row {
-  display: grid;
-  grid-template-columns: 4cqw 1fr;
-  gap: 1cqw;
-  padding: .65cqw 0;
-  border-bottom: 1px solid var(--line-faint);
-  align-items: baseline;
-}
-.app-row:last-child { border-bottom: none; }
-.app-row .k {
+.learn-card.l1::before { background: var(--a1); }
+.learn-card.l2::before { background: var(--a2); }
+.learn-card.l3::before { background: var(--a3); }
+.learn-card.l4::before { background: var(--a5); }
+.learn-card .ln {
   font-family: var(--f-mono);
   font-size: .85cqw;
   font-weight: 700;
-  letter-spacing: .08em;
+  letter-spacing: .18em;
   color: var(--muted);
+  text-transform: uppercase;
 }
-.app-row .v {
-  font-family: var(--f-mono);
-  font-size: .95cqw;
+.learn-card .lt {
+  font-family: var(--f-serif);
+  font-size: 1.6cqw;
+  font-weight: 600;
+  letter-spacing: -.018em;
   color: var(--ink);
-  line-height: 1.35;
+  line-height: 1.08;
 }
-.app-row .v .fn { color: var(--primary); }
-.app-row .v .cls { color: var(--orange); }
-.app-row .v .file { font-weight: 600; }
-.app-row .v .annot {
-  display: block;
-  font-family: var(--f-sans);
-  font-size: .82cqw;
+.learn-card .lb {
+  font-family: var(--f-serif);
+  font-size: 1cqw;
+  line-height: 1.5;
   color: var(--muted);
-  margin-top: .15cqw;
+  margin-top: auto;
+  padding-top: .8cqw;
+  border-top: 1px dashed var(--line);
 }
-
-.app-row.api { grid-template-columns: 8cqw 1fr; }
-.app-row.api .method {
-  font-family: var(--f-mono);
-  font-size: .78cqw;
-  font-weight: 700;
-  letter-spacing: .1em;
-  padding: .2cqw .45cqw;
-  background: var(--ink);
-  color: var(--paper);
-  width: max-content;
+.learn-card .lb em {
+  font-style: italic;
+  color: var(--light);
 }
-.app-row.api .method.get { background: var(--green); }
-.app-row.api .method.post { background: var(--primary); }
-.app-row.api .method.del { background: var(--red); }
 
 /* ════════════════════════════════════════════════════════
-   SLIDE 14 — THANKS
+   SLIDE 14 — APPENDIX  (cleaner, glance-able)
    ════════════════════════════════════════════════════════ */
-.thanks {
-  position: absolute;
-  inset: 0;
-  padding: 4.5cqw 5cqw;
+.app-board {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr 1fr;
+  gap: 1.6cqw;
+  min-height: 0;
+}
+.app-block {
+  background: var(--white);
+  border: 1px solid var(--line);
+  padding: 1.2cqw 1.4cqw;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  position: relative;
+  overflow: hidden;
 }
-.thanks-eyebrow {
-  font-family: var(--f-mono);
-  font-size: 1.05cqw;
-  font-weight: 600;
-  letter-spacing: .35em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 2.2cqw;
+.app-block::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
 }
-.thanks-title {
-  font-family: var(--f-serif);
-  font-size: 14cqw;
-  font-weight: 700;
-  line-height: .9;
-  letter-spacing: -.04em;
-  color: var(--ink);
-  margin-bottom: 1.8cqw;
-  text-align: center;
-}
-.thanks-sub {
-  font-family: var(--f-serif);
-  font-size: 2.2cqw;
-  font-weight: 400;
-  font-style: italic;
-  color: var(--muted);
-  letter-spacing: -.015em;
-}
-.thanks-rule {
-  width: 8cqw;
-  height: 2px;
-  background: var(--rule);
-  margin: 3.6cqw 0 2cqw;
-}
-.thanks-meta {
+.app-block.b1::before { background: var(--a1); }
+.app-block.b2::before { background: var(--a3); }
+.app-block.b3::before { background: var(--a5); }
+
+.app-block-head {
   display: flex;
-  gap: 2.4cqw;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-bottom: .7cqw;
+  margin-bottom: .8cqw;
+  border-bottom: 1px solid var(--line);
+}
+.app-block-head .title {
   font-family: var(--f-mono);
-  font-size: .95cqw;
-  font-weight: 600;
+  font-size: .92cqw;
+  font-weight: 700;
   letter-spacing: .2em;
   text-transform: uppercase;
   color: var(--ink);
 }
-.thanks-meta .sep { color: var(--light); }
-.thanks-meta a {
-  color: var(--primary);
-  text-decoration: none;
-  border-bottom: 1px solid var(--primary);
-}
-
-.thanks-corner {
-  position: absolute;
-  top: 4.5cqw; right: 5cqw;
+.app-block-head .count {
   font-family: var(--f-mono);
-  font-size: .95cqw;
-  font-weight: 600;
-  letter-spacing: .22em;
-  text-transform: uppercase;
+  font-size: .75cqw;
+  font-weight: 700;
+  letter-spacing: .12em;
   color: var(--muted);
 }
-.thanks-corner-l {
-  position: absolute;
-  top: 4.5cqw; left: 5cqw;
+.app-block-path {
   font-family: var(--f-mono);
-  font-size: .95cqw;
-  font-weight: 600;
-  letter-spacing: .22em;
-  text-transform: uppercase;
-  color: var(--ink);
+  font-size: .7cqw;
+  color: var(--muted);
+  letter-spacing: .12em;
+  margin-bottom: .8cqw;
+  text-transform: lowercase;
 }
-.thanks-corner-l::before { content: '◆ '; color: var(--primary); }
 
-.thanks-bottom-rule {
-  position: absolute;
-  left: 5cqw; right: 5cqw; bottom: 4.5cqw;
-  height: 1px;
-  background: var(--line);
+.app-rows {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: .35cqw;
+}
+.app-rows li {
+  display: grid;
+  grid-template-columns: 2.6cqw 1fr;
+  gap: .6cqw;
+  font-family: var(--f-mono);
+  font-size: .82cqw;
+  align-items: baseline;
+  padding: .25cqw 0;
+}
+.app-rows li .tag {
+  font-weight: 700;
+  letter-spacing: .08em;
+  font-size: .72cqw;
+  color: var(--paper);
+  background: var(--ink);
+  padding: .15cqw .4cqw;
+  text-align: center;
+  border-radius: 1px;
+}
+.app-rows li .tag.get  { background: var(--green); }
+.app-rows li .tag.post { background: var(--primary); }
+.app-rows li .body {
+  color: var(--ink);
+  line-height: 1.32;
+}
+.app-rows li .body .f { color: var(--primary); }
+.app-rows li .body .c { color: var(--orange); }
+.app-rows li .body .ann {
+  color: var(--muted);
+  font-size: .92em;
+  margin-left: .35em;
 }
 
 /* ════════════════════════════════════════════════════════
-   CONTENT REVEAL ANIMATION (per slide entry)
+   SLIDE 15 — THANKS  (minimal: big screenshot + 감사합니다)
+   ════════════════════════════════════════════════════════ */
+.slide.thanks-slide {
+  padding: 2.6cqw 4cqw 3.4cqw;
+  align-items: center;
+  justify-content: center;
+  gap: 1.8cqw;
+}
+.thanks-title {
+  font-family: var(--f-serif);
+  font-size: 9cqw;
+  font-weight: 700;
+  line-height: .9;
+  letter-spacing: -.045em;
+  color: var(--ink);
+  text-align: center;
+  flex-shrink: 0;
+}
+.thanks-figure {
+  flex: 1;
+  width: 86cqw;
+  max-width: 100%;
+  background: var(--white);
+  border: 1px solid var(--line);
+  padding: 1cqw;
+  box-shadow: var(--shadow-paper-deep);
+  overflow: hidden;
+  display: flex;
+  min-height: 0;
+}
+.thanks-figure img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+/* ════════════════════════════════════════════════════════
+   CONTENT REVEAL
    ════════════════════════════════════════════════════════ */
 @keyframes rise {
   from { opacity: 0; transform: translateY(14px); }
@@ -1698,7 +1648,7 @@ button { font: inherit; cursor: pointer; }
 .slide[data-active] .reveal[data-d="10"] { animation-delay: .58s; }
 
 /* ════════════════════════════════════════════════════════
-   CONTROLS — bottom indicator strip
+   CONTROLS
    ════════════════════════════════════════════════════════ */
 .controls {
   position: fixed;
@@ -1715,6 +1665,7 @@ button { font: inherit; cursor: pointer; }
   letter-spacing: .18em;
   text-transform: uppercase;
   color: var(--muted);
+  transition: opacity .3s;
 }
 .controls .counter {
   display: flex;
@@ -1725,7 +1676,6 @@ button { font: inherit; cursor: pointer; }
 .controls .counter .cur {
   font-size: 13px;
   font-weight: 700;
-  color: var(--ink);
 }
 .controls .counter .total {
   color: var(--muted);
@@ -1739,13 +1689,13 @@ button { font: inherit; cursor: pointer; }
   padding: 5px 0;
 }
 .indicators button {
-  width: 18px;
+  width: 16px;
   height: 4px;
   background: var(--line-strong);
   border: none;
   padding: 0;
   position: relative;
-  transition: background .2s, transform .2s;
+  transition: background .2s, transform .2s, width .2s;
 }
 .indicators button:hover {
   background: var(--muted);
@@ -1753,7 +1703,7 @@ button { font: inherit; cursor: pointer; }
 }
 .indicators button[data-on] {
   background: var(--ink);
-  width: 28px;
+  width: 26px;
 }
 
 .nav-btn {
@@ -1784,6 +1734,7 @@ button { font: inherit; cursor: pointer; }
   text-transform: uppercase;
   color: var(--muted);
   z-index: 100;
+  transition: opacity .3s;
 }
 .help-hint .key {
   background: var(--white);
@@ -1803,10 +1754,32 @@ button { font: inherit; cursor: pointer; }
   text-transform: uppercase;
   color: var(--muted);
   z-index: 100;
+  transition: opacity .3s;
 }
-.brand-foot::before {
-  content: '◆ ';
-  color: var(--primary);
+.brand-foot::before { content: '◆ '; color: var(--primary); }
+
+/* ════════════════════════════════════════════════════════
+   FULLSCREEN — stage fills the viewport
+   ════════════════════════════════════════════════════════ */
+:fullscreen body,
+body:fullscreen,
+.deck:fullscreen { background: #000; }
+:fullscreen .deck { padding: 0 !important; }
+:fullscreen .stage {
+  width: min(100vw, calc(100vh * 16 / 9)) !important;
+  height: min(100vh, calc(100vw * 9 / 16)) !important;
+  box-shadow: none !important;
+}
+:fullscreen .controls,
+:fullscreen .help-hint,
+:fullscreen .brand-foot {
+  opacity: 0;
+  pointer-events: none;
+}
+:fullscreen .deck:hover .controls,
+:fullscreen body:hover > .controls {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 /* ════════════════════════════════════════════════════════
@@ -1857,14 +1830,14 @@ button { font: inherit; cursor: pointer; }
 
 .overview-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.4vw;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.2vw;
 }
 .ov-card {
   aspect-ratio: 16 / 10;
   background: var(--paper);
   border: 1px solid var(--line-strong);
-  padding: 1.6vw 1.8vw;
+  padding: 1.3vw 1.5vw;
   display: flex;
   flex-direction: column;
   cursor: pointer;
@@ -1878,14 +1851,14 @@ button { font: inherit; cursor: pointer; }
 }
 .ov-card .ov-n {
   font-family: var(--f-mono);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: .2em;
   color: var(--muted);
 }
 .ov-card .ov-t {
   font-family: var(--f-serif);
-  font-size: 1.5vw;
+  font-size: 1.2vw;
   font-weight: 600;
   letter-spacing: -.018em;
   color: var(--ink);
@@ -1894,7 +1867,7 @@ button { font: inherit; cursor: pointer; }
 }
 
 /* ════════════════════════════════════════════════════════
-   VIEW TRANSITIONS — morphing animations
+   VIEW TRANSITIONS
    ════════════════════════════════════════════════════════ */
 ::view-transition-old(root),
 ::view-transition-new(root) {
@@ -1908,9 +1881,6 @@ button { font: inherit; cursor: pointer; }
   mix-blend-mode: normal;
 }
 
-/* ════════════════════════════════════════════════════════
-   REDUCED MOTION
-   ════════════════════════════════════════════════════════ */
 @media (prefers-reduced-motion: reduce) {
   .slide[data-active] .reveal { animation: none; }
   ::view-transition-old(*),
@@ -1939,14 +1909,6 @@ button { font: inherit; cursor: pointer; }
   }
   .slide:not(:first-child) { display: none; }
 }
-
-/* ════════════════════════════════════════════════════════
-   SMALL VIEWPORT WARNING
-   ════════════════════════════════════════════════════════ */
-@media (max-width: 720px) {
-  .deck { padding: 0; }
-  .stage { box-shadow: none; }
-}
 </style>
 </head>
 <body>
@@ -1956,12 +1918,12 @@ button { font: inherit; cursor: pointer; }
 <main class="deck" role="main">
   <div class="stage" id="stage">
 
-    <!-- ════════════ SLIDE 01 — COVER ════════════ -->
+    <!-- ════════════ 1 — COVER ════════════ -->
     <section class="slide" data-slide="1" data-active>
       <div class="cover">
         <div class="cover-top reveal" data-d="1">
           <span class="mark">REVIEWER<span style="color: var(--light); margin: 0 .6em;">/</span>v0.6</span>
-          <span>P. 01 / 14</span>
+          <span>P. 01 / 15</span>
         </div>
 
         <div class="cover-eyebrow reveal" data-d="2">알고리즘 4조 — 학기 프로젝트</div>
@@ -1971,7 +1933,7 @@ button { font: inherit; cursor: pointer; }
         <p class="cover-subtitle reveal" data-d="4">개발자 포트폴리오 정형화 · 비교 시스템</p>
 
         <div class="cover-decor reveal" data-d="5">
-          A presentation in<br>fourteen pages
+          A presentation in<br>fifteen pages
         </div>
 
         <div class="cover-bottom reveal" data-d="6">
@@ -1985,39 +1947,39 @@ button { font: inherit; cursor: pointer; }
       </div>
     </section>
 
-    <!-- ════════════ SLIDE 02 — TABLE OF CONTENTS ════════════ -->
+    <!-- ════════════ 2 — TABLE OF CONTENTS (simplified) ════════════ -->
     <section class="slide" data-slide="2">
       <header class="run reveal" data-d="1">
         <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>TABLE OF CONTENTS</span></span>
-        <span class="rhs"><span>P. 02 / 14</span></span>
+        <span class="rhs"><span>P. 02 / 15</span></span>
       </header>
       <hr class="rule-major reveal" data-d="1">
 
       <div class="toc-wrap">
         <aside class="toc-aside reveal" data-d="2">
           <div class="eyebrow"><span>CONTENTS</span></div>
-          <h2 class="display-sm">14 Pages<br><em style="color: var(--muted); font-style: italic; font-weight: 400;">8 Sections</em></h2>
-          <p class="lede" style="margin-top: 1.6cqw;">Solar LLM 기반 포트폴리오 정형화와 8종의 알고리즘으로 구성된 비교 분석 시스템의 전체 발표 흐름입니다.</p>
+          <h2 class="display-sm" style="margin-top: 1cqw;">목차</h2>
         </aside>
 
         <ol class="toc-list">
           <li class="toc-row reveal" data-d="3" data-jump="3"><span class="num">01</span><span class="label">프로젝트 소개</span><span class="pg">03</span></li>
           <li class="toc-row reveal" data-d="4" data-jump="4"><span class="num">02</span><span class="label">개발 동기 — 5가지 문제</span><span class="pg">04</span></li>
-          <li class="toc-row reveal" data-d="5" data-jump="5"><span class="num">03</span><span class="label">기술 스택 &amp; 실행 환경</span><span class="pg">05</span></li>
-          <li class="toc-row reveal" data-d="6" data-jump="6"><span class="num">04</span><span class="label">시스템 아키텍처</span><span class="pg">06</span></li>
-          <li class="toc-row reveal" data-d="7" data-jump="7"><span class="num">05</span><span class="label">알고리즘 8종 한눈에</span><span class="pg">07</span></li>
-          <li class="toc-row reveal" data-d="8" data-jump="8"><span class="num">06</span><span class="label">주요 기능 4가지</span><span class="pg">08–11</span></li>
-          <li class="toc-row reveal" data-d="9" data-jump="12"><span class="num">07</span><span class="label">개발 워크플로우 &amp; 회고</span><span class="pg">12</span></li>
-          <li class="toc-row reveal" data-d="10" data-jump="13"><span class="num">08</span><span class="label">부록 — 코드 명세</span><span class="pg">13</span></li>
+          <li class="toc-row reveal" data-d="5" data-jump="5"><span class="num">03</span><span class="label">개발 워크플로우 &amp; 회고</span><span class="pg">05</span></li>
+          <li class="toc-row reveal" data-d="6" data-jump="6"><span class="num">04</span><span class="label">기술 스택 &amp; 실행 환경</span><span class="pg">06</span></li>
+          <li class="toc-row reveal" data-d="7" data-jump="7"><span class="num">05</span><span class="label">시스템 아키텍처</span><span class="pg">07</span></li>
+          <li class="toc-row reveal" data-d="8" data-jump="8"><span class="num">06</span><span class="label">알고리즘 8종 한눈에</span><span class="pg">08</span></li>
+          <li class="toc-row reveal" data-d="9" data-jump="9"><span class="num">07</span><span class="label">주요 기능 4가지</span><span class="pg">09–12</span></li>
+          <li class="toc-row reveal" data-d="10" data-jump="13"><span class="num">08</span><span class="label">학습 내용</span><span class="pg">13</span></li>
+          <li class="toc-row reveal" data-d="10" data-jump="14"><span class="num">09</span><span class="label">부록 — 코드 명세</span><span class="pg">14</span></li>
         </ol>
       </div>
     </section>
 
-    <!-- ════════════ SLIDE 03 — INTRODUCTION ════════════ -->
+    <!-- ════════════ 3 — INTRODUCTION ════════════ -->
     <section class="slide" data-slide="3">
       <header class="run reveal" data-d="1">
         <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>01 · INTRODUCTION</span></span>
-        <span class="rhs"><span>P. 03 / 14</span></span>
+        <span class="rhs"><span>P. 03 / 15</span></span>
       </header>
       <hr class="rule-major reveal" data-d="1">
 
@@ -2054,30 +2016,28 @@ button { font: inherit; cursor: pointer; }
             </div>
             <figcaption class="intro-figure-cap">
               <span>FIG. 01 — 메인 분석 화면 / 3패널 비교</span>
-              <span>↗ frontend/src/pages/WorkflowPage.jsx</span>
+              <span>↗ WorkflowPage.jsx</span>
             </figcaption>
           </figure>
         </div>
       </div>
     </section>
 
-    <!-- ════════════ SLIDE 04 — MOTIVATION ════════════ -->
+    <!-- ════════════ 4 — MOTIVATION ════════════ -->
     <section class="slide" data-slide="4">
       <header class="run reveal" data-d="1">
         <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>02 · MOTIVATION</span></span>
-        <span class="rhs"><span>P. 04 / 14</span></span>
+        <span class="rhs"><span>P. 04 / 15</span></span>
       </header>
       <hr class="rule-major reveal" data-d="1">
 
-      <div class="mot-head reveal" data-d="2">
-        <div>
-          <div class="eyebrow" style="margin-bottom: 1.2cqw;"><span style="color: var(--muted);">MOTIVATION</span><span class="sep">/</span><span>5 PROBLEMS</span></div>
+      <div class="compact-head reveal" data-d="2">
+        <div class="left">
+          <div class="eyebrow"><span style="color: var(--muted);">MOTIVATION</span><span class="sep">/</span><span>5 PROBLEMS</span></div>
           <h2 class="display">왜 만들었는가</h2>
         </div>
-        <div class="mot-meta">
-          <strong>05</strong> Problems<br>
-          <strong>08</strong> Algorithms<br>
-          <strong>01</strong> Service
+        <div class="right">
+          <strong>05</strong> Problems<span class="sep" style="margin: 0 .4em; color: var(--light);">/</span><strong>08</strong> Algorithms
         </div>
       </div>
 
@@ -2119,544 +2079,21 @@ button { font: inherit; cursor: pointer; }
       </table>
     </section>
 
-    <!-- ════════════ SLIDE 05 — TECH STACK ════════════ -->
+    <!-- ════════════ 5 — WORKFLOW (moved here from old 12) ════════════ -->
     <section class="slide" data-slide="5">
       <header class="run reveal" data-d="1">
-        <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>03 · STACK</span></span>
-        <span class="rhs"><span>P. 05 / 14</span></span>
+        <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>03 · PROCESS</span></span>
+        <span class="rhs"><span>P. 05 / 15</span></span>
       </header>
       <hr class="rule-major reveal" data-d="1">
 
-      <div class="stack-wrap">
-        <figure class="stack-thumb reveal" data-d="2">
-          <div class="stack-thumb-img">
-            <img data-shot="intro" alt="Portfolio Reviewer 메인 분석 화면">
-          </div>
-          <figcaption class="stack-thumb-cap">
-            <span>FIG. 01 ↻</span>
-            <span>p. 03</span>
-          </figcaption>
-        </figure>
-
-        <div class="stack-title reveal" data-d="3">
-          <div>
-            <div class="eyebrow" style="margin-bottom: 1cqw;"><span style="color: var(--muted);">STACK</span><span class="sep">/</span><span>ENVIRONMENT</span></div>
-            <h2 class="display">기술 스택<br>&amp; 실행 환경</h2>
-          </div>
-          <div class="stack-title-meta">
-            10+<br>dependencies<br><span style="color: var(--ink); font-weight: 700;">2</span> runtimes
-          </div>
-        </div>
-
-        <div class="stack-grid">
-          <article class="stack-card f reveal" data-d="4">
-            <span class="label">Frontend</span>
-            <div class="name">React 18 + Vite 5</div>
-            <p class="desc"><code>react-markdown</code> + <code>remark-gfm</code> · 순수 CSS (Pretendard · JetBrains Mono)</p>
-          </article>
-          <article class="stack-card b reveal" data-d="5">
-            <span class="label">Backend</span>
-            <div class="name">Python 3.10+ &middot; FastAPI</div>
-            <p class="desc"><code>Uvicorn</code> · <code>httpx</code> 비동기 · <code>pdfplumber</code></p>
-          </article>
-          <article class="stack-card l reveal" data-d="6">
-            <span class="label">LLM</span>
-            <div class="name">Upstage Solar API</div>
-            <p class="desc">모델 <code>solar-pro</code> · 32k 컨텍스트 · 한국어 자연 출력</p>
-          </article>
-          <article class="stack-card d reveal" data-d="7">
-            <span class="label">Data</span>
-            <div class="name">JSON + localStorage</div>
-            <p class="desc"><code>session.json</code> 백엔드 임시 세션 + <code>localStorage</code> 브라우저 캐시</p>
-          </article>
-        </div>
-
-        <footer class="env-bar reveal" data-d="8">
-          <span class="item"><span class="k">OS</span><span class="v">Win / macOS / Linux</span></span>
-          <span class="sep">/</span>
-          <span class="item"><span class="k">Node</span><span class="v">18+</span></span>
-          <span class="sep">/</span>
-          <span class="item"><span class="k">Python</span><span class="v">3.10+</span></span>
-          <span class="sep">/</span>
-          <span class="item"><span class="k">Frontend</span><span class="v">:5173</span></span>
-          <span class="sep">/</span>
-          <span class="item"><span class="k">Backend</span><span class="v">:8000</span></span>
-        </footer>
-      </div>
-    </section>
-
-    <!-- ════════════ SLIDE 06 — ARCHITECTURE ════════════ -->
-    <section class="slide" data-slide="6">
-      <header class="run reveal" data-d="1">
-        <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>04 · ARCHITECTURE</span></span>
-        <span class="rhs"><span>P. 06 / 14</span></span>
-      </header>
-      <hr class="rule-major reveal" data-d="1">
-
-      <div class="arch-head reveal" data-d="2">
-        <div>
-          <div class="eyebrow" style="margin-bottom: 1cqw;"><span style="color: var(--muted);">SYSTEM</span><span class="sep">/</span><span>CLIENT &middot; SERVER</span></div>
-          <h2 class="display">시스템 구성</h2>
-        </div>
-        <div class="arch-head-meta">
-          Client <strong style="color: var(--ink);">React + Vite</strong><br>
-          Server <strong style="color: var(--ink);">FastAPI</strong><br>
-          Proxy via <code style="font-family: var(--f-mono);">/api/*</code>
-        </div>
-      </div>
-
-      <div class="arch-diagram">
-        <div class="arch-row reveal" data-d="3">
-          <div class="arch-node browser">
-            <span class="nlabel">Client</span>
-            <span class="nname">브라우저</span>
-            <span class="nport">React 18 + Vite · :5173</span>
-          </div>
-          <div class="arch-arrow">
-            <span class="a-label">/api · proxy</span>
-            <span class="a-line"></span>
-          </div>
-          <div class="arch-node server">
-            <span class="nlabel">Server</span>
-            <span class="nname">FastAPI 서버</span>
-            <span class="nport">Python 3.10+ · Uvicorn · :8000</span>
-          </div>
-        </div>
-
-        <div class="arch-modules reveal" data-d="4">
-          <div class="arch-mod">
-            <div class="path">routers / portfolios.py</div>
-            <div class="desc">포트폴리오 CRUD · 분석 · 검색 · 유사 검출 엔드포인트</div>
-          </div>
-          <div class="arch-mod">
-            <div class="path">routers / utils.py</div>
-            <div class="desc">채용 설정 자동 추출 · 공통 헬퍼 함수</div>
-          </div>
-          <div class="arch-mod services">
-            <div class="path">services / *</div>
-            <div class="desc">
-              <span class="svc">solar.py</span>
-              <span class="svc">_solar_http.py</span>
-              <span class="svc">parser.py</span>
-              <span class="svc algo">algorithms/ · 8개</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="arch-warn reveal" data-d="5">
-          <span class="w-label">⚠ Constraint</span>
-          <span class="w-body">Solar <strong>32k 컨텍스트</strong> 초과 시 자동 분할 처리 + <code>_truncated</code> 플래그로 절단 경고 배너 표시.</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- ════════════ SLIDE 07 — ALGORITHMS GRID ════════════ -->
-    <section class="slide" data-slide="7">
-      <header class="run reveal" data-d="1">
-        <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>05 · ALGORITHMS</span></span>
-        <span class="rhs"><span>P. 07 / 14</span></span>
-      </header>
-      <hr class="rule-major reveal" data-d="1">
-
-      <div class="alg-head reveal" data-d="2">
-        <div>
-          <div class="eyebrow" style="margin-bottom: 1cqw;"><span style="color: var(--muted);">ALGORITHMS</span><span class="sep">/</span><span>8 IMPLEMENTATIONS</span></div>
-          <h2 class="display">알고리즘 8종</h2>
-        </div>
-        <div class="alg-head-meta">
-          이 한 페이지로 전체 알고리즘<br>구조를 한눈에 — 상세는<br>이어지는 4개 슬라이드에서.
-        </div>
-      </div>
-
-      <div class="alg-grid">
-        <article class="alg-card c1 reveal" data-d="3">
-          <span class="num">#01</span>
-          <div class="name">Solar LLM</div>
-          <p class="role">포트폴리오 정형화 · PDF·MD·URL → 공통 JSON 스키마</p>
-          <div class="big-o"><span class="k">T</span>API dependent</div>
-        </article>
-        <article class="alg-card c2 reveal" data-d="3">
-          <span class="num">#02</span>
-          <div class="name">해시 테이블</div>
-          <p class="role">필요 스펙 O(1) 매칭 · 스킬 하이라이트</p>
-          <div class="big-o"><span class="k">T</span>O(1) avg</div>
-        </article>
-        <article class="alg-card c3 reveal" data-d="4">
-          <span class="num">#03</span>
-          <div class="name">Edit Distance</div>
-          <p class="role">DP 기반 · 기술명 표기 차이 · 오타 흡수</p>
-          <div class="big-o"><span class="k">T</span>O(m × n)</div>
-        </article>
-        <article class="alg-card c4 reveal" data-d="4">
-          <span class="num">#04</span>
-          <div class="name">LCS</div>
-          <p class="role">DP 기반 · 매칭 점수 산출 · 0–100%</p>
-          <div class="big-o"><span class="k">T</span>O(m × n) → O(n)</div>
-        </article>
-        <article class="alg-card c5 reveal" data-d="5">
-          <span class="num">#05</span>
-          <div class="name">정렬 (Timsort)</div>
-          <p class="role">매칭률 · 경력 · 이름 기준 순위 정렬</p>
-          <div class="big-o"><span class="k">T</span>O(n log n)</div>
-        </article>
-        <article class="alg-card c6 reveal" data-d="5">
-          <span class="num">#06</span>
-          <div class="name">BST</div>
-          <p class="role">키워드 검색 cross · intra 두 모드</p>
-          <div class="big-o"><span class="k">T</span>O(log n) avg</div>
-        </article>
-        <article class="alg-card c7 reveal" data-d="6">
-          <span class="num">#07</span>
-          <div class="name">별칭 해시맵 + ED</div>
-          <p class="role">동의어 · 오타 통합 검색 · 150+ 별칭 사전</p>
-          <div class="big-o"><span class="k">T</span>O(k × m)</div>
-        </article>
-        <article class="alg-card c8 reveal" data-d="6">
-          <span class="num">#08</span>
-          <div class="name">Rabin-Karp + LCS</div>
-          <p class="role">유사 문장 검출 · 색상 그룹 시각화</p>
-          <div class="big-o"><span class="k">T</span>O(n + m) avg</div>
-        </article>
-      </div>
-
-      <div class="alg-foot reveal" data-d="7">
-        <span><span class="k">구현 위치</span> <span class="v">backend / services / algorithms /</span> <span style="color: var(--muted);">(파일별 분리)</span></span>
-        <span><span class="k">상세 코드 위치</span> <span class="v">p. 13 부록</span></span>
-      </div>
-    </section>
-
-    <!-- ════════════ SLIDE 08 — FEATURE 01 Solar LLM ════════════ -->
-    <section class="slide" data-slide="8">
-      <header class="run reveal" data-d="1">
-        <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>06 · FEATURES</span></span>
-        <span class="rhs"><span>FEATURE 01 / 04</span><span class="sep">/</span><span>P. 08 / 14</span></span>
-      </header>
-      <hr class="rule-major reveal" data-d="1">
-
-      <div class="feat-wrap">
-        <div class="feat-panel">
-          <div class="feat-panel-head reveal" data-d="2">
-            <span class="eyebrow"><span style="color: var(--muted);">FEATURE</span><span class="sep">/</span><span style="color: var(--ink);">01</span><span class="of"> / 04</span></span>
-            <div class="name" style="view-transition-name: feat-title;">Solar LLM<br>정형화</div>
-          </div>
-          <div class="feat-algo-line reveal" data-d="3">
-            <span class="algo-tag" style="background: var(--a1);">#01 Solar LLM</span>
-          </div>
-
-          <p class="feat-summary reveal" data-d="4">
-            <strong>PDF · MD · URL</strong> 포트폴리오를 Solar LLM으로 자동 파싱해
-            <strong>공통 JSON 스키마</strong>로 변환한다.
-          </p>
-
-          <div class="feat-sec reveal" data-d="5">
-            <div class="h">Flow</div>
-            <pre class="feat-code"><span class="file">parser.py</span>      <span class="comment"># pdfplumber 텍스트 추출</span>
-   <span class="arrow">↓</span>
-<span class="file">solar.py</span>       <span class="comment"># Solar 프롬프트 → API 호출</span>
-   <span class="arrow">↓</span>
-<span class="fn">JSON 응답</span>      <span class="comment"># 포트폴리오 객체 파싱</span></pre>
-          </div>
-
-          <div class="feat-sec reveal" data-d="6">
-            <div class="h">부가</div>
-            <ul class="feat-bullets">
-              <li>폴더 일괄 업로드 <code>FolderUploadModal</code></li>
-              <li>32k 토큰 초과 시 분할 + 절단 경고 배너</li>
-              <li>Solar 실패 시 텍스트 파서 자동 폴백</li>
-              <li>업로드 단계 표시 (파일 → LLM → 저장 → 완료)</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="feat-stage reveal" data-d="3">
-          <figure class="feat-shot">
-            <div class="feat-shot-img">
-              <img data-shot="solar" alt="Solar LLM 파싱 결과 — 김철수 포트폴리오">
-            </div>
-            <figcaption class="feat-shot-cap">
-              <span>FIG. 02 — Solar LLM 파싱 결과 · 김철수</span>
-              <span>↗ services/solar.py</span>
-            </figcaption>
-          </figure>
-
-          <div class="feat-strip reveal" data-d="6">
-            <div class="feat-strip-card s1 active" data-jump="8">
-              <span class="sn">#01</span><span class="st">Solar LLM 정형화</span><span class="sd">Now</span>
-            </div>
-            <div class="feat-strip-card s2" data-jump="9">
-              <span class="sn">#02</span><span class="st">스펙 매칭 + 점수</span><span class="sd">Next</span>
-            </div>
-            <div class="feat-strip-card s3" data-jump="10">
-              <span class="sn">#03</span><span class="st">별칭·오타 검색</span><span class="sd">→</span>
-            </div>
-            <div class="feat-strip-card s4" data-jump="11">
-              <span class="sn">#04</span><span class="st">유사 문장 검출</span><span class="sd">→</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ════════════ SLIDE 09 — FEATURE 02 Spec Matching ════════════ -->
-    <section class="slide" data-slide="9">
-      <header class="run reveal" data-d="1">
-        <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>06 · FEATURES</span></span>
-        <span class="rhs"><span>FEATURE 02 / 04</span><span class="sep">/</span><span>P. 09 / 14</span></span>
-      </header>
-      <hr class="rule-major reveal" data-d="1">
-
-      <div class="feat-wrap">
-        <div class="feat-panel">
-          <div class="feat-panel-head reveal" data-d="2">
-            <span class="eyebrow"><span style="color: var(--muted);">FEATURE</span><span class="sep">/</span><span style="color: var(--ink);">02</span><span class="of"> / 04</span></span>
-            <div class="name" style="view-transition-name: feat-title;">스펙 매칭 +<br>점수 산출</div>
-          </div>
-          <div class="feat-algo-line reveal" data-d="3">
-            <span class="algo-tag" style="background: var(--a2);">#02 해시 테이블</span>
-            <span class="algo-tag" style="background: var(--a4);">#04 LCS</span>
-            <span class="algo-tag" style="background: var(--a5);">#05 정렬</span>
-          </div>
-
-          <p class="feat-summary reveal" data-d="4">
-            필요 스펙과 지원자 스킬을 <strong>O(1) 매칭</strong>,
-            <strong>0–100% 점수</strong>로 순위 산출.
-          </p>
-
-          <div class="feat-sec reveal" data-d="5">
-            <div class="h">Core code</div>
-            <pre class="feat-code"><span class="file">hash_table.py</span>  <span class="fn">SpecMatcher.match_skills()</span>  <span class="ok">O(1)</span>
-<span class="file">lcs.py</span>         <span class="fn">match_score()</span>             <span class="comment">LCS 점수</span>
-<span class="file">sort.py</span>        <span class="fn">sort_applicants()</span>         <span class="comment">Timsort</span></pre>
-          </div>
-
-          <div class="feat-sec reveal" data-d="6">
-            <div class="h">가중치 (사용자 조절)</div>
-            <ul class="feat-bullets">
-              <li><strong style="color: var(--ink);">스킬 60</strong> · 경력 25 · 프로젝트 15 → 합계 100 자동 정규화</li>
-            </ul>
-          </div>
-
-          <div class="feat-sec reveal" data-d="7">
-            <div class="h">UI 피드백</div>
-            <ul class="feat-bullets">
-              <li>필요 스펙 일치 배지 → 노란 <code>#FFD43B</code> 하이라이트</li>
-              <li>매칭률 색상 — 70%+ <span style="color: var(--green); font-weight: 700;">초록</span> / 40–69% <span style="color: var(--orange); font-weight: 700;">주황</span> / ~39% <span style="color: var(--red); font-weight: 700;">빨강</span></li>
-              <li>분석 완료 배너 "총 N명 중 M명 70%+ 매칭"</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="feat-stage reveal" data-d="3">
-          <figure class="feat-shot">
-            <div class="feat-shot-img">
-              <img data-shot="match" alt="해시 테이블 + LCS 스펙 매칭 점수 정렬">
-            </div>
-            <figcaption class="feat-shot-cap">
-              <span>FIG. 03 — 스펙 매칭 결과 · 점수 정렬</span>
-              <span>↗ services/algorithms/lcs.py</span>
-            </figcaption>
-          </figure>
-
-          <div class="feat-strip reveal" data-d="6">
-            <div class="feat-strip-card s1" data-jump="8">
-              <span class="sn">#01</span><span class="st">Solar LLM 정형화</span><span class="sd">←</span>
-            </div>
-            <div class="feat-strip-card s2 active" data-jump="9">
-              <span class="sn">#02</span><span class="st">스펙 매칭 + 점수</span><span class="sd">Now</span>
-            </div>
-            <div class="feat-strip-card s3" data-jump="10">
-              <span class="sn">#03</span><span class="st">별칭·오타 검색</span><span class="sd">Next</span>
-            </div>
-            <div class="feat-strip-card s4" data-jump="11">
-              <span class="sn">#04</span><span class="st">유사 문장 검출</span><span class="sd">→</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ════════════ SLIDE 10 — FEATURE 03 Alias Search ════════════ -->
-    <section class="slide" data-slide="10">
-      <header class="run reveal" data-d="1">
-        <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>06 · FEATURES</span></span>
-        <span class="rhs"><span>FEATURE 03 / 04</span><span class="sep">/</span><span>P. 10 / 14</span></span>
-      </header>
-      <hr class="rule-major reveal" data-d="1">
-
-      <div class="feat-wrap">
-        <div class="feat-panel">
-          <div class="feat-panel-head reveal" data-d="2">
-            <span class="eyebrow"><span style="color: var(--muted);">FEATURE</span><span class="sep">/</span><span style="color: var(--ink);">03</span><span class="of"> / 04</span></span>
-            <div class="name" style="view-transition-name: feat-title;">별칭·오타<br>허용 검색</div>
-          </div>
-          <div class="feat-algo-line reveal" data-d="3">
-            <span class="algo-tag" style="background: var(--a3);">#03 Edit Distance</span>
-            <span class="algo-tag" style="background: var(--a6);">#06 BST</span>
-            <span class="algo-tag" style="background: var(--a7);">#07 별칭 해시맵</span>
-          </div>
-
-          <p class="feat-summary reveal" data-d="4">
-            <strong>"py" · "파이선" · "python"</strong> 모두 <strong>Python</strong> 결과로
-            통합 검색 + 오타 흡수 <em>(typscript → typescript)</em>.
-          </p>
-
-          <div class="feat-sec reveal" data-d="5">
-            <div class="h">Core code</div>
-            <pre class="feat-code"><span class="file">alias_map.py</span>     <span class="fn">ALIAS_MAP</span>     <span class="comment"># 150+ 별칭 사전</span>
-<span class="file">alias_search.py</span>  <span class="fn">expand_query()</span> <span class="comment"># O(1) + ED 오타</span>
-<span class="file">bst.py</span>           <span class="cls">ApplicantIndex</span> <span class="comment">cross 전체 검색</span>
-                 <span class="cls">TextIndex</span>      <span class="comment">intra 패널 내 검색</span></pre>
-          </div>
-
-          <div class="feat-sec reveal" data-d="6">
-            <div class="h">검색 흐름</div>
-            <pre class="feat-code">검색어 입력 (300ms 디바운스)
-   <span class="arrow">↓</span>
-<span class="fn">expand_query</span>: alias 사전 + ED ≤ 2 흡수
-   <span class="arrow">↓</span>
-<span class="cls">BST 탐색</span> (O(log n) 평균)
-   <span class="arrow">↓</span>
-결과 하이라이트 <span class="fn">highlight_positions</span></pre>
-          </div>
-
-          <div class="feat-sec reveal" data-d="7">
-            <div class="h">부가</div>
-            <ul class="feat-bullets">
-              <li>검색 히스토리 8건 <code>localStorage</code> 저장</li>
-              <li>패널 내 검색 (▲▼ 네비게이션 · N/M 카운터)</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="feat-stage reveal" data-d="3">
-          <figure class="feat-shot">
-            <div class="feat-shot-img">
-              <img data-shot="search" alt="Edit Distance 오타 허용 — typscript 검색 결과">
-            </div>
-            <figcaption class="feat-shot-cap">
-              <span>FIG. 04 — 오타 "typscript" → TypeScript 매칭</span>
-              <span>↗ algorithms/alias_search.py</span>
-            </figcaption>
-          </figure>
-
-          <div class="feat-strip reveal" data-d="6">
-            <div class="feat-strip-card s1" data-jump="8">
-              <span class="sn">#01</span><span class="st">Solar LLM 정형화</span><span class="sd">←</span>
-            </div>
-            <div class="feat-strip-card s2" data-jump="9">
-              <span class="sn">#02</span><span class="st">스펙 매칭 + 점수</span><span class="sd">←</span>
-            </div>
-            <div class="feat-strip-card s3 active" data-jump="10">
-              <span class="sn">#03</span><span class="st">별칭·오타 검색</span><span class="sd">Now</span>
-            </div>
-            <div class="feat-strip-card s4" data-jump="11">
-              <span class="sn">#04</span><span class="st">유사 문장 검출</span><span class="sd">Next</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ════════════ SLIDE 11 — FEATURE 04 Similar Detection ════════════ -->
-    <section class="slide" data-slide="11">
-      <header class="run reveal" data-d="1">
-        <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>06 · FEATURES</span></span>
-        <span class="rhs"><span>FEATURE 04 / 04</span><span class="sep">/</span><span>P. 11 / 14</span></span>
-      </header>
-      <hr class="rule-major reveal" data-d="1">
-
-      <div class="feat-wrap">
-        <div class="feat-panel">
-          <div class="feat-panel-head reveal" data-d="2">
-            <span class="eyebrow"><span style="color: var(--muted);">FEATURE</span><span class="sep">/</span><span style="color: var(--ink);">04</span><span class="of"> / 04</span></span>
-            <div class="name" style="view-transition-name: feat-title;">유사 문장<br>검출</div>
-          </div>
-          <div class="feat-algo-line reveal" data-d="3">
-            <span class="algo-tag" style="background: var(--a8);">#08 Rabin-Karp</span>
-            <span class="algo-tag" style="background: var(--a4);">#04 LCS 검증</span>
-          </div>
-
-          <p class="feat-summary reveal" data-d="4">
-            지원자 간 <strong>베끼거나 중복된 구간</strong>을 색상 그룹으로 자동 검출 →
-            <em>표절 의심 즉시 가시화</em>.
-          </p>
-
-          <div class="feat-sec reveal" data-d="5">
-            <div class="h">알고리즘 흐름</div>
-            <pre class="feat-code">텍스트 토큰화 <span class="fn">_tokenize</span>
-   <span class="arrow">↓</span>
-슬라이딩 윈도우 롤링 해시 <span class="comment">(window=5)</span>
-   <span class="arrow">↓</span>
-해시 충돌 구간 수집
-   <span class="arrow">↓</span>
-<span class="ok">LCS 검증</span> <span class="comment">(lcs_length ≥ 70% 통과)</span>
-   <span class="arrow">↓</span>
-인접 구간 병합 <span class="fn">merge_ranges</span>
-   <span class="arrow">↓</span>
-섹션 경계 분할 <span class="comment"># 오검출 방지</span>
-   <span class="arrow">↓</span>
-색상 그룹 번호 부여</pre>
-          </div>
-
-          <div class="feat-sec reveal" data-d="6">
-            <div class="h">롤링 해시 공식</div>
-            <div class="feat-formula">hash = (w₁×31⁴ + w₂×31³ + w₃×31² + w₄×31 + w₅) mod (2³¹−1)</div>
-          </div>
-
-          <div class="feat-sec reveal" data-d="7">
-            <div class="h">표기 옵션</div>
-            <ul class="feat-bullets">
-              <li>흐리게 보기 (기본) · 단일 색상 · <strong>컬러풀 6색 팔레트</strong></li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="feat-stage reveal" data-d="3">
-          <figure class="feat-shot">
-            <div class="feat-shot-img">
-              <img data-shot="similar" alt="Rabin-Karp 컬러풀 팔레트 유사 문장 하이라이트">
-            </div>
-            <figcaption class="feat-shot-cap">
-              <span>FIG. 05 — 유사 문장 컬러풀 팔레트</span>
-              <span>↗ algorithms/rabin_karp.py</span>
-            </figcaption>
-          </figure>
-
-          <div class="feat-strip reveal" data-d="6">
-            <div class="feat-strip-card s1" data-jump="8">
-              <span class="sn">#01</span><span class="st">Solar LLM 정형화</span><span class="sd">←</span>
-            </div>
-            <div class="feat-strip-card s2" data-jump="9">
-              <span class="sn">#02</span><span class="st">스펙 매칭 + 점수</span><span class="sd">←</span>
-            </div>
-            <div class="feat-strip-card s3" data-jump="10">
-              <span class="sn">#03</span><span class="st">별칭·오타 검색</span><span class="sd">←</span>
-            </div>
-            <div class="feat-strip-card s4 active" data-jump="11">
-              <span class="sn">#04</span><span class="st">유사 문장 검출</span><span class="sd">Now</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ════════════ SLIDE 12 — WORKFLOW + RETROSPECTIVE ════════════ -->
-    <section class="slide" data-slide="12">
-      <header class="run reveal" data-d="1">
-        <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>07 · PROCESS</span></span>
-        <span class="rhs"><span>P. 12 / 14</span></span>
-      </header>
-      <hr class="rule-major reveal" data-d="1">
-
-      <div class="wf-head reveal" data-d="2">
-        <div>
-          <div class="eyebrow" style="margin-bottom: 1cqw;"><span style="color: var(--muted);">PROCESS</span><span class="sep">/</span><span>6 PHASES &middot; CLAUDE CLI</span></div>
+      <div class="compact-head reveal" data-d="2">
+        <div class="left">
+          <div class="eyebrow"><span style="color: var(--muted);">PROCESS</span><span class="sep">/</span><span>7 PHASES &middot; CLAUDE CLI</span></div>
           <h2 class="display">개발 워크플로우</h2>
         </div>
-        <div class="wf-head-meta">
-          <strong style="color: var(--ink);">22일</strong> 개발 기간<br>
-          <strong style="color: var(--ink);">7</strong> Phase<br>
-          <strong style="color: var(--ink);">100+</strong> 검증 항목
+        <div class="right">
+          <strong>22일</strong> 개발 기간<span class="sep" style="margin: 0 .4em; color: var(--light);">/</span><strong>7</strong> Phase
         </div>
       </div>
 
@@ -2738,110 +2175,618 @@ button { font: inherit; cursor: pointer; }
       </div>
     </section>
 
-    <!-- ════════════ SLIDE 13 — APPENDIX / CODE MAP ════════════ -->
-    <section class="slide" data-slide="13">
+    <!-- ════════════ 6 — TECH STACK ════════════ -->
+    <section class="slide" data-slide="6">
       <header class="run reveal" data-d="1">
-        <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>08 · APPENDIX</span></span>
-        <span class="rhs"><span>P. 13 / 14</span></span>
+        <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>04 · STACK</span></span>
+        <span class="rhs"><span>P. 06 / 15</span></span>
       </header>
       <hr class="rule-major reveal" data-d="1">
 
-      <div class="app-head reveal" data-d="2">
-        <div>
-          <div class="eyebrow" style="margin-bottom: 1cqw;"><span style="color: var(--muted);">APPENDIX</span><span class="sep">/</span><span>CODE MAP</span></div>
-          <h2 class="display">부록 — 코드 명세</h2>
+      <div class="stack-wrap">
+        <figure class="stack-thumb reveal" data-d="2">
+          <div class="stack-thumb-img">
+            <img data-shot="intro" alt="Portfolio Reviewer 메인 분석 화면">
+          </div>
+          <figcaption class="stack-thumb-cap">
+            <span>FIG. 01 ↻</span>
+            <span>p. 03</span>
+          </figcaption>
+        </figure>
+
+        <div class="stack-title reveal" data-d="3">
+          <div>
+            <div class="eyebrow" style="margin-bottom: .6cqw;"><span style="color: var(--muted);">STACK</span><span class="sep">/</span><span>ENVIRONMENT</span></div>
+            <h2 class="display">기술 스택 &amp; 실행 환경</h2>
+          </div>
+          <div class="stack-title-meta">
+            10+<br>dependencies
+          </div>
         </div>
-        <div class="wf-head-meta">발표 후 참고용 — 각 파일·함수의<br>실제 위치를 한 페이지에 정리.</div>
+
+        <div class="stack-grid">
+          <article class="stack-card f reveal" data-d="4">
+            <span class="label">Frontend</span>
+            <div class="name">React 18 + Vite 5</div>
+            <p class="desc"><code>react-markdown</code> + <code>remark-gfm</code> · 순수 CSS (Pretendard · JetBrains Mono)</p>
+          </article>
+          <article class="stack-card b reveal" data-d="5">
+            <span class="label">Backend</span>
+            <div class="name">Python 3.10+ &middot; FastAPI</div>
+            <p class="desc"><code>Uvicorn</code> · <code>httpx</code> 비동기 · <code>pdfplumber</code></p>
+          </article>
+          <article class="stack-card l reveal" data-d="6">
+            <span class="label">LLM</span>
+            <div class="name">Upstage Solar API</div>
+            <p class="desc">모델 <code>solar-pro</code> · 32k 컨텍스트 · 한국어 자연 출력</p>
+          </article>
+          <article class="stack-card d reveal" data-d="7">
+            <span class="label">Data</span>
+            <div class="name">JSON + localStorage</div>
+            <p class="desc"><code>session.json</code> 백엔드 세션 + <code>localStorage</code> 브라우저 캐시</p>
+          </article>
+        </div>
+
+        <footer class="env-bar reveal" data-d="8">
+          <span class="item"><span class="k">OS</span><span class="v">Win / macOS / Linux</span></span>
+          <span class="sep">/</span>
+          <span class="item"><span class="k">Node</span><span class="v">18+</span></span>
+          <span class="sep">/</span>
+          <span class="item"><span class="k">Python</span><span class="v">3.10+</span></span>
+          <span class="sep">/</span>
+          <span class="item"><span class="k">Frontend</span><span class="v">:5173</span></span>
+          <span class="sep">/</span>
+          <span class="item"><span class="k">Backend</span><span class="v">:8000</span></span>
+        </footer>
+      </div>
+    </section>
+
+    <!-- ════════════ 7 — ARCHITECTURE ════════════ -->
+    <section class="slide" data-slide="7">
+      <header class="run reveal" data-d="1">
+        <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>05 · ARCHITECTURE</span></span>
+        <span class="rhs"><span>P. 07 / 15</span></span>
+      </header>
+      <hr class="rule-major reveal" data-d="1">
+
+      <div class="compact-head reveal" data-d="2">
+        <div class="left">
+          <div class="eyebrow"><span style="color: var(--muted);">SYSTEM</span><span class="sep">/</span><span>CLIENT &middot; SERVER</span></div>
+          <h2 class="display">시스템 구성</h2>
+        </div>
+        <div class="right">
+          Client <strong>React + Vite</strong><span class="sep" style="margin: 0 .4em; color: var(--light);">/</span>Server <strong>FastAPI</strong>
+        </div>
       </div>
 
-      <div class="app-cols">
-        <section class="app-col reveal" data-d="3">
-          <div class="app-col-head">
-            Algorithms
-            <span class="path">backend / services / algorithms /</span>
+      <div class="arch-diagram">
+        <div class="arch-row reveal" data-d="3">
+          <div class="arch-node browser">
+            <span class="nlabel">Client</span>
+            <span class="nname">브라우저</span>
+            <span class="nport">React 18 + Vite · :5173</span>
           </div>
-          <ol class="app-list">
-            <li class="app-row"><span class="k">#01</span><span class="v"><span class="file">solar.py</span> · <span class="fn">parse_portfolio()</span><span class="annot">Upstage Solar API 호출 + JSON 파싱</span></span></li>
-            <li class="app-row"><span class="k">#02</span><span class="v"><span class="file">hash_table.py</span> · <span class="cls">class SpecMatcher</span><span class="annot">필요 스펙 O(1) 매칭</span></span></li>
-            <li class="app-row"><span class="k">#03</span><span class="v"><span class="file">edit_distance.py</span> · <span class="fn">is_similar()</span><span class="annot">Wagner-Fischer DP</span></span></li>
-            <li class="app-row"><span class="k">#04</span><span class="v"><span class="file">lcs.py</span> · <span class="fn">match_score()</span><span class="annot">롤링 배열 LCS</span></span></li>
-            <li class="app-row"><span class="k">#05</span><span class="v"><span class="file">sort.py</span> · <span class="fn">sort_applicants()</span><span class="annot">Timsort 기반 다중 기준</span></span></li>
-            <li class="app-row"><span class="k">#06</span><span class="v"><span class="file">bst.py</span> · <span class="cls">ApplicantIndex</span> / <span class="cls">TextIndex</span><span class="annot">cross · intra 두 모드</span></span></li>
-            <li class="app-row"><span class="k">#07</span><span class="v"><span class="file">alias_map.py</span> + <span class="file">alias_search.py</span><span class="annot">150+ 별칭 + 퍼지 매칭</span></span></li>
-            <li class="app-row"><span class="k">#08</span><span class="v"><span class="file">rabin_karp.py</span> · <span class="fn">detect_similar()</span><span class="annot">롤링 해시 + LCS 검증</span></span></li>
-          </ol>
+          <div class="arch-arrow">
+            <span class="a-label">/api · proxy</span>
+            <span class="a-line"></span>
+          </div>
+          <div class="arch-node server">
+            <span class="nlabel">Server</span>
+            <span class="nname">FastAPI 서버</span>
+            <span class="nport">Python 3.10+ · Uvicorn · :8000</span>
+          </div>
+        </div>
+
+        <div class="arch-modules reveal" data-d="4">
+          <div class="arch-mod">
+            <div class="path">routers / portfolios.py</div>
+            <div class="desc">포트폴리오 CRUD · 분석 · 검색 · 유사 검출 엔드포인트</div>
+          </div>
+          <div class="arch-mod">
+            <div class="path">routers / utils.py</div>
+            <div class="desc">채용 설정 자동 추출 · 공통 헬퍼 함수</div>
+          </div>
+          <div class="arch-mod services">
+            <div class="path">services / *</div>
+            <div class="desc">
+              <span class="svc">solar.py</span>
+              <span class="svc">_solar_http.py</span>
+              <span class="svc">parser.py</span>
+              <span class="svc algo">algorithms/ · 8개</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="arch-warn reveal" data-d="5">
+          <span class="w-label">⚠ Constraint</span>
+          <span class="w-body">Solar <strong>32k 컨텍스트</strong> 초과 시 자동 분할 처리 + <code>_truncated</code> 플래그로 절단 경고 배너 표시.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════ 8 — ALGORITHMS GRID ════════════ -->
+    <section class="slide" data-slide="8">
+      <header class="run reveal" data-d="1">
+        <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>06 · ALGORITHMS</span></span>
+        <span class="rhs"><span>P. 08 / 15</span></span>
+      </header>
+      <hr class="rule-major reveal" data-d="1">
+
+      <div class="compact-head reveal" data-d="2">
+        <div class="left">
+          <div class="eyebrow"><span style="color: var(--muted);">ALGORITHMS</span><span class="sep">/</span><span>8 IMPLEMENTATIONS</span></div>
+          <h2 class="display">알고리즘 8종</h2>
+        </div>
+        <div class="right">상세는 이어지는 4개 슬라이드</div>
+      </div>
+
+      <div class="alg-grid">
+        <article class="alg-card c1 reveal" data-d="3">
+          <span class="num">#01</span>
+          <div class="name">Solar LLM</div>
+          <p class="role">포트폴리오 정형화 · PDF·MD·URL → JSON</p>
+          <div class="big-o"><span class="k">T</span>API dependent</div>
+        </article>
+        <article class="alg-card c2 reveal" data-d="3">
+          <span class="num">#02</span>
+          <div class="name">해시 테이블</div>
+          <p class="role">필요 스펙 O(1) 매칭 · 스킬 하이라이트</p>
+          <div class="big-o"><span class="k">T</span>O(1) avg</div>
+        </article>
+        <article class="alg-card c3 reveal" data-d="4">
+          <span class="num">#03</span>
+          <div class="name">Edit Distance</div>
+          <p class="role">DP · 기술명 표기 차이 · 오타 흡수</p>
+          <div class="big-o"><span class="k">T</span>O(m × n)</div>
+        </article>
+        <article class="alg-card c4 reveal" data-d="4">
+          <span class="num">#04</span>
+          <div class="name">LCS</div>
+          <p class="role">DP · 매칭 점수 산출 · 0–100%</p>
+          <div class="big-o"><span class="k">T</span>O(m × n) → O(n)</div>
+        </article>
+        <article class="alg-card c5 reveal" data-d="5">
+          <span class="num">#05</span>
+          <div class="name">정렬 (Timsort)</div>
+          <p class="role">매칭률 · 경력 · 이름 기준 정렬</p>
+          <div class="big-o"><span class="k">T</span>O(n log n)</div>
+        </article>
+        <article class="alg-card c6 reveal" data-d="5">
+          <span class="num">#06</span>
+          <div class="name">BST</div>
+          <p class="role">키워드 검색 cross · intra 두 모드</p>
+          <div class="big-o"><span class="k">T</span>O(log n) avg</div>
+        </article>
+        <article class="alg-card c7 reveal" data-d="6">
+          <span class="num">#07</span>
+          <div class="name">별칭 해시맵 + ED</div>
+          <p class="role">동의어 · 오타 통합 · 150+ 별칭 사전</p>
+          <div class="big-o"><span class="k">T</span>O(k × m)</div>
+        </article>
+        <article class="alg-card c8 reveal" data-d="6">
+          <span class="num">#08</span>
+          <div class="name">Rabin-Karp + LCS</div>
+          <p class="role">유사 문장 검출 · 색상 그룹 시각화</p>
+          <div class="big-o"><span class="k">T</span>O(n + m) avg</div>
+        </article>
+      </div>
+
+      <div class="alg-foot reveal" data-d="7">
+        <span><span class="k">구현 위치</span> <span class="v">backend / services / algorithms /</span></span>
+        <span><span class="k">코드 상세</span> <span class="v">p. 14 부록</span></span>
+      </div>
+    </section>
+
+    <!-- ════════════ 9 — FEATURE 01 Solar LLM ════════════ -->
+    <section class="slide" data-slide="9">
+      <header class="run reveal" data-d="1">
+        <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>07 · FEATURES</span></span>
+        <span class="rhs"><span>FEATURE 01 / 04</span><span class="sep">/</span><span>P. 09 / 15</span></span>
+      </header>
+      <hr class="rule-major reveal" data-d="1">
+
+      <div class="feat-wrap">
+        <div class="feat-panel">
+          <div class="feat-panel-head reveal" data-d="2">
+            <span class="eyebrow"><span style="color: var(--muted);">FEATURE</span><span class="sep">/</span><span style="color: var(--ink);">01</span><span class="of"> / 04</span></span>
+            <div class="name">Solar LLM 정형화</div>
+          </div>
+          <div class="feat-algo-line reveal" data-d="3">
+            <span class="algo-tag" style="background: var(--a1);">#01 Solar LLM</span>
+          </div>
+
+          <p class="feat-summary reveal" data-d="4">
+            <strong>PDF · MD · URL</strong> 포트폴리오를 Solar LLM으로 자동 파싱해
+            <strong>공통 JSON 스키마</strong>로 변환.
+          </p>
+
+          <div class="feat-sec reveal" data-d="5">
+            <div class="h">Flow</div>
+            <pre class="feat-code"><span class="file">parser.py</span>   <span class="comment"># pdfplumber 텍스트 추출</span>
+   <span class="arrow">↓</span>
+<span class="file">solar.py</span>    <span class="comment"># Solar 프롬프트 → API</span>
+   <span class="arrow">↓</span>
+<span class="fn">JSON 응답</span>   <span class="comment"># 포트폴리오 객체 파싱</span></pre>
+          </div>
+
+          <div class="feat-sec reveal" data-d="6">
+            <div class="h">부가</div>
+            <ul class="feat-bullets">
+              <li>폴더 일괄 업로드 <code>FolderUploadModal</code></li>
+              <li>32k 토큰 초과 시 분할 + 절단 경고 배너</li>
+              <li>Solar 실패 시 텍스트 파서 자동 폴백</li>
+              <li>업로드 단계 표시 (파일 → LLM → 저장 → 완료)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="feat-stage reveal" data-d="3">
+          <figure class="feat-shot">
+            <div class="feat-shot-img">
+              <img data-shot="solar" alt="Solar LLM 파싱 결과 — 김철수 포트폴리오">
+            </div>
+            <figcaption class="feat-shot-cap">
+              <span>FIG. 02 — Solar LLM 파싱 · 김철수</span>
+              <span>↗ services/solar.py</span>
+            </figcaption>
+          </figure>
+
+          <div class="feat-strip reveal" data-d="6">
+            <div class="feat-strip-card s1 active" data-jump="9"><span class="sn">#01</span><span class="st">Solar LLM 정형화</span><span class="sd">Now</span></div>
+            <div class="feat-strip-card s2" data-jump="10"><span class="sn">#02</span><span class="st">스펙 매칭 + 점수</span><span class="sd">Next</span></div>
+            <div class="feat-strip-card s3" data-jump="11"><span class="sn">#03</span><span class="st">별칭·오타 검색</span><span class="sd">→</span></div>
+            <div class="feat-strip-card s4" data-jump="12"><span class="sn">#04</span><span class="st">유사 문장 검출</span><span class="sd">→</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════ 10 — FEATURE 02 Spec Matching ════════════ -->
+    <section class="slide" data-slide="10">
+      <header class="run reveal" data-d="1">
+        <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>07 · FEATURES</span></span>
+        <span class="rhs"><span>FEATURE 02 / 04</span><span class="sep">/</span><span>P. 10 / 15</span></span>
+      </header>
+      <hr class="rule-major reveal" data-d="1">
+
+      <div class="feat-wrap">
+        <div class="feat-panel">
+          <div class="feat-panel-head reveal" data-d="2">
+            <span class="eyebrow"><span style="color: var(--muted);">FEATURE</span><span class="sep">/</span><span style="color: var(--ink);">02</span><span class="of"> / 04</span></span>
+            <div class="name">스펙 매칭 + 점수</div>
+          </div>
+          <div class="feat-algo-line reveal" data-d="3">
+            <span class="algo-tag" style="background: var(--a2);">#02 해시 테이블</span>
+            <span class="algo-tag" style="background: var(--a4);">#04 LCS</span>
+            <span class="algo-tag" style="background: var(--a5);">#05 정렬</span>
+          </div>
+
+          <p class="feat-summary reveal" data-d="4">
+            필요 스펙과 지원자 스킬을 <strong>O(1) 매칭</strong>,
+            <strong>0–100% 점수</strong>로 순위 산출.
+          </p>
+
+          <div class="feat-sec reveal" data-d="5">
+            <div class="h">Core code</div>
+            <pre class="feat-code"><span class="file">hash_table.py</span>  <span class="fn">SpecMatcher.match_skills()</span>
+<span class="file">lcs.py</span>         <span class="fn">match_score()</span>  <span class="comment">LCS</span>
+<span class="file">sort.py</span>        <span class="fn">sort_applicants()</span>  <span class="comment">Timsort</span></pre>
+          </div>
+
+          <div class="feat-sec reveal" data-d="6">
+            <div class="h">가중치</div>
+            <ul class="feat-bullets">
+              <li><strong style="color: var(--ink);">스킬 60</strong> · 경력 25 · 프로젝트 15 (합계 100 자동 정규화)</li>
+            </ul>
+          </div>
+
+          <div class="feat-sec reveal" data-d="7">
+            <div class="h">UI 피드백</div>
+            <ul class="feat-bullets">
+              <li>스펙 일치 → 노란 <code>#FFD43B</code> 하이라이트</li>
+              <li>70%+ <span style="color: var(--green); font-weight: 700;">초록</span> · 40–69% <span style="color: var(--orange); font-weight: 700;">주황</span> · ~39% <span style="color: var(--red); font-weight: 700;">빨강</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="feat-stage reveal" data-d="3">
+          <figure class="feat-shot">
+            <div class="feat-shot-img">
+              <img data-shot="match" alt="해시 테이블 + LCS 스펙 매칭 점수 정렬">
+            </div>
+            <figcaption class="feat-shot-cap">
+              <span>FIG. 03 — 스펙 매칭 · 점수 정렬</span>
+              <span>↗ algorithms/lcs.py</span>
+            </figcaption>
+          </figure>
+
+          <div class="feat-strip reveal" data-d="6">
+            <div class="feat-strip-card s1" data-jump="9"><span class="sn">#01</span><span class="st">Solar LLM 정형화</span><span class="sd">←</span></div>
+            <div class="feat-strip-card s2 active" data-jump="10"><span class="sn">#02</span><span class="st">스펙 매칭 + 점수</span><span class="sd">Now</span></div>
+            <div class="feat-strip-card s3" data-jump="11"><span class="sn">#03</span><span class="st">별칭·오타 검색</span><span class="sd">Next</span></div>
+            <div class="feat-strip-card s4" data-jump="12"><span class="sn">#04</span><span class="st">유사 문장 검출</span><span class="sd">→</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════ 11 — FEATURE 03 Alias Search ════════════ -->
+    <section class="slide" data-slide="11">
+      <header class="run reveal" data-d="1">
+        <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>07 · FEATURES</span></span>
+        <span class="rhs"><span>FEATURE 03 / 04</span><span class="sep">/</span><span>P. 11 / 15</span></span>
+      </header>
+      <hr class="rule-major reveal" data-d="1">
+
+      <div class="feat-wrap">
+        <div class="feat-panel">
+          <div class="feat-panel-head reveal" data-d="2">
+            <span class="eyebrow"><span style="color: var(--muted);">FEATURE</span><span class="sep">/</span><span style="color: var(--ink);">03</span><span class="of"> / 04</span></span>
+            <div class="name">별칭·오타 허용 검색</div>
+          </div>
+          <div class="feat-algo-line reveal" data-d="3">
+            <span class="algo-tag" style="background: var(--a3);">#03 Edit Distance</span>
+            <span class="algo-tag" style="background: var(--a6);">#06 BST</span>
+            <span class="algo-tag" style="background: var(--a7);">#07 별칭</span>
+          </div>
+
+          <p class="feat-summary reveal" data-d="4">
+            <strong>"py" · "파이선" · "python"</strong> 통합 검색 +
+            오타 흡수 <em>(typscript → typescript)</em>.
+          </p>
+
+          <div class="feat-sec reveal" data-d="5">
+            <div class="h">Core code</div>
+            <pre class="feat-code"><span class="file">alias_map.py</span>     <span class="fn">ALIAS_MAP</span>     <span class="comment"># 150+ 별칭</span>
+<span class="file">alias_search.py</span>  <span class="fn">expand_query()</span> <span class="comment"># + ED 오타</span>
+<span class="file">bst.py</span>           <span class="fn">ApplicantIndex</span> <span class="comment">cross</span>
+                 <span class="fn">TextIndex</span>      <span class="comment">intra</span></pre>
+          </div>
+
+          <div class="feat-sec reveal" data-d="6">
+            <div class="h">검색 흐름</div>
+            <pre class="feat-code">검색어 (300ms 디바운스)
+   <span class="arrow">↓</span>
+alias 사전 + ED ≤ 2 흡수
+   <span class="arrow">↓</span>
+BST 탐색 <span class="comment">O(log n)</span>
+   <span class="arrow">↓</span>
+결과 하이라이트</pre>
+          </div>
+        </div>
+
+        <div class="feat-stage reveal" data-d="3">
+          <figure class="feat-shot">
+            <div class="feat-shot-img">
+              <img data-shot="search" alt="Edit Distance 오타 허용 — typscript 검색 결과">
+            </div>
+            <figcaption class="feat-shot-cap">
+              <span>FIG. 04 — "typscript" → TypeScript</span>
+              <span>↗ algorithms/alias_search.py</span>
+            </figcaption>
+          </figure>
+
+          <div class="feat-strip reveal" data-d="6">
+            <div class="feat-strip-card s1" data-jump="9"><span class="sn">#01</span><span class="st">Solar LLM 정형화</span><span class="sd">←</span></div>
+            <div class="feat-strip-card s2" data-jump="10"><span class="sn">#02</span><span class="st">스펙 매칭 + 점수</span><span class="sd">←</span></div>
+            <div class="feat-strip-card s3 active" data-jump="11"><span class="sn">#03</span><span class="st">별칭·오타 검색</span><span class="sd">Now</span></div>
+            <div class="feat-strip-card s4" data-jump="12"><span class="sn">#04</span><span class="st">유사 문장 검출</span><span class="sd">Next</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════ 12 — FEATURE 04 Similar Detection ════════════ -->
+    <section class="slide" data-slide="12">
+      <header class="run reveal" data-d="1">
+        <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>07 · FEATURES</span></span>
+        <span class="rhs"><span>FEATURE 04 / 04</span><span class="sep">/</span><span>P. 12 / 15</span></span>
+      </header>
+      <hr class="rule-major reveal" data-d="1">
+
+      <div class="feat-wrap">
+        <div class="feat-panel">
+          <div class="feat-panel-head reveal" data-d="2">
+            <span class="eyebrow"><span style="color: var(--muted);">FEATURE</span><span class="sep">/</span><span style="color: var(--ink);">04</span><span class="of"> / 04</span></span>
+            <div class="name">유사 문장 검출</div>
+          </div>
+          <div class="feat-algo-line reveal" data-d="3">
+            <span class="algo-tag" style="background: var(--a8);">#08 Rabin-Karp</span>
+            <span class="algo-tag" style="background: var(--a4);">#04 LCS 검증</span>
+          </div>
+
+          <p class="feat-summary reveal" data-d="4">
+            지원자 간 <strong>베끼거나 중복된 구간</strong>을 색상 그룹으로
+            자동 검출 → <em>표절 의심 즉시 가시화</em>.
+          </p>
+
+          <div class="feat-sec reveal" data-d="5">
+            <div class="h">흐름</div>
+            <pre class="feat-code">토큰화 → 슬라이딩 롤링 해시 <span class="comment">(W=5)</span>
+   <span class="arrow">↓</span>
+해시 충돌 → <span class="ok">LCS 검증</span> <span class="comment">(≥ 70%)</span>
+   <span class="arrow">↓</span>
+인접 병합 → 섹션 분할
+   <span class="arrow">↓</span>
+색상 그룹 부여</pre>
+          </div>
+
+          <div class="feat-sec reveal" data-d="6">
+            <div class="h">롤링 해시 공식</div>
+            <div class="feat-formula">hash = (w₁×31⁴ + w₂×31³ + … + w₅) mod (2³¹−1)</div>
+          </div>
+
+          <div class="feat-sec reveal" data-d="7">
+            <div class="h">표기 옵션</div>
+            <ul class="feat-bullets">
+              <li>흐리게 · 단일 색상 · <strong>컬러풀 6색 팔레트</strong></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="feat-stage reveal" data-d="3">
+          <figure class="feat-shot">
+            <div class="feat-shot-img">
+              <img data-shot="similar" alt="Rabin-Karp 컬러풀 팔레트 유사 문장 하이라이트">
+            </div>
+            <figcaption class="feat-shot-cap">
+              <span>FIG. 05 — 컬러풀 팔레트</span>
+              <span>↗ algorithms/rabin_karp.py</span>
+            </figcaption>
+          </figure>
+
+          <div class="feat-strip reveal" data-d="6">
+            <div class="feat-strip-card s1" data-jump="9"><span class="sn">#01</span><span class="st">Solar LLM 정형화</span><span class="sd">←</span></div>
+            <div class="feat-strip-card s2" data-jump="10"><span class="sn">#02</span><span class="st">스펙 매칭 + 점수</span><span class="sd">←</span></div>
+            <div class="feat-strip-card s3" data-jump="11"><span class="sn">#03</span><span class="st">별칭·오타 검색</span><span class="sd">←</span></div>
+            <div class="feat-strip-card s4 active" data-jump="12"><span class="sn">#04</span><span class="st">유사 문장 검출</span><span class="sd">Now</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════ 13 — LEARNINGS (NEW placeholder) ════════════ -->
+    <section class="slide" data-slide="13">
+      <header class="run reveal" data-d="1">
+        <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>08 · LEARNINGS</span></span>
+        <span class="rhs"><span>P. 13 / 15</span></span>
+      </header>
+      <hr class="rule-major reveal" data-d="1">
+
+      <div class="compact-head reveal" data-d="2">
+        <div class="left">
+          <div class="eyebrow"><span style="color: var(--muted);">LEARNINGS</span><span class="sep">/</span><span>TAKEAWAYS</span></div>
+          <h2 class="display">이번 프로젝트로 배운 것</h2>
+        </div>
+        <div class="right">— placeholder —<br>내용 추후 추가</div>
+      </div>
+
+      <div class="learn-wrap">
+        <div class="learn-intro reveal" data-d="3">
+          <p class="lede">
+            한 학기 동안 알고리즘 8종을 실제 서비스에 통합하면서
+            <em style="color: var(--ink);">자료구조 선택의 트레이드오프</em>,
+            <em style="color: var(--ink);">LLM 연동의 안정성 설계</em>,
+            그리고 <em style="color: var(--ink);">AI 협업 개발 사이클</em>에 대해
+            폭넓게 학습한 내용을 정리합니다.
+          </p>
+          <div class="note">발표 시 구두 보강 — 카드 본문은 추후 작성 예정</div>
+        </div>
+
+        <div class="learn-grid">
+          <article class="learn-card l1 reveal" data-d="4">
+            <span class="ln">01 · Algorithm</span>
+            <div class="lt">알고리즘 트레이드오프</div>
+            <p class="lb"><em>해시·DP·트리 자료구조의 실제 적용 사례와 시간·공간 복잡도 선택 기준에 대한 학습 내용 작성 예정</em></p>
+          </article>
+          <article class="learn-card l2 reveal" data-d="5">
+            <span class="ln">02 · LLM</span>
+            <div class="lt">LLM 연동 설계</div>
+            <p class="lb"><em>Solar API 통합 · 32k 컨텍스트 한계 · 폴백 처리 · 재시도 백오프에서 얻은 인사이트 작성 예정</em></p>
+          </article>
+          <article class="learn-card l3 reveal" data-d="6">
+            <span class="ln">03 · Architecture</span>
+            <div class="lt">모듈 분리 & 코드 위치</div>
+            <p class="lb"><em>algorithms/ 파일별 분리, code_location.md 기반 추적 등 대규모 코드베이스 유지보수 패턴 작성 예정</em></p>
+          </article>
+          <article class="learn-card l4 reveal" data-d="7">
+            <span class="ln">04 · Process</span>
+            <div class="lt">AI 협업 워크플로우</div>
+            <p class="lb"><em>Claude CLI + Playwright MCP를 활용한 요구사항 → 구현 → 시각 검증 사이클의 효과 작성 예정</em></p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════ 14 — APPENDIX (cleaner) ════════════ -->
+    <section class="slide" data-slide="14">
+      <header class="run reveal" data-d="1">
+        <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>09 · APPENDIX</span></span>
+        <span class="rhs"><span>P. 14 / 15</span></span>
+      </header>
+      <hr class="rule-major reveal" data-d="1">
+
+      <div class="compact-head reveal" data-d="2">
+        <div class="left">
+          <div class="eyebrow"><span style="color: var(--muted);">APPENDIX</span><span class="sep">/</span><span>CODE MAP</span></div>
+          <h2 class="display">부록 — 코드 명세</h2>
+        </div>
+        <div class="right">발표 후 참고용 — 한눈에 보기</div>
+      </div>
+
+      <div class="app-board">
+        <section class="app-block b1 reveal" data-d="3">
+          <div class="app-block-head">
+            <span class="title">Algorithms</span>
+            <span class="count">8 files</span>
+          </div>
+          <div class="app-block-path">backend / services / algorithms /</div>
+          <ul class="app-rows">
+            <li><span class="tag">#01</span><span class="body"><span class="f">solar.py</span> <span class="ann">parse_portfolio()</span></span></li>
+            <li><span class="tag">#02</span><span class="body"><span class="f">hash_table.py</span> <span class="ann">class SpecMatcher</span></span></li>
+            <li><span class="tag">#03</span><span class="body"><span class="f">edit_distance.py</span> <span class="ann">is_similar()</span></span></li>
+            <li><span class="tag">#04</span><span class="body"><span class="f">lcs.py</span> <span class="ann">match_score()</span></span></li>
+            <li><span class="tag">#05</span><span class="body"><span class="f">sort.py</span> <span class="ann">sort_applicants()</span></span></li>
+            <li><span class="tag">#06</span><span class="body"><span class="f">bst.py</span> <span class="ann">ApplicantIndex / TextIndex</span></span></li>
+            <li><span class="tag">#07</span><span class="body"><span class="f">alias_map.py</span> + <span class="f">alias_search.py</span></span></li>
+            <li><span class="tag">#08</span><span class="body"><span class="f">rabin_karp.py</span> <span class="ann">detect_similar()</span></span></li>
+          </ul>
         </section>
 
-        <section class="app-col reveal" data-d="4">
-          <div class="app-col-head">
-            API Endpoints
-            <span class="path">backend / routers /</span>
+        <section class="app-block b2 reveal" data-d="4">
+          <div class="app-block-head">
+            <span class="title">API Endpoints</span>
+            <span class="count">7 routes</span>
           </div>
-          <ol class="app-list">
-            <li class="app-row api"><span class="method post">POST</span><span class="v"><span class="file">/portfolios/add</span><span class="annot">업로드 · Solar 파싱</span></span></li>
-            <li class="app-row api"><span class="method post">POST</span><span class="v"><span class="file">/portfolios/{id}/reanalyze</span><span class="annot">Solar 재파싱</span></span></li>
-            <li class="app-row api"><span class="method post">POST</span><span class="v"><span class="file">/analyze</span><span class="annot">매칭 점수 산출 (해시 + LCS + 정렬)</span></span></li>
-            <li class="app-row api"><span class="method get">GET</span><span class="v"><span class="file">/search</span><span class="annot">별칭 확장 + BST 검색</span></span></li>
-            <li class="app-row api"><span class="method get">GET</span><span class="v"><span class="file">/similar</span><span class="annot">Rabin-Karp 유사 검출</span></span></li>
-            <li class="app-row api"><span class="method post">POST</span><span class="v"><span class="file">/diff</span><span class="annot">2인 비교 — 항목별 winner</span></span></li>
-            <li class="app-row api"><span class="method post">POST</span><span class="v"><span class="file">/portfolios/summarize-all</span><span class="annot">채용 설정 기준 AI 요약</span></span></li>
-          </ol>
+          <div class="app-block-path">backend / routers / portfolios.py</div>
+          <ul class="app-rows">
+            <li><span class="tag post">POST</span><span class="body"><span class="f">/portfolios/add</span><span class="ann">업로드·파싱</span></span></li>
+            <li><span class="tag post">POST</span><span class="body"><span class="f">/portfolios/{id}/reanalyze</span><span class="ann">재파싱</span></span></li>
+            <li><span class="tag post">POST</span><span class="body"><span class="f">/analyze</span><span class="ann">점수 산출</span></span></li>
+            <li><span class="tag get">GET</span><span class="body"><span class="f">/search</span><span class="ann">별칭 + BST</span></span></li>
+            <li><span class="tag get">GET</span><span class="body"><span class="f">/similar</span><span class="ann">유사 검출</span></span></li>
+            <li><span class="tag post">POST</span><span class="body"><span class="f">/diff</span><span class="ann">2인 비교</span></span></li>
+            <li><span class="tag post">POST</span><span class="body"><span class="f">/summarize-all</span><span class="ann">AI 요약</span></span></li>
+          </ul>
         </section>
 
-        <section class="app-col reveal" data-d="5">
-          <div class="app-col-head">
-            Frontend Core
-            <span class="path">frontend / src /</span>
+        <section class="app-block b3 reveal" data-d="5">
+          <div class="app-block-head">
+            <span class="title">Frontend</span>
+            <span class="count">7 modules</span>
           </div>
-          <ol class="app-list">
-            <li class="app-row"><span class="k">PAGE</span><span class="v"><span class="file">WorkflowPage.jsx</span><span class="annot">메인 상태 관리 · 레이아웃</span></span></li>
-            <li class="app-row"><span class="k">VIEW</span><span class="v"><span class="file">PortfolioPanel.jsx</span><span class="annot">패널 · 하이라이트 · 메모</span></span></li>
-            <li class="app-row"><span class="k">LIST</span><span class="v"><span class="file">Sidebar.jsx</span><span class="annot">지원자 리스트 · 필터 · 북마크</span></span></li>
-            <li class="app-row"><span class="k">PANEL</span><span class="v"><span class="file">SettingsDrawer.jsx</span><span class="annot">토글 · 가중치 슬라이더</span></span></li>
-            <li class="app-row"><span class="k">MODAL</span><span class="v"><span class="file">JobConfigModal.jsx</span><span class="annot">채용 설정 + AI 추출</span></span></li>
-            <li class="app-row"><span class="k">MODAL</span><span class="v"><span class="file">DiffModal.jsx</span><span class="annot">2인 비교 모달</span></span></li>
-            <li class="app-row"><span class="k">UTIL</span><span class="v"><span class="file">api.js</span> + <span class="file">constants.js</span><span class="annot">API 호출 · 전역 상수</span></span></li>
-          </ol>
+          <div class="app-block-path">frontend / src /</div>
+          <ul class="app-rows">
+            <li><span class="tag" style="background: var(--orange);">PAGE</span><span class="body"><span class="f">WorkflowPage.jsx</span></span></li>
+            <li><span class="tag" style="background: var(--orange);">PANEL</span><span class="body"><span class="f">PortfolioPanel.jsx</span></span></li>
+            <li><span class="tag" style="background: var(--orange);">LIST</span><span class="body"><span class="f">Sidebar.jsx</span></span></li>
+            <li><span class="tag" style="background: var(--orange);">DRAW</span><span class="body"><span class="f">SettingsDrawer.jsx</span></span></li>
+            <li><span class="tag" style="background: var(--orange);">MODAL</span><span class="body"><span class="f">JobConfigModal.jsx</span></span></li>
+            <li><span class="tag" style="background: var(--orange);">MODAL</span><span class="body"><span class="f">DiffModal.jsx</span></span></li>
+            <li><span class="tag" style="background: var(--orange);">UTIL</span><span class="body"><span class="f">api.js</span> + <span class="f">constants.js</span></span></li>
+          </ul>
         </section>
       </div>
     </section>
 
-    <!-- ════════════ SLIDE 14 — THANKS ════════════ -->
-    <section class="slide" data-slide="14">
-      <div class="thanks-corner-l reveal" data-d="1">REVIEWER<span style="color: var(--light); margin: 0 .6em;">/</span>v0.6</div>
-      <div class="thanks-corner reveal" data-d="1">P. 14 / 14</div>
-
-      <div class="thanks">
-        <div class="thanks-eyebrow reveal" data-d="2">— END OF DECK —</div>
-        <h2 class="thanks-title reveal" data-d="3">감사합니다.</h2>
-        <p class="thanks-sub reveal" data-d="4">질문해 주세요</p>
-
-        <div class="thanks-rule reveal" data-d="5"></div>
-
-        <div class="thanks-meta reveal" data-d="6">
-          <span>Algorithm Group 4</span>
-          <span class="sep">/</span>
-          <a href="https://github.com/cole0213/Algorithm-Group-4-Project" target="_blank" rel="noopener">github.com/cole0213/Algorithm-Group-4-Project</a>
-          <span class="sep">/</span>
-          <span>2026 · 05 · 28</span>
-        </div>
-      </div>
-
-      <div class="thanks-bottom-rule"></div>
+    <!-- ════════════ 15 — THANKS (minimal) ════════════ -->
+    <section class="slide thanks-slide" data-slide="15">
+      <h2 class="thanks-title reveal" data-d="1">감사합니다.</h2>
+      <figure class="thanks-figure reveal" data-d="2">
+        <img data-shot="intro" alt="Portfolio Reviewer 메인 화면">
+      </figure>
     </section>
 
   </div>
 </main>
 
-<!-- ════════════════════════════════════════════════════════
-     CONTROLS
-     ════════════════════════════════════════════════════════ -->
+<!-- ════════════ CONTROLS ════════════ -->
 <div class="controls" role="toolbar" aria-label="Slide controls">
   <button class="nav-btn" id="prev" aria-label="Previous slide">‹</button>
   <div class="counter">
     <span class="cur" id="cur-num">01</span>
     <span class="sep">/</span>
-    <span class="total">14</span>
+    <span class="total">15</span>
   </div>
   <nav class="indicators" id="indicators" aria-label="Slide indicators"></nav>
   <button class="nav-btn" id="next" aria-label="Next slide">›</button>
@@ -2855,9 +2800,7 @@ button { font: inherit; cursor: pointer; }
   <span class="key">←</span><span class="key">→</span> navigate
 </div>
 
-<!-- ════════════════════════════════════════════════════════
-     TOC OVERVIEW (ESC)
-     ════════════════════════════════════════════════════════ -->
+<!-- ════════════ TOC OVERVIEW (ESC) ════════════ -->
 <div class="overview" id="overview" role="dialog" aria-label="Slide overview">
   <div class="overview-head">
     <h2>Slide Overview</h2>
@@ -2870,9 +2813,6 @@ button { font: inherit; cursor: pointer; }
 (function() {
   'use strict';
 
-  // ════════════════════════════════════════════════════════
-  // SCREENSHOT REGISTRY  (Korean filename → URL-encoded)
-  // ════════════════════════════════════════════════════════
   const BASE = 'docs/screenshots/tests/';
   const SHOTS = {
     intro:   BASE + encodeURIComponent('테스트_01_Solar_LLM_파싱결과_3패널비교.png'),
@@ -2882,23 +2822,15 @@ button { font: inherit; cursor: pointer; }
     similar: BASE + encodeURIComponent('테스트_08_RabinKarp_컬러풀팔레트_최종확인.png'),
   };
 
-  // Resolve all <img data-shot="…"> placeholders
   document.querySelectorAll('img[data-shot]').forEach(img => {
     const key = img.dataset.shot;
     if (SHOTS[key]) img.src = SHOTS[key];
   });
 
-  // ════════════════════════════════════════════════════════
-  // SLIDE STATE
-  // ════════════════════════════════════════════════════════
   const slides = Array.from(document.querySelectorAll('.slide'));
   const TOTAL = slides.length;
   let current = 0;
-  let lastDir = 1;
 
-  // ════════════════════════════════════════════════════════
-  // INDICATORS
-  // ════════════════════════════════════════════════════════
   const indicatorsEl = document.getElementById('indicators');
   for (let i = 0; i < TOTAL; i++) {
     const b = document.createElement('button');
@@ -2910,12 +2842,7 @@ button { font: inherit; cursor: pointer; }
   }
   const indicators = Array.from(indicatorsEl.children);
 
-  // ════════════════════════════════════════════════════════
-  // NAVIGATION
-  // ════════════════════════════════════════════════════════
-  const stage = document.getElementById('stage');
   const curNumEl = document.getElementById('cur-num');
-
   function pad(n) { return n < 10 ? '0' + n : String(n); }
 
   function applyState(idx) {
@@ -2928,20 +2855,14 @@ button { font: inherit; cursor: pointer; }
       else el.removeAttribute('data-on');
     });
     curNumEl.textContent = pad(idx + 1);
-    document.documentElement.style.setProperty('--slide-dir', String(lastDir));
   }
 
   function go(idx) {
     if (idx < 0 || idx >= TOTAL || idx === current) return;
-    lastDir = idx > current ? 1 : -1;
-
     const updateDOM = () => {
       current = idx;
       applyState(idx);
     };
-
-    // Use View Transitions API when available — gives us
-    // the morphing animations for shared elements (site-image, feat-title).
     if (document.startViewTransition) {
       document.startViewTransition(updateDOM);
     } else {
@@ -2955,9 +2876,6 @@ button { font: inherit; cursor: pointer; }
   document.getElementById('next').addEventListener('click', next);
   document.getElementById('prev').addEventListener('click', prev);
 
-  // ════════════════════════════════════════════════════════
-  // INTERNAL JUMP LINKS (TOC rows, strip cards)
-  // ════════════════════════════════════════════════════════
   document.querySelectorAll('[data-jump]').forEach(el => {
     el.addEventListener('click', (e) => {
       const n = parseInt(el.dataset.jump, 10);
@@ -2969,9 +2887,6 @@ button { font: inherit; cursor: pointer; }
     el.style.cursor = 'pointer';
   });
 
-  // ════════════════════════════════════════════════════════
-  // OVERVIEW (ESC) — generate slide cards
-  // ════════════════════════════════════════════════════════
   const overviewEl = document.getElementById('overview');
   const overviewGridEl = document.getElementById('overview-grid');
   const SLIDE_TITLES = [
@@ -2979,6 +2894,7 @@ button { font: inherit; cursor: pointer; }
     '목차',
     '프로젝트 소개',
     '개발 동기 — 5가지 문제',
+    '개발 워크플로우 & 회고',
     '기술 스택 & 실행 환경',
     '시스템 아키텍처',
     '알고리즘 8종 한눈에',
@@ -2986,14 +2902,14 @@ button { font: inherit; cursor: pointer; }
     '주요 기능 ② 스펙 매칭 + 점수',
     '주요 기능 ③ 별칭·오타 검색',
     '주요 기능 ④ 유사 문장 검출',
-    '개발 워크플로우 & 회고',
+    '학습 내용',
     '부록 — 코드 명세',
     '감사합니다',
   ];
   SLIDE_TITLES.forEach((t, i) => {
     const c = document.createElement('div');
     c.className = 'ov-card';
-    c.innerHTML = `<span class="ov-n">P. ${pad(i + 1)} / 14</span><span class="ov-t">${t}</span>`;
+    c.innerHTML = `<span class="ov-n">P. ${pad(i + 1)} / 15</span><span class="ov-t">${t}</span>`;
     c.addEventListener('click', () => {
       hideOverview();
       go(i);
@@ -3004,13 +2920,8 @@ button { font: inherit; cursor: pointer; }
   function showOverview() { overviewEl.classList.add('on'); }
   function hideOverview() { overviewEl.classList.remove('on'); }
 
-  // ════════════════════════════════════════════════════════
-  // KEYBOARD CONTROL
-  // ════════════════════════════════════════════════════════
   document.addEventListener('keydown', (e) => {
-    // Allow form inputs to capture keys
     if (e.target.matches('input, textarea')) return;
-
     switch (e.key) {
       case 'ArrowRight':
       case 'PageDown':
@@ -3044,7 +2955,6 @@ button { font: inherit; cursor: pointer; }
         toggleFullscreen();
         break;
       default:
-        // Number keys 1–9 jump
         if (/^[1-9]$/.test(e.key)) {
           e.preventDefault();
           go(parseInt(e.key, 10) - 1);
@@ -3053,9 +2963,6 @@ button { font: inherit; cursor: pointer; }
     }
   });
 
-  // ════════════════════════════════════════════════════════
-  // FULLSCREEN
-  // ════════════════════════════════════════════════════════
   function toggleFullscreen() {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen().catch(() => {});
@@ -3064,9 +2971,6 @@ button { font: inherit; cursor: pointer; }
     }
   }
 
-  // ════════════════════════════════════════════════════════
-  // SWIPE (touch / trackpad)
-  // ════════════════════════════════════════════════════════
   let touchX = 0;
   document.addEventListener('touchstart', (e) => {
     touchX = e.changedTouches[0].clientX;
@@ -3078,19 +2982,12 @@ button { font: inherit; cursor: pointer; }
     }
   }, { passive: true });
 
-  // ════════════════════════════════════════════════════════
-  // CLICK TO CLOSE OVERVIEW
-  // ════════════════════════════════════════════════════════
   overviewEl.addEventListener('click', (e) => {
     if (e.target === overviewEl) hideOverview();
   });
 
-  // ════════════════════════════════════════════════════════
-  // INITIAL STATE — re-trigger animations on first load
-  // ════════════════════════════════════════════════════════
   applyState(0);
 
-  // Tiny optimization: preload all screenshots so morphing is smooth
   Object.values(SHOTS).forEach(url => {
     const img = new Image();
     img.src = url;
