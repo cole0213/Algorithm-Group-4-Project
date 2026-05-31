@@ -279,6 +279,37 @@ button { font: inherit; cursor: pointer; }
 .cover-bottom .rhs { display: flex; gap: 1.6cqw; }
 .cover-bottom .rhs .sep { color: var(--light); }
 
+.cover-team {
+  margin-top: 2.4cqw;
+  display: flex;
+  align-items: baseline;
+  gap: 1.6cqw;
+  max-width: 60cqw;
+  padding-top: 1.4cqw;
+  border-top: 1px solid var(--line);
+}
+.cover-team .team-label {
+  font-family: var(--f-mono);
+  font-size: .85cqw;
+  font-weight: 600;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.cover-team .team-names {
+  font-family: var(--f-serif);
+  font-size: 1.7cqw;
+  font-weight: 500;
+  letter-spacing: -.01em;
+  color: var(--ink);
+  display: inline-flex;
+  align-items: baseline;
+  gap: .9cqw;
+}
+.cover-team .team-names .m { color: var(--ink); }
+.cover-team .team-names .dot { color: var(--light); font-weight: 400; }
+
 .cover-decor {
   position: absolute;
   top: 16cqw; right: 4.6cqw;
@@ -465,7 +496,7 @@ button { font: inherit; cursor: pointer; }
 }
 .intro-figure-cap {
   font-family: var(--f-mono);
-  font-size: .82cqw;
+  font-size: .94cqw;
   font-weight: 600;
   letter-spacing: .18em;
   text-transform: uppercase;
@@ -491,11 +522,11 @@ button { font: inherit; cursor: pointer; }
 .compact-head .display { font-size: 4.4cqw; }
 .compact-head .right {
   font-family: var(--f-mono);
-  font-size: .85cqw;
+  font-size: 1cqw;
   font-weight: 600;
   letter-spacing: .15em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--ink-soft);
   text-align: right;
   line-height: 1.7;
   align-self: flex-end;
@@ -529,9 +560,9 @@ button { font: inherit; cursor: pointer; }
   font-family: var(--f-serif);
 }
 .mot-table .problem {
-  color: var(--muted);
-  font-size: 1.2cqw;
-  line-height: 1.4;
+  color: var(--ink-soft);
+  font-size: 1.35cqw;
+  line-height: 1.45;
 }
 .mot-table .problem::before {
   content: '—';
@@ -540,9 +571,9 @@ button { font: inherit; cursor: pointer; }
 }
 .mot-table .solution {
   color: var(--ink);
-  font-size: 1.35cqw;
+  font-size: 1.5cqw;
   font-weight: 500;
-  line-height: 1.38;
+  line-height: 1.4;
   letter-spacing: -.015em;
 }
 .mot-table .solution em {
@@ -627,7 +658,7 @@ button { font: inherit; cursor: pointer; }
 .wf-phase.p6 { border-left-color: var(--a7); }
 .wf-phase .ph {
   font-family: var(--f-mono);
-  font-size: .72cqw;
+  font-size: .85cqw;
   font-weight: 700;
   letter-spacing: .15em;
   text-transform: uppercase;
@@ -635,17 +666,17 @@ button { font: inherit; cursor: pointer; }
 }
 .wf-phase .pd {
   font-family: var(--f-mono);
-  font-size: .78cqw;
+  font-size: .9cqw;
   font-weight: 700;
   color: var(--ink);
   letter-spacing: .04em;
 }
 .wf-phase .pt {
   font-family: var(--f-serif);
-  font-size: .92cqw;
+  font-size: 1.05cqw;
   font-weight: 500;
   color: var(--ink-soft);
-  line-height: 1.3;
+  line-height: 1.35;
   letter-spacing: -.008em;
   margin-top: .25cqw;
 }
@@ -666,7 +697,7 @@ button { font: inherit; cursor: pointer; }
 }
 .wf-retro .h {
   font-family: var(--f-mono);
-  font-size: .82cqw;
+  font-size: .95cqw;
   font-weight: 700;
   letter-spacing: .2em;
   text-transform: uppercase;
@@ -683,8 +714,8 @@ button { font: inherit; cursor: pointer; }
 }
 .wf-retro li {
   font-family: var(--f-serif);
-  font-size: 1cqw;
-  line-height: 1.48;
+  font-size: 1.15cqw;
+  line-height: 1.5;
   color: var(--ink);
   padding-left: 1.2cqw;
   position: relative;
@@ -720,7 +751,7 @@ button { font: inherit; cursor: pointer; }
 }
 .wf-stat .k {
   font-family: var(--f-mono);
-  font-size: .7cqw;
+  font-size: .82cqw;
   font-weight: 700;
   letter-spacing: .2em;
   text-transform: uppercase;
@@ -838,7 +869,7 @@ button { font: inherit; cursor: pointer; }
 .stack-card.d::before { background: var(--a4); }
 .stack-card .label {
   font-family: var(--f-mono);
-  font-size: .75cqw;
+  font-size: .88cqw;
   font-weight: 700;
   letter-spacing: .22em;
   text-transform: uppercase;
@@ -854,7 +885,7 @@ button { font: inherit; cursor: pointer; }
 }
 .stack-card .desc {
   font-family: var(--f-sans);
-  font-size: .95cqw;
+  font-size: 1.1cqw;
   line-height: 1.5;
   color: var(--ink-soft);
   margin-top: auto;
@@ -916,7 +947,7 @@ button { font: inherit; cursor: pointer; }
 }
 .arch-node .nlabel {
   font-family: var(--f-mono);
-  font-size: .78cqw;
+  font-size: .9cqw;
   font-weight: 700;
   letter-spacing: .2em;
   text-transform: uppercase;
@@ -931,7 +962,7 @@ button { font: inherit; cursor: pointer; }
 }
 .arch-node .nport {
   font-family: var(--f-mono);
-  font-size: .85cqw;
+  font-size: .98cqw;
   color: var(--muted);
 }
 .arch-node.browser { flex: 0 0 22cqw; }
@@ -964,7 +995,7 @@ button { font: inherit; cursor: pointer; }
 }
 .arch-arrow .a-label {
   font-family: var(--f-mono);
-  font-size: .78cqw;
+  font-size: .9cqw;
   font-weight: 600;
   letter-spacing: .14em;
   text-transform: uppercase;
@@ -984,14 +1015,15 @@ button { font: inherit; cursor: pointer; }
 }
 .arch-mod .path {
   font-family: var(--f-mono);
-  font-size: .92cqw;
+  font-size: 1.05cqw;
   font-weight: 600;
   color: var(--ink);
-  margin-bottom: .2cqw;
+  margin-bottom: .25cqw;
 }
 .arch-mod .desc {
   font-family: var(--f-sans);
-  font-size: .82cqw;
+  font-size: .96cqw;
+  line-height: 1.5;
   color: var(--ink-soft);
 }
 .arch-mod.services { grid-column: 1 / -1; }
@@ -1003,8 +1035,8 @@ button { font: inherit; cursor: pointer; }
 }
 .arch-mod.services .desc .svc {
   font-family: var(--f-mono);
-  font-size: .82cqw;
-  padding: .3cqw .55cqw;
+  font-size: .95cqw;
+  padding: .35cqw .6cqw;
   background: var(--white);
   border: 1px solid var(--line);
   color: var(--ink-soft);
@@ -1027,7 +1059,7 @@ button { font: inherit; cursor: pointer; }
 }
 .arch-warn .w-label {
   font-family: var(--f-mono);
-  font-size: .78cqw;
+  font-size: .9cqw;
   font-weight: 700;
   letter-spacing: .2em;
   text-transform: uppercase;
@@ -1083,7 +1115,7 @@ button { font: inherit; cursor: pointer; }
 .alg-card.c8::before { background: var(--a8); }
 .alg-card .num {
   font-family: var(--f-mono);
-  font-size: .92cqw;
+  font-size: 1.05cqw;
   font-weight: 700;
   letter-spacing: .14em;
   color: var(--muted);
@@ -1107,14 +1139,14 @@ button { font: inherit; cursor: pointer; }
 }
 .alg-card .role {
   font-family: var(--f-sans);
-  font-size: .85cqw;
+  font-size: 1cqw;
   color: var(--ink-soft);
-  line-height: 1.4;
+  line-height: 1.45;
   margin-bottom: auto;
 }
 .alg-card .big-o {
   font-family: var(--f-mono);
-  font-size: .88cqw;
+  font-size: .95cqw;
   font-weight: 700;
   letter-spacing: .04em;
   color: var(--ink);
@@ -1135,7 +1167,7 @@ button { font: inherit; cursor: pointer; }
   display: flex;
   justify-content: space-between;
   font-family: var(--f-mono);
-  font-size: .88cqw;
+  font-size: 1cqw;
   font-weight: 600;
   letter-spacing: .15em;
   text-transform: uppercase;
@@ -1188,10 +1220,10 @@ button { font: inherit; cursor: pointer; }
 }
 .feat-algo-line .algo-tag {
   font-family: var(--f-mono);
-  font-size: .78cqw;
+  font-size: .88cqw;
   font-weight: 700;
   letter-spacing: .08em;
-  padding: .3cqw .55cqw .35cqw;
+  padding: .35cqw .6cqw .4cqw;
   background: var(--ink);
   color: var(--paper);
   line-height: 1;
@@ -1199,10 +1231,10 @@ button { font: inherit; cursor: pointer; }
 
 .feat-summary {
   font-family: var(--f-serif);
-  font-size: 1.05cqw;
-  line-height: 1.42;
+  font-size: 1.2cqw;
+  line-height: 1.45;
   color: var(--ink-soft);
-  padding: .25cqw 0 .35cqw;
+  padding: .3cqw 0 .4cqw;
   border-bottom: 1px solid var(--line);
 }
 .feat-summary strong { color: var(--ink); font-weight: 600; }
@@ -1214,7 +1246,7 @@ button { font: inherit; cursor: pointer; }
 }
 .feat-sec .h {
   font-family: var(--f-mono);
-  font-size: .75cqw;
+  font-size: .9cqw;
   font-weight: 700;
   letter-spacing: .2em;
   text-transform: uppercase;
@@ -1234,11 +1266,11 @@ button { font: inherit; cursor: pointer; }
 
 .feat-code {
   font-family: var(--f-mono);
-  font-size: .8cqw;
-  line-height: 1.45;
+  font-size: .92cqw;
+  line-height: 1.5;
   background: var(--ink);
   color: var(--paper);
-  padding: .7cqw .9cqw;
+  padding: .8cqw 1cqw;
   white-space: pre;
   overflow: hidden;
 }
@@ -1256,8 +1288,8 @@ button { font: inherit; cursor: pointer; }
 }
 .feat-bullets li {
   font-family: var(--f-sans);
-  font-size: .88cqw;
-  line-height: 1.45;
+  font-size: 1.02cqw;
+  line-height: 1.5;
   color: var(--ink-soft);
   padding-left: 1cqw;
   position: relative;
@@ -1279,8 +1311,8 @@ button { font: inherit; cursor: pointer; }
 
 .feat-formula {
   font-family: var(--f-mono);
-  font-size: .82cqw;
-  line-height: 1.45;
+  font-size: .95cqw;
+  line-height: 1.5;
   background: var(--paper);
   border: 1px solid var(--line);
   border-left: 3px solid var(--primary);
@@ -1319,7 +1351,7 @@ button { font: inherit; cursor: pointer; }
 }
 .feat-shot-cap {
   font-family: var(--f-mono);
-  font-size: .78cqw;
+  font-size: .9cqw;
   font-weight: 600;
   letter-spacing: .18em;
   text-transform: uppercase;
@@ -1363,22 +1395,22 @@ button { font: inherit; cursor: pointer; }
 .feat-strip-card.s4::before { background: var(--a4); }
 .feat-strip-card .sn {
   font-family: var(--f-mono);
-  font-size: .68cqw;
+  font-size: .8cqw;
   font-weight: 700;
   letter-spacing: .18em;
   color: var(--muted);
 }
 .feat-strip-card .st {
   font-family: var(--f-serif);
-  font-size: .95cqw;
+  font-size: 1.08cqw;
   font-weight: 600;
   color: var(--ink);
-  line-height: 1.08;
+  line-height: 1.1;
   letter-spacing: -.015em;
 }
 .feat-strip-card .sd {
   font-family: var(--f-mono);
-  font-size: .62cqw;
+  font-size: .72cqw;
   letter-spacing: .12em;
   text-transform: uppercase;
   color: var(--muted);
@@ -1396,32 +1428,33 @@ button { font: inherit; cursor: pointer; }
 .learn-wrap {
   flex: 1;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2.6cqw;
+  grid-template-columns: 0.5fr 1fr;
+  gap: 2.2cqw;
+  min-height: 0;
 }
 .learn-intro {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding-right: 2cqw;
+  padding-right: 1.6cqw;
   border-right: 1px solid var(--line);
 }
 .learn-intro .lede {
   font-family: var(--f-serif);
-  font-size: 1.3cqw;
+  font-size: 1.25cqw;
   line-height: 1.55;
   color: var(--ink-soft);
 }
 .learn-intro .note {
   font-family: var(--f-mono);
-  font-size: .85cqw;
+  font-size: .92cqw;
   font-weight: 600;
   letter-spacing: .18em;
   text-transform: uppercase;
   color: var(--muted);
   border-top: 1px solid var(--line);
-  padding-top: 1.2cqw;
-  margin-top: 1.6cqw;
+  padding-top: 1cqw;
+  margin-top: 1.4cqw;
 }
 .learn-intro .note::before {
   content: '※ ';
@@ -1432,17 +1465,19 @@ button { font: inherit; cursor: pointer; }
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-  gap: 1.2cqw;
+  gap: 1cqw;
+  min-height: 0;
 }
 .learn-card {
   background: var(--white);
   border: 1px solid var(--line);
-  padding: 1.4cqw 1.6cqw;
+  padding: 1.3cqw 1.5cqw;
   display: flex;
   flex-direction: column;
-  gap: .5cqw;
+  gap: .4cqw;
   position: relative;
   overflow: hidden;
+  min-height: 0;
 }
 .learn-card::before {
   content: '';
@@ -1456,7 +1491,7 @@ button { font: inherit; cursor: pointer; }
 .learn-card.l4::before { background: var(--a5); }
 .learn-card .ln {
   font-family: var(--f-mono);
-  font-size: .85cqw;
+  font-size: .9cqw;
   font-weight: 700;
   letter-spacing: .18em;
   color: var(--muted);
@@ -1464,24 +1499,26 @@ button { font: inherit; cursor: pointer; }
 }
 .learn-card .lt {
   font-family: var(--f-serif);
-  font-size: 1.6cqw;
+  font-size: 1.4cqw;
   font-weight: 600;
   letter-spacing: -.018em;
   color: var(--ink);
   line-height: 1.08;
+  margin-bottom: .2cqw;
 }
 .learn-card .lb {
   font-family: var(--f-serif);
-  font-size: 1cqw;
-  line-height: 1.5;
-  color: var(--muted);
+  font-size: 1.3cqw;
+  line-height: 1.55;
+  color: var(--ink);
   margin-top: auto;
-  padding-top: .8cqw;
+  padding-top: .9cqw;
   border-top: 1px dashed var(--line);
+  letter-spacing: -.005em;
 }
 .learn-card .lb em {
   font-style: italic;
-  color: var(--light);
+  color: var(--ink-soft);
 }
 
 /* ════════════════════════════════════════════════════════
@@ -1523,7 +1560,7 @@ button { font: inherit; cursor: pointer; }
 }
 .app-block-head .title {
   font-family: var(--f-mono);
-  font-size: .92cqw;
+  font-size: 1.05cqw;
   font-weight: 700;
   letter-spacing: .2em;
   text-transform: uppercase;
@@ -1531,14 +1568,14 @@ button { font: inherit; cursor: pointer; }
 }
 .app-block-head .count {
   font-family: var(--f-mono);
-  font-size: .75cqw;
+  font-size: .85cqw;
   font-weight: 700;
   letter-spacing: .12em;
   color: var(--muted);
 }
 .app-block-path {
   font-family: var(--f-mono);
-  font-size: .7cqw;
+  font-size: .82cqw;
   color: var(--muted);
   letter-spacing: .12em;
   margin-bottom: .8cqw;
@@ -1553,20 +1590,20 @@ button { font: inherit; cursor: pointer; }
 }
 .app-rows li {
   display: grid;
-  grid-template-columns: 2.6cqw 1fr;
+  grid-template-columns: 2.9cqw 1fr;
   gap: .6cqw;
   font-family: var(--f-mono);
-  font-size: .82cqw;
+  font-size: .95cqw;
   align-items: baseline;
-  padding: .25cqw 0;
+  padding: .3cqw 0;
 }
 .app-rows li .tag {
   font-weight: 700;
   letter-spacing: .08em;
-  font-size: .72cqw;
+  font-size: .82cqw;
   color: var(--paper);
   background: var(--ink);
-  padding: .15cqw .4cqw;
+  padding: .18cqw .45cqw;
   text-align: center;
   border-radius: 1px;
 }
@@ -1932,11 +1969,24 @@ body:fullscreen,
 
         <p class="cover-subtitle reveal" data-d="4">개발자 포트폴리오 정형화 · 비교 시스템</p>
 
-        <div class="cover-decor reveal" data-d="5">
+        <div class="cover-team reveal" data-d="5">
+          <span class="team-label">Members</span>
+          <span class="team-names">
+            <span class="m">조국</span>
+            <span class="dot">·</span>
+            <span class="m">영인</span>
+            <span class="dot">·</span>
+            <span class="m">규상</span>
+            <span class="dot">·</span>
+            <span class="m">령기</span>
+          </span>
+        </div>
+
+        <div class="cover-decor reveal" data-d="6">
           A presentation in<br>fifteen pages
         </div>
 
-        <div class="cover-bottom reveal" data-d="6">
+        <div class="cover-bottom reveal" data-d="7">
           <span class="lhs">Algorithm Group 4</span>
           <span class="rhs">
             <span>2026</span><span class="sep">—</span>
@@ -2655,44 +2705,44 @@ BST 탐색 <span class="comment">O(log n)</span>
 
       <div class="compact-head reveal" data-d="2">
         <div class="left">
-          <div class="eyebrow"><span style="color: var(--muted);">LEARNINGS</span><span class="sep">/</span><span>TAKEAWAYS</span></div>
+          <div class="eyebrow"><span style="color: var(--muted);">LEARNINGS</span><span class="sep">/</span><span>TEAM RETROSPECTIVE</span></div>
           <h2 class="display">이번 프로젝트로 배운 것</h2>
         </div>
-        <div class="right">— placeholder —<br>내용 추후 추가</div>
+        <div class="right">팀원 4명의 회고</div>
       </div>
 
       <div class="learn-wrap">
         <div class="learn-intro reveal" data-d="3">
           <p class="lede">
-            한 학기 동안 알고리즘 8종을 실제 서비스에 통합하면서
-            <em style="color: var(--ink);">자료구조 선택의 트레이드오프</em>,
-            <em style="color: var(--ink);">LLM 연동의 안정성 설계</em>,
-            그리고 <em style="color: var(--ink);">AI 협업 개발 사이클</em>에 대해
-            폭넓게 학습한 내용을 정리합니다.
+            <em style="color: var(--ink);">AI 에이전트</em>,
+            <em style="color: var(--ink);">바이브 코딩</em>,
+            <em style="color: var(--ink);">Solar API</em>,
+            그리고 <em style="color: var(--ink);">웹 사이트 제작</em> —
+            팀원 네 명이 각자의 첫 경험에서 느낀 점과 배운 점을 정리합니다.
           </p>
-          <div class="note">발표 시 구두 보강 — 카드 본문은 추후 작성 예정</div>
+          <div class="note">각 카드 본문은 본인 작성</div>
         </div>
 
         <div class="learn-grid">
           <article class="learn-card l1 reveal" data-d="4">
-            <span class="ln">01 · Algorithm</span>
-            <div class="lt">알고리즘 트레이드오프</div>
-            <p class="lb"><em>해시·DP·트리 자료구조의 실제 적용 사례와 시간·공간 복잡도 선택 기준에 대한 학습 내용 작성 예정</em></p>
+            <span class="ln">01 · AI Agent</span>
+            <div class="lt">조국</div>
+            <p class="lb">AI 에이전트라는 걸 이번에 처음 써봤는데 성능이 놀랍기도 했고, AI의 활용에 대해 더 생각해보게 된 계기가 됐다.</p>
           </article>
           <article class="learn-card l2 reveal" data-d="5">
-            <span class="ln">02 · LLM</span>
-            <div class="lt">LLM 연동 설계</div>
-            <p class="lb"><em>Solar API 통합 · 32k 컨텍스트 한계 · 폴백 처리 · 재시도 백오프에서 얻은 인사이트 작성 예정</em></p>
+            <span class="ln">02 · Vibe Coding</span>
+            <div class="lt">영인</div>
+            <p class="lb">바이브 코딩이라는 개념만 알고 있었는데, 이번 프로젝트를 통해 실제로 진행해보면서 적절한 사용법을 터득할 수 있는 기회가 되었다.</p>
           </article>
           <article class="learn-card l3 reveal" data-d="6">
-            <span class="ln">03 · Architecture</span>
-            <div class="lt">모듈 분리 & 코드 위치</div>
-            <p class="lb"><em>algorithms/ 파일별 분리, code_location.md 기반 추적 등 대규모 코드베이스 유지보수 패턴 작성 예정</em></p>
+            <span class="ln">03 · Solar API</span>
+            <div class="lt">규상</div>
+            <p class="lb">이번에 Solar API를 처음 써봤는데 이런 기능이 있다는 것에 놀라웠고, 많은 알고리즘이 웹에 다양하게 활용되는 것을 배우게 되었다.</p>
           </article>
           <article class="learn-card l4 reveal" data-d="7">
-            <span class="ln">04 · Process</span>
-            <div class="lt">AI 협업 워크플로우</div>
-            <p class="lb"><em>Claude CLI + Playwright MCP를 활용한 요구사항 → 구현 → 시각 검증 사이클의 효과 작성 예정</em></p>
+            <span class="ln">04 · First Site</span>
+            <div class="lt">령기</div>
+            <p class="lb">사이트를 처음 제작하는데도 LLM의 발전에 힘입어 이렇게 높은 완성도가 나와서 재밌었다. LLM을 활용한 서비스를 제작해보며 값진 인사이트를 얻었다.</p>
           </article>
         </div>
       </div>
@@ -2813,13 +2863,13 @@ BST 탐색 <span class="comment">O(log n)</span>
 (function() {
   'use strict';
 
-  const BASE = 'docs/screenshots/tests/';
+  const BASE = 'images/';
   const SHOTS = {
-    intro:   BASE + encodeURIComponent('테스트_01_Solar_LLM_파싱결과_3패널비교.png'),
-    solar:   BASE + encodeURIComponent('테스트_01_Solar_LLM_파싱결과_김철수.png'),
-    match:   BASE + encodeURIComponent('테스트_02_해시테이블_LCS_스펙매칭_점수정렬.png'),
-    search:  BASE + encodeURIComponent('테스트_03_EditDistance_오타허용_typscript검색.png'),
-    similar: BASE + encodeURIComponent('테스트_08_RabinKarp_컬러풀팔레트_최종확인.png'),
+    intro:   BASE + 'intro.png',
+    solar:   BASE + 'solar.png',
+    match:   BASE + 'match.png',
+    search:  BASE + 'search.png',
+    similar: BASE + 'similar.png',
   };
 
   document.querySelectorAll('img[data-shot]').forEach(img => {
