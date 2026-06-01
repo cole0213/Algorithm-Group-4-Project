@@ -1423,7 +1423,72 @@ button { font: inherit; cursor: pointer; }
 .feat-strip-card.active::before { width: 100%; opacity: .15; }
 
 /* ════════════════════════════════════════════════════════
-   SLIDE 13 — LEARNINGS  (NEW)
+   SLIDE 13 — MORE FEATURES (10-item overview)
+   ════════════════════════════════════════════════════════ */
+.more-grid {
+  flex: 1;
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: 1fr;
+  gap: .9cqw 1.6cqw;
+  min-height: 0;
+}
+.more-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: 1cqw;
+  padding: .7cqw .2cqw .7cqw 0;
+  border-top: 1px solid var(--line);
+  min-height: 0;
+}
+.more-card:first-child,
+.more-card:nth-child(2) { border-top: 1px solid var(--line-strong); }
+
+.more-card .mn {
+  font-family: var(--f-mono);
+  font-size: 1cqw;
+  font-weight: 700;
+  letter-spacing: .14em;
+  color: var(--muted);
+  padding-top: .25cqw;
+  min-width: 2.4cqw;
+}
+.more-card .mb { display: flex; flex-direction: column; gap: .25cqw; min-width: 0; }
+.more-card .mt {
+  font-family: var(--f-serif);
+  font-size: 1.5cqw;
+  font-weight: 600;
+  letter-spacing: -.012em;
+  color: var(--ink);
+  line-height: 1.15;
+}
+.more-card .mt em {
+  font-style: normal;
+  background: linear-gradient(transparent 62%, rgba(255,212,59,.55) 62%);
+  padding: 0 .12em;
+}
+.more-card .md {
+  font-family: var(--f-serif);
+  font-size: 1.05cqw;
+  line-height: 1.4;
+  color: var(--ink-soft);
+  letter-spacing: -.003em;
+}
+.more-card .md .tag {
+  display: inline-block;
+  font-family: var(--f-mono);
+  font-size: .82cqw;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-right: .4em;
+}
+
+/* ════════════════════════════════════════════════════════
+   SLIDE 14 — LEARNINGS  (NEW)
    ════════════════════════════════════════════════════════ */
 .learn-wrap {
   flex: 1;
@@ -1960,7 +2025,7 @@ body:fullscreen,
       <div class="cover">
         <div class="cover-top reveal" data-d="1">
           <span class="mark">REVIEWER<span style="color: var(--light); margin: 0 .6em;">/</span>v0.6</span>
-          <span>P. 01 / 15</span>
+          <span>P. 01 / 16</span>
         </div>
 
         <div class="cover-eyebrow reveal" data-d="2">알고리즘 4조 — 학기 프로젝트</div>
@@ -1983,7 +2048,7 @@ body:fullscreen,
         </div>
 
         <div class="cover-decor reveal" data-d="6">
-          A presentation in<br>fifteen pages
+          A presentation in<br>sixteen pages
         </div>
 
         <div class="cover-bottom reveal" data-d="7">
@@ -2001,7 +2066,7 @@ body:fullscreen,
     <section class="slide" data-slide="2">
       <header class="run reveal" data-d="1">
         <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>TABLE OF CONTENTS</span></span>
-        <span class="rhs"><span>P. 02 / 15</span></span>
+        <span class="rhs"><span>P. 02 / 16</span></span>
       </header>
       <hr class="rule-major reveal" data-d="1">
 
@@ -2018,9 +2083,9 @@ body:fullscreen,
           <li class="toc-row reveal" data-d="6" data-jump="6"><span class="num">04</span><span class="label">기술 스택 &amp; 실행 환경</span><span class="pg">06</span></li>
           <li class="toc-row reveal" data-d="7" data-jump="7"><span class="num">05</span><span class="label">시스템 아키텍처</span><span class="pg">07</span></li>
           <li class="toc-row reveal" data-d="8" data-jump="8"><span class="num">06</span><span class="label">알고리즘 8종 한눈에</span><span class="pg">08</span></li>
-          <li class="toc-row reveal" data-d="9" data-jump="9"><span class="num">07</span><span class="label">주요 기능 4가지</span><span class="pg">09–12</span></li>
-          <li class="toc-row reveal" data-d="10" data-jump="13"><span class="num">08</span><span class="label">학습 내용</span><span class="pg">13</span></li>
-          <li class="toc-row reveal" data-d="10" data-jump="14"><span class="num">09</span><span class="label">부록 — 코드 명세</span><span class="pg">14</span></li>
+          <li class="toc-row reveal" data-d="9" data-jump="9"><span class="num">07</span><span class="label">주요 기능 4가지 + 그 외 10가지</span><span class="pg">09–13</span></li>
+          <li class="toc-row reveal" data-d="10" data-jump="14"><span class="num">08</span><span class="label">학습 내용</span><span class="pg">14</span></li>
+          <li class="toc-row reveal" data-d="10" data-jump="15"><span class="num">09</span><span class="label">부록 — 코드 명세</span><span class="pg">15</span></li>
         </ol>
       </div>
     </section>
@@ -2029,7 +2094,7 @@ body:fullscreen,
     <section class="slide" data-slide="3">
       <header class="run reveal" data-d="1">
         <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>01 · INTRODUCTION</span></span>
-        <span class="rhs"><span>P. 03 / 15</span></span>
+        <span class="rhs"><span>P. 03 / 16</span></span>
       </header>
       <hr class="rule-major reveal" data-d="1">
 
@@ -2077,7 +2142,7 @@ body:fullscreen,
     <section class="slide" data-slide="4">
       <header class="run reveal" data-d="1">
         <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>02 · MOTIVATION</span></span>
-        <span class="rhs"><span>P. 04 / 15</span></span>
+        <span class="rhs"><span>P. 04 / 16</span></span>
       </header>
       <hr class="rule-major reveal" data-d="1">
 
@@ -2133,7 +2198,7 @@ body:fullscreen,
     <section class="slide" data-slide="5">
       <header class="run reveal" data-d="1">
         <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>03 · PROCESS</span></span>
-        <span class="rhs"><span>P. 05 / 15</span></span>
+        <span class="rhs"><span>P. 05 / 16</span></span>
       </header>
       <hr class="rule-major reveal" data-d="1">
 
@@ -2229,14 +2294,14 @@ body:fullscreen,
     <section class="slide" data-slide="6">
       <header class="run reveal" data-d="1">
         <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>04 · STACK</span></span>
-        <span class="rhs"><span>P. 06 / 15</span></span>
+        <span class="rhs"><span>P. 06 / 16</span></span>
       </header>
       <hr class="rule-major reveal" data-d="1">
 
       <div class="stack-wrap">
         <figure class="stack-thumb reveal" data-d="2">
           <div class="stack-thumb-img">
-            <img data-shot="intro" alt="Portfolio Reviewer 메인 분석 화면">
+            <img data-shot="mookup" alt="Portfolio Reviewer 디바이스 목업">
           </div>
           <figcaption class="stack-thumb-cap">
             <span>FIG. 01 ↻</span>
@@ -2295,7 +2360,7 @@ body:fullscreen,
     <section class="slide" data-slide="7">
       <header class="run reveal" data-d="1">
         <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>05 · ARCHITECTURE</span></span>
-        <span class="rhs"><span>P. 07 / 15</span></span>
+        <span class="rhs"><span>P. 07 / 16</span></span>
       </header>
       <hr class="rule-major reveal" data-d="1">
 
@@ -2358,7 +2423,7 @@ body:fullscreen,
     <section class="slide" data-slide="8">
       <header class="run reveal" data-d="1">
         <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>06 · ALGORITHMS</span></span>
-        <span class="rhs"><span>P. 08 / 15</span></span>
+        <span class="rhs"><span>P. 08 / 16</span></span>
       </header>
       <hr class="rule-major reveal" data-d="1">
 
@@ -2431,7 +2496,7 @@ body:fullscreen,
     <section class="slide" data-slide="9">
       <header class="run reveal" data-d="1">
         <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>07 · FEATURES</span></span>
-        <span class="rhs"><span>FEATURE 01 / 04</span><span class="sep">/</span><span>P. 09 / 15</span></span>
+        <span class="rhs"><span>FEATURE 01 / 04</span><span class="sep">/</span><span>P. 09 / 16</span></span>
       </header>
       <hr class="rule-major reveal" data-d="1">
 
@@ -2495,7 +2560,7 @@ body:fullscreen,
     <section class="slide" data-slide="10">
       <header class="run reveal" data-d="1">
         <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>07 · FEATURES</span></span>
-        <span class="rhs"><span>FEATURE 02 / 04</span><span class="sep">/</span><span>P. 10 / 15</span></span>
+        <span class="rhs"><span>FEATURE 02 / 04</span><span class="sep">/</span><span>P. 10 / 16</span></span>
       </header>
       <hr class="rule-major reveal" data-d="1">
 
@@ -2564,7 +2629,7 @@ body:fullscreen,
     <section class="slide" data-slide="11">
       <header class="run reveal" data-d="1">
         <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>07 · FEATURES</span></span>
-        <span class="rhs"><span>FEATURE 03 / 04</span><span class="sep">/</span><span>P. 11 / 15</span></span>
+        <span class="rhs"><span>FEATURE 03 / 04</span><span class="sep">/</span><span>P. 11 / 16</span></span>
       </header>
       <hr class="rule-major reveal" data-d="1">
 
@@ -2630,7 +2695,7 @@ BST 탐색 <span class="comment">O(log n)</span>
     <section class="slide" data-slide="12">
       <header class="run reveal" data-d="1">
         <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>07 · FEATURES</span></span>
-        <span class="rhs"><span>FEATURE 04 / 04</span><span class="sep">/</span><span>P. 12 / 15</span></span>
+        <span class="rhs"><span>FEATURE 04 / 04</span><span class="sep">/</span><span>P. 12 / 16</span></span>
       </header>
       <hr class="rule-major reveal" data-d="1">
 
@@ -2695,11 +2760,101 @@ BST 탐색 <span class="comment">O(log n)</span>
       </div>
     </section>
 
-    <!-- ════════════ 13 — LEARNINGS (NEW placeholder) ════════════ -->
+    <!-- ════════════ 13 — MORE FEATURES (overview list) ════════════ -->
     <section class="slide" data-slide="13">
       <header class="run reveal" data-d="1">
+        <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>07 · FEATURES</span></span>
+        <span class="rhs"><span>MORE · 10 ITEMS</span><span class="sep">/</span><span>P. 13 / 16</span></span>
+      </header>
+      <hr class="rule-major reveal" data-d="1">
+
+      <div class="compact-head reveal" data-d="2">
+        <div class="left">
+          <div class="eyebrow"><span style="color: var(--muted);">FEATURES</span><span class="sep">/</span><span>그 외 기능</span></div>
+          <h2 class="display">앞선 4가지 외 <span style="color: var(--muted);">—</span> 그 외 핵심 10가지</h2>
+        </div>
+        <div class="right">상세는 <strong>docs/features.md</strong> 참고<br>발표에서는 <strong>간단히 나열</strong>만</div>
+      </div>
+
+      <ol class="more-grid">
+        <li class="more-card reveal" data-d="3">
+          <span class="mn">05</span>
+          <div class="mb">
+            <div class="mt">폴더 일괄 업로드</div>
+            <div class="md"><span class="tag">UPLOAD</span>폴더 단위 다중 파일 · 단계별 진행 표시</div>
+          </div>
+        </li>
+        <li class="more-card reveal" data-d="3">
+          <span class="mn">06</span>
+          <div class="mb">
+            <div class="mt">중복 감지</div>
+            <div class="md"><span class="tag">DEDUPE</span>이름 중복 + Rabin-Karp 내용 유사도(%) 경고</div>
+          </div>
+        </li>
+        <li class="more-card reveal" data-d="4">
+          <span class="mn">07</span>
+          <div class="mb">
+            <div class="mt">32k 토큰 분할 파싱</div>
+            <div class="md"><span class="tag">SOLAR</span>컨텍스트 한계 초과 시 자동 분할 + 절단 배너</div>
+          </div>
+        </li>
+        <li class="more-card reveal" data-d="4">
+          <span class="mn">08</span>
+          <div class="mb">
+            <div class="mt">북마크 &amp; 심사 마킹</div>
+            <div class="md"><span class="tag">REVIEW</span>☆/★ 즐겨찾기 · 통과 / 보류 / 탈락 색상 구분</div>
+          </div>
+        </li>
+        <li class="more-card reveal" data-d="5">
+          <span class="mn">09</span>
+          <div class="mb">
+            <div class="mt">다중 패널 + 동기화 스크롤</div>
+            <div class="md"><span class="tag">COMPARE</span>최대 4명 동시 · 길이 비율 기반 자동 동기화</div>
+          </div>
+        </li>
+        <li class="more-card reveal" data-d="5">
+          <span class="mn">10</span>
+          <div class="mb">
+            <div class="mt">비교 분석 (Diff)</div>
+            <div class="md"><span class="tag">DIFF</span>2~4명 항목별 표 · 집중 비교 · AI 코멘트</div>
+          </div>
+        </li>
+        <li class="more-card reveal" data-d="6">
+          <span class="mn">11</span>
+          <div class="mb">
+            <div class="mt">타임라인 &amp; 스킬 매트릭스</div>
+            <div class="md"><span class="tag">VIS</span>프로젝트 기간 수평 시각화 · 지원자×스킬 그리드 + CSV</div>
+          </div>
+        </li>
+        <li class="more-card reveal" data-d="6">
+          <span class="mn">12</span>
+          <div class="mb">
+            <div class="mt">블라인드 심사 모드</div>
+            <div class="md"><span class="tag">BLIND</span>이름을 "지원자 #N"으로 치환 · 무의식적 편향 차단</div>
+          </div>
+        </li>
+        <li class="more-card reveal" data-d="7">
+          <span class="mn">13</span>
+          <div class="mb">
+            <div class="mt">AI 채용 기준 요약</div>
+            <div class="md"><span class="tag">SOLAR</span>현재 채용 설정 기준으로 Solar가 포트폴리오 자동 요약</div>
+          </div>
+        </li>
+        <li class="more-card reveal" data-d="7">
+          <span class="mn">14</span>
+          <div class="mb">
+            <div class="mt">세션 관리</div>
+            <div class="md"><span class="tag">SAVE</span>JSON 가져오기·내보내기 · 백엔드 + localStorage 자동 저장</div>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <!-- ════════════ 14 — LEARNINGS (NEW placeholder) ════════════ -->
+    <section class="slide" data-slide="14">
+      <header class="run reveal" data-d="1">
         <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>08 · LEARNINGS</span></span>
-        <span class="rhs"><span>P. 13 / 15</span></span>
+        <span class="rhs"><span>P. 14 / 16</span></span>
       </header>
       <hr class="rule-major reveal" data-d="1">
 
@@ -2748,11 +2903,11 @@ BST 탐색 <span class="comment">O(log n)</span>
       </div>
     </section>
 
-    <!-- ════════════ 14 — APPENDIX (cleaner) ════════════ -->
-    <section class="slide" data-slide="14">
+    <!-- ════════════ 15 — APPENDIX (cleaner) ════════════ -->
+    <section class="slide" data-slide="15">
       <header class="run reveal" data-d="1">
         <span class="lhs"><span class="mark">REVIEWER</span><span class="sep">/</span><span>09 · APPENDIX</span></span>
-        <span class="rhs"><span>P. 14 / 15</span></span>
+        <span class="rhs"><span>P. 15 / 16</span></span>
       </header>
       <hr class="rule-major reveal" data-d="1">
 
@@ -2819,11 +2974,11 @@ BST 탐색 <span class="comment">O(log n)</span>
       </div>
     </section>
 
-    <!-- ════════════ 15 — THANKS (minimal) ════════════ -->
-    <section class="slide thanks-slide" data-slide="15">
+    <!-- ════════════ 16 — THANKS (minimal) ════════════ -->
+    <section class="slide thanks-slide" data-slide="16">
       <h2 class="thanks-title reveal" data-d="1">감사합니다.</h2>
       <figure class="thanks-figure reveal" data-d="2">
-        <img data-shot="intro" alt="Portfolio Reviewer 메인 화면">
+        <img data-shot="end" alt="Portfolio Reviewer 마무리 이미지">
       </figure>
     </section>
 
@@ -2836,7 +2991,7 @@ BST 탐색 <span class="comment">O(log n)</span>
   <div class="counter">
     <span class="cur" id="cur-num">01</span>
     <span class="sep">/</span>
-    <span class="total">15</span>
+    <span class="total">16</span>
   </div>
   <nav class="indicators" id="indicators" aria-label="Slide indicators"></nav>
   <button class="nav-btn" id="next" aria-label="Next slide">›</button>
@@ -2866,10 +3021,12 @@ BST 탐색 <span class="comment">O(log n)</span>
   const BASE = 'images/';
   const SHOTS = {
     intro:   BASE + 'intro.png',
+    mookup:  BASE + 'mookup.png',
     solar:   BASE + 'solar.png',
     match:   BASE + 'match.png',
     search:  BASE + 'search.png',
     similar: BASE + 'similar.png',
+    end:     BASE + 'end.png',
   };
 
   document.querySelectorAll('img[data-shot]').forEach(img => {
@@ -2959,7 +3116,7 @@ BST 탐색 <span class="comment">O(log n)</span>
   SLIDE_TITLES.forEach((t, i) => {
     const c = document.createElement('div');
     c.className = 'ov-card';
-    c.innerHTML = `<span class="ov-n">P. ${pad(i + 1)} / 15</span><span class="ov-t">${t}</span>`;
+    c.innerHTML = `<span class="ov-n">P. ${pad(i + 1)} / 16</span><span class="ov-t">${t}</span>`;
     c.addEventListener('click', () => {
       hideOverview();
       go(i);
