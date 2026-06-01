@@ -197,20 +197,22 @@ export default function WorkflowPage() {
     clearTimeout(searchTimer.current);
     if (!q.trim()) { setSearchQuery(''); setVisibleIds(null); return; }
     setSearchQuery(q.trim());
+    const useAlias = settings.aliasSearch;
     searchTimer.current = setTimeout(async () => {
       try {
-        const ids = await searchPortfolios(q, 'cross');
+        const ids = await searchPortfolios(q, 'cross', null, useAlias);
         setVisibleIds(new Set(ids));
       } catch (e) {
         console.error('search 오류:', e);
       }
     }, 300);
-  }, []);
+  }, [settings.aliasSearch]);
 
   const toggleSelected = useCallback((id) => {
     setSelectedIds(prev => {
       if (prev.includes(id)) return prev.filter(x => x !== id);
-      if (prev.length >= 4) return prev;
+      // 최대 4개 — 초과 시 가장 오래된 패널을 닫고 새 패널 추가 (features.md 명세)
+      if (prev.length >= 4) return [...prev.slice(1), id];
       return [...prev, id];
     });
   }, []);

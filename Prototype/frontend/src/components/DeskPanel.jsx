@@ -139,18 +139,13 @@ export default function DeskPanel({
   }
 
   // — Filtered list —
+  // 주의: nameFilter는 백엔드 search(/api/search)로 visibleIds → applicants(prop)에 이미 반영됨.
+  // 여기서 다시 client-side substring 필터를 적용하면 ED/별칭 흡수가 무효화되므로 사용하지 않음.
   const filteredList = (() => {
     let list = [
       ...applicants.filter(a => bookmarks.has(a.id)),
       ...applicants.filter(a => !bookmarks.has(a.id)),
     ];
-    if (nameFilter.trim()) {
-      const q = nameFilter.trim().toLowerCase();
-      list = list.filter(a =>
-        a.name.toLowerCase().includes(q) ||
-        (a.skills || []).some(s => s.toLowerCase().includes(q))
-      );
-    }
     if (activeTab !== 'all') list = list.filter(a => marks[a.id] === activeTab);
     if (minCareer > 0) list = list.filter(a => (a.career_years ?? 0) >= minCareer);
     if (filterSkill.trim()) {

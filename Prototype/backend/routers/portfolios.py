@@ -643,25 +643,30 @@ def search(
     q: str = Query(..., description="검색 키워드"),
     mode: str = Query("cross", description="cross | intra"),
     portfolio_id: str | None = Query(None, description="intra 모드 시 대상 포트폴리오 ID"),
+    use_alias: bool = Query(True, description="별칭/오타 흡수 검색 (alias hashmap + Edit Distance)"),
 ):
     """
     cross 모드: BST로 키워드를 가진 지원자 ID 목록 반환
     intra 모드: TextIndex로 특정 포트폴리오 내 키워드 위치 반환
+
+    use_alias=False면 동의어·오타 흡수 없이 정확 매칭만 (별칭 통합 검색 토글 OFF).
     """
     portfolios = _get_portfolios()
 
     if mode == "cross":
-        # alias_search로 확장된 쿼리로 필터링
         matched_ids = [
             p["id"] for p in portfolios
-            if portfolio_matches_query(p, q)
+            if portfolio_matches_query(p, q, use_alias=use_alias)
         ]
-        # BST 인덱스로 결과 재검증 (성능 시연용) — 캐시 활용
-        idx = get_or_build_bst(portfolios)
-        bst_ids = idx.search(q)
-        # 두 결과 합집합 (alias_search가 더 넓게 탐지)
-        all_ids = list(dict.fromkeys(matched_ids + bst_ids))
-        return {"mode": "cross", "query": q, "matched_ids": all_ids}
+        # BST 인덱스도 normalize를 거치며 alias 정규화를 적용하므로
+        # 토글 OFF 시에는 BST 보강을 건너뛰어 일관성을 유지한다.
+        if use_alias:
+            idx = get_or_build_bst(portfolios)
+            bst_ids = idx.search(q)
+            all_ids = list(dict.fromkeys(matched_ids + bst_ids))
+        else:
+            all_ids = matched_ids
+        return {"mode": "cross", "query": q, "matched_ids": all_ids, "use_alias": use_alias}
 
     elif mode == "intra":
         if not portfolio_id:

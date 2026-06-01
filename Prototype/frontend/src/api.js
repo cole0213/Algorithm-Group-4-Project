@@ -16,8 +16,8 @@ export async function analyzePortfolios(requiredSpecs, sortKey = 'match', weight
   return data.portfolios;
 }
 
-export async function searchPortfolios(query, mode = 'cross', portfolioId = null) {
-  const params = new URLSearchParams({ q: query, mode });
+export async function searchPortfolios(query, mode = 'cross', portfolioId = null, useAlias = true) {
+  const params = new URLSearchParams({ q: query, mode, use_alias: useAlias ? 'true' : 'false' });
   if (portfolioId) params.set('portfolio_id', portfolioId);
   const res = await fetch(`${BASE}/search?${params}`);
   if (!res.ok) throw new Error(`search 실패: ${res.status}`);
