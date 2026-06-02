@@ -214,7 +214,7 @@ const PortfolioPanel = forwardRef(function PortfolioPanel(
 
   // 패널별 유사 문장 숨기기 (전역 설정 독립)
   const [localHide, setLocalHide] = useState(null); // null=전역따름 | true | false
-  const effectiveHide = localHide !== null ? localHide : settings.hideSimlar;
+  const effectiveHide = localHide !== null ? localHide : settings.hideSimilar;
   const hasSimilar = settings.similar && similarSpans?.length > 0;
 
   // intra 검색 debounce
@@ -395,7 +395,7 @@ const PortfolioPanel = forwardRef(function PortfolioPanel(
             <button
               className={`panel-action-btn ${effectiveHide ? 'active' : ''}`}
               title={effectiveHide ? '유사 문장 표시' : '유사 문장 숨기기'}
-              onClick={() => setLocalHide(h => h === null ? !settings.hideSimlar : !h)}
+              onClick={() => setLocalHide(h => h === null ? !settings.hideSimilar : !h)}
             >
               {effectiveHide ? <IcEye size={13} /> : <IcEyeOff size={13} />}
             </button>

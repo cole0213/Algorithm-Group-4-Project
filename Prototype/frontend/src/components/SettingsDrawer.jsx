@@ -27,7 +27,7 @@ export const SIMILAR_PALETTES = [
 const TOGGLES = [
   { key: 'highlight',      label: '스킬 하이라이트',          desc: '필요 스펙과 일치하는 기술을 주황색으로 표시합니다.' },
   { key: 'similar',        label: '유사 문장 표시',            desc: '포트폴리오 간 유사한 문장을 색상으로 강조합니다.' },
-  { key: 'hideSimlar',     label: '유사 문장 흐리게',          desc: '유사 문장을 강조 대신 흐리게 처리하여 숨깁니다.' },
+  { key: 'hideSimilar',     label: '유사 문장 흐리게',          desc: '유사 문장을 강조 대신 흐리게 처리하여 숨깁니다.' },
   { key: 'syncScroll',     label: '동기화 스크롤',             desc: '열린 패널들을 같은 위치로 동시에 스크롤합니다.' },
   { key: 'panelAnimation', label: '패널 추가 애니메이션',      desc: '새 패널 열릴 때 슬라이드 효과. 성능이 낮은 기기에서는 끄세요.' },
   { key: 'originalLink',   label: '원본 보기 버튼',            desc: '패널 하단에 원본 파일 텍스트 확인 버튼을 표시합니다.' },

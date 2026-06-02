@@ -2406,7 +2406,83 @@ body.dark .job-desc-textarea {
   color: #F1F5F9;
 }
 
-/* 스킬 매트릭스 */
+/* 스킬 매트릭스 모달 */
+.matrix-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 24px;
+}
+.matrix-modal {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 24px 64px rgba(15, 23, 42, 0.25);
+  max-width: min(1200px, 96vw);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.matrix-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #E2E8F0;
+}
+.matrix-title { font-weight: 700; font-size: 16px; color: #0F172A; }
+.matrix-subtitle { color: #64748B; font-size: 13px; flex: 1; }
+.matrix-export-btn,
+.matrix-close {
+  border: 1px solid #E2E8F0;
+  background: #F8FAFC;
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #475569;
+}
+.matrix-export-btn:hover { background: #EEF2FF; color: #4338CA; border-color: #C7D2FE; }
+.matrix-close:hover { background: #FEE2E2; color: #B91C1C; border-color: #FECACA; }
+.matrix-body { overflow: auto; padding: 12px 20px 20px; }
+.matrix-table {
+  border-collapse: collapse;
+  font-size: 13px;
+  width: 100%;
+}
+.matrix-table th,
+.matrix-table td {
+  border: 1px solid #E2E8F0;
+  padding: 6px 10px;
+  text-align: center;
+  white-space: nowrap;
+}
+.matrix-table th {
+  background: #F8FAFC;
+  color: #334155;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+}
+.matrix-skill-cell { text-align: left; font-weight: 500; color: #0F172A; }
+.matrix-cell.has-skill { color: #16A34A; font-weight: 700; }
+.matrix-cell.no-skill { color: #CBD5E1; }
+.matrix-count-cell { font-variant-numeric: tabular-nums; }
+.matrix-ratio-bar {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #DBEAFE calc(var(--ratio) * 100%), #F1F5F9 0);
+  color: #1E40AF;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+body.dark .matrix-overlay { background: rgba(2, 6, 23, 0.7); }
 body.dark .matrix-modal {
   background: #1E293B;
   box-shadow: 0 20px 60px rgba(0,0,0,0.6);

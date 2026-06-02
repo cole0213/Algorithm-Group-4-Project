@@ -9,6 +9,7 @@ import FolderUploadModal from '../components/FolderUploadModal';
 import Toaster, { useToast } from '../components/Toaster';
 import DiffModal from '../components/DiffModal';
 import JobConfigModal from '../components/JobConfigModal';
+import SkillMatrix from '../components/SkillMatrix';
 import { DEFAULT_SPECS, DEFAULT_WEIGHTS, STORAGE_KEYS, BLIND_ADJECTIVES, BLIND_NOUNS } from '../constants';
 
 function loadCache() {
@@ -19,7 +20,7 @@ function loadCache() {
 const _defaultSettings = {
   highlight:      true,
   similar:        true,
-  hideSimlar:     true,
+  hideSimilar:     true,
   syncScroll:     false,
   originalLink:   true,
   aliasSearch:    true,
@@ -83,6 +84,7 @@ export default function WorkflowPage() {
   const [selectedSummarizeIds, setSelectedSummarizeIds] = useState(() => new Set());
   const cancelSummarizeRef = useRef(false);
   const [jobConfigOpen, setJobConfigOpen] = useState(false);
+  const [matrixOpen, setMatrixOpen]       = useState(false);
   const [dropFile, setDropFile] = useState(null);
   const [stageSearch, setStageSearch] = useState('');
 
@@ -112,13 +114,18 @@ export default function WorkflowPage() {
   useEffect(() => {
     function onKeyDown(e) {
       if (e.key !== 'Escape') return;
+      // 모달 우선순위: Diff > SkillMatrix > JobConfig > Folder > Upload > Drawer > 패널 슬라이스
+      if (showDiff) { setShowDiff(false); return; }
+      if (matrixOpen) { setMatrixOpen(false); return; }
+      if (jobConfigOpen) { setJobConfigOpen(false); return; }
+      if (folderOpen) { setFolderOpen(false); return; }
       if (uploadOpen) { setUploadOpen(false); return; }
       if (drawerOpen) { setDrawerOpen(false); return; }
       setSelectedIds(prev => prev.length ? prev.slice(0, -1) : prev);
     }
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [uploadOpen, drawerOpen]);
+  }, [uploadOpen, drawerOpen, showDiff, matrixOpen, jobConfigOpen, folderOpen]);
 
   const isMounted = useRef(false);
   useEffect(() => {
@@ -366,9 +373,9 @@ export default function WorkflowPage() {
     setSelectedPalette(paletteId);
     setGroupColors(palette.colors);
     if (paletteId === 'dim') {
-      setSettings(prev => ({ ...prev, hideSimlar: true }));
+      setSettings(prev => ({ ...prev, hideSimilar: true }));
     } else {
-      setSettings(prev => ({ ...prev, hideSimlar: false }));
+      setSettings(prev => ({ ...prev, hideSimilar: false }));
     }
     runSimilar(similarScope, selectedIds, palette.colors);
   }, [similarScope, selectedIds, runSimilar]);
@@ -489,7 +496,7 @@ export default function WorkflowPage() {
             }
           }
         }}
-        onMatrixClick={exportSkillMatrixCsv}
+        onMatrixClick={() => setMatrixOpen(true)}
         onExportClick={() => exportPortfolios({ ...settings, weights, visibleSections })}
         onSettingsClick={() => setDrawerOpen(true)}
         applicants={visibleApplicants}
@@ -599,6 +606,13 @@ export default function WorkflowPage() {
         <DiffModal
           applicants={diffIds.map(id => applicants.find(a => a.id === id)).filter(Boolean)}
           onClose={() => setShowDiff(false)}
+        />
+      )}
+      {matrixOpen && (
+        <SkillMatrix
+          applicants={applicants}
+          onClose={() => setMatrixOpen(false)}
+          onExportCsv={exportSkillMatrixCsv}
         />
       )}
       <JobConfigModal

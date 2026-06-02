@@ -1,4 +1,12 @@
-export default function SkillMatrix({ applicants, onClose }) {
+import { useEffect } from 'react';
+
+export default function SkillMatrix({ applicants, onClose, onExportCsv }) {
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
   // 빈도 내림차순으로 스킬 정렬
   const allSkills = [...new Set(
     applicants.flatMap(a => a.skills || [])
@@ -18,6 +26,11 @@ export default function SkillMatrix({ applicants, onClose }) {
           <span className="matrix-subtitle">
             {applicants.length}명 · {allSkills.length}개 스킬
           </span>
+          {onExportCsv && (
+            <button className="matrix-export-btn" onClick={onExportCsv} title="CSV로 내보내기">
+              ↓ CSV
+            </button>
+          )}
           <button className="matrix-close" onClick={onClose}>✕</button>
         </div>
 
